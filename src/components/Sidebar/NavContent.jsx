@@ -32,9 +32,6 @@ function NavContent() {
     if ((currentPath.indexOf("bonds") >= 0 || currentPath.indexOf("choose_bond") >= 0) && page === "bonds") {
       return true;
     }
-    if (currentPath.indexOf("33-together") >= 0 && page === "33-together") {
-      return true;
-    }
     return false;
   }, []);
 
@@ -43,7 +40,7 @@ function NavContent() {
       <Box className="dapp-sidebar-inner" display="flex" justifyContent="space-between" flexDirection="column">
         <div className="dapp-menu-top">
           <Box className="branding-header">
-            <Link href="https://olympusdao.finance" target="_blank">
+            <Link href="https://exodia.finance" target="_blank">
               <SvgIcon
                 color="primary"
                 component={OlympusIcon}
@@ -54,7 +51,7 @@ function NavContent() {
 
             {address && (
               <div className="wallet-link">
-                <Link href={`https://etherscan.io/address/${address}`} target="_blank">
+                <Link href={`https://ftmscan.com/address/${address}`} target="_blank">
                   {shorten(address)}
                 </Link>
               </div>
@@ -90,21 +87,6 @@ function NavContent() {
                 <Typography variant="h6">
                   <SvgIcon color="primary" component={StakeIcon} />
                   <Trans>Stake</Trans>
-                </Typography>
-              </Link>
-
-              <Link
-                component={NavLink}
-                id="33-together-nav"
-                to="/33-together"
-                isActive={(match, location) => {
-                  return checkPage(match, location, "33-together");
-                }}
-                className={`button-dapp-menu ${isActive ? "active" : ""}`}
-              >
-                <Typography variant="h6">
-                  <SvgIcon color="primary" component={PoolTogetherIcon} />
-                  3,3 Together
                 </Typography>
               </Link>
 

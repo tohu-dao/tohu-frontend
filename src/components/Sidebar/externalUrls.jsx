@@ -7,25 +7,15 @@ import { Trans } from "@lingui/macro";
 
 const externalUrls = [
   {
-    title: <Trans>Forum</Trans>,
-    url: "https://forum.olympusdao.finance/",
-    icon: <SvgIcon color="primary" component={ForumIcon} />,
-  },
-  {
     title: <Trans>Governance</Trans>,
-    url: "https://vote.olympusdao.finance/",
+    url: "https://snapshot.org/#/exodiadao.eth",
     icon: <SvgIcon color="primary" component={GovIcon} />,
   },
   {
     title: <Trans>Docs</Trans>,
-    url: "https://docs.olympusdao.finance/",
+    url: "https://docs.exodia.finance",
     icon: <SvgIcon color="primary" component={DocsIcon} />,
   },
-  // {
-  //   title: "Feedback",
-  //   url: "https://olympusdao.canny.io/",
-  //   icon: <SvgIcon color="primary" component={FeedbackIcon} />,
-  // },
 ];
 
 export default externalUrls;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { addresses, TOKEN_DECIMALS } from "../../constants";
+import { addresses, OHM_TICKER, sOHM_TICKER, TOKEN_DECIMALS } from "../../constants";
 import { NavLink } from "react-router-dom";
 import { Link, SvgIcon, Popper, Button, Paper, Typography, Divider, Box, Fade, Slide } from "@material-ui/core";
 import { ReactComponent as InfoIcon } from "../../assets/icons/info-fill.svg";
@@ -10,7 +10,7 @@ import { ReactComponent as ohmTokenImg } from "../../assets/tokens/token_OHM.svg
 import { ReactComponent as t33TokenImg } from "../../assets/tokens/token_33T.svg";
 
 import "./ohmmenu.scss";
-import { dai, frax } from "src/helpers/AllBonds";
+import { dai } from "src/helpers/AllBonds";
 import { Trans } from "@lingui/macro";
 import { useWeb3Context } from "../../hooks/web3Context";
 
@@ -73,7 +73,6 @@ function OhmMenu() {
   const { chainID, address } = useWeb3Context();
 
   const networkID = chainID;
-
   const SOHM_ADDRESS = addresses[networkID].SOHM_ADDRESS;
   const OHM_ADDRESS = addresses[networkID].OHM_ADDRESS;
   const PT_TOKEN_ADDRESS = addresses[networkID].PT_TOKEN_ADDRESS;
@@ -85,7 +84,6 @@ function OhmMenu() {
   const open = Boolean(anchorEl);
   const id = "ohm-popper";
   const daiAddress = dai.getAddressForReserve(networkID);
-  const fraxAddress = frax.getAddressForReserve(networkID);
   return (
     <Box
       component="div"
@@ -95,7 +93,7 @@ function OhmMenu() {
     >
       <Button id="ohm-menu-button" size="large" variant="contained" color="secondary" title="OHM" aria-describedby={id}>
         <SvgIcon component={InfoIcon} color="primary" />
-        <Typography>OHM</Typography>
+        <Typography>{OHM_TICKER}</Typography>
       </Button>
 
       <Popper id={id} open={open} anchorEl={anchorEl} placement="bottom-start" transition>
@@ -105,47 +103,22 @@ function OhmMenu() {
               <Paper className="ohm-menu" elevation={1}>
                 <Box component="div" className="buy-tokens">
                   <Link
-                    href={`https://app.sushi.com/swap?inputCurrency=${daiAddress}&outputCurrency=${OHM_ADDRESS}`}
+                    href={`https://spookyswap.finance/swap?inputCurrency=${daiAddress}&outputCurrency=${OHM_ADDRESS}`}
                     target="_blank"
                     rel="noreferrer"
                   >
                     <Button size="large" variant="contained" color="secondary" fullWidth>
                       <Typography align="left">
-                        <Trans>Buy on {new String("Sushiswap")}</Trans>
-                        <SvgIcon component={ArrowUpIcon} htmlColor="#A3A3A3" />
+                        Buy on SpookySwap <SvgIcon component={ArrowUpIcon} htmlColor="#A3A3A3" />
                       </Typography>
                     </Button>
                   </Link>
 
-                  <Link
-                    href={`https://app.uniswap.org/#/swap?inputCurrency=${fraxAddress}&outputCurrency=${OHM_ADDRESS}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <Button size="large" variant="contained" color="secondary" fullWidth>
-                      <Typography align="left">
-                        <Trans>Buy on {new String("Uniswap")}</Trans>
-                        <SvgIcon component={ArrowUpIcon} htmlColor="#A3A3A3" />
-                      </Typography>
-                    </Button>
-                  </Link>
-
-                  <Link component={NavLink} to="/wrap" style={{ textDecoration: "none" }}>
+                  {/*                  <Link component={NavLink} to="/wrap" style={{ textDecoration: "none" }}>
                     <Button size="large" variant="contained" color="secondary" fullWidth>
                       <Typography align="left">Wrap sOHM</Typography>
                     </Button>
-                  </Link>
-                </Box>
-
-                <Box component="div" className="data-links">
-                  <Divider color="secondary" className="less-margin" />
-                  <Link href={`https://dune.xyz/shadow/Olympus-(OHM)`} target="_blank" rel="noreferrer">
-                    <Button size="large" variant="contained" color="secondary" fullWidth>
-                      <Typography align="left">
-                        Shadow's Dune Dashboard <SvgIcon component={ArrowUpIcon} htmlColor="#A3A3A3" />
-                      </Typography>
-                    </Button>
-                  </Link>
+                  </Link>*/}
                 </Box>
 
                 {isEthereumAPIAvailable ? (
@@ -159,74 +132,33 @@ function OhmMenu() {
                         <Button
                           variant="contained"
                           color="secondary"
-                          onClick={addTokenToWallet("OHM", OHM_ADDRESS, address)}
+                          onClick={addTokenToWallet(OHM_TICKER, OHM_ADDRESS, address)}
                         >
                           <SvgIcon
                             component={ohmTokenImg}
                             viewBox="0 0 32 32"
                             style={{ height: "25px", width: "25px" }}
                           />
-                          <Typography variant="body1">OHM</Typography>
+                          <Typography variant="body1">{OHM_TICKER}</Typography>
                         </Button>
                       )}
                       {SOHM_ADDRESS && (
                         <Button
                           variant="contained"
                           color="secondary"
-                          onClick={addTokenToWallet("sOHM", SOHM_ADDRESS, address)}
+                          onClick={addTokenToWallet(sOHM_TICKER, SOHM_ADDRESS, address)}
                         >
                           <SvgIcon
                             component={sOhmTokenImg}
                             viewBox="0 0 100 100"
                             style={{ height: "25px", width: "25px" }}
                           />
-                          <Typography variant="body1">sOHM</Typography>
-                        </Button>
-                      )}
-                      {WSOHM_ADDRESS && (
-                        <Button
-                          variant="contained"
-                          color="secondary"
-                          onClick={addTokenToWallet("wsOHM", WSOHM_ADDRESS, address)}
-                        >
-                          <SvgIcon
-                            component={wsOhmTokenImg}
-                            viewBox="0 0 180 180"
-                            style={{ height: "25px", width: "25px" }}
-                          />
-                          <Typography variant="body1">wsOHM</Typography>
-                        </Button>
-                      )}
-                      {PT_TOKEN_ADDRESS && (
-                        <Button
-                          variant="contained"
-                          color="secondary"
-                          onClick={addTokenToWallet("33T", PT_TOKEN_ADDRESS, address)}
-                        >
-                          <SvgIcon
-                            component={t33TokenImg}
-                            viewBox="0 0 1000 1000"
-                            style={{ height: "25px", width: "25px" }}
-                          />
-                          <Typography variant="body1">33T</Typography>
+                          <Typography variant="body1">{sOHM_TICKER}</Typography>
                         </Button>
                       )}
                     </Box>
                   </Box>
                 ) : null}
-
-                <Divider color="secondary" />
-                <Link
-                  href="https://docs.olympusdao.finance/using-the-website/unstaking_lp"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Button size="large" variant="contained" color="secondary" fullWidth>
-                    <Typography align="left">
-                      <Trans>Unstake Legacy LP Token</Trans>
-                    </Typography>
-                  </Button>
-                </Link>
               </Paper>
             </Fade>
           );

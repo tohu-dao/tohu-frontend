@@ -22,14 +22,13 @@ import RebaseTimer from "../../components/RebaseTimer/RebaseTimer";
 import TabPanel from "../../components/TabPanel";
 import { getOhmTokenImage, getTokenImage, trim } from "../../helpers";
 import { changeApproval, changeStake } from "../../slices/StakeThunk";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
 import "./stake.scss";
 import { useWeb3Context } from "src/hooks/web3Context";
 import { isPendingTxn, txnButtonText } from "src/slices/PendingTxnsSlice";
 import { Skeleton } from "@material-ui/lab";
-import ExternalStakePool from "./ExternalStakePool";
 import { error } from "../../slices/MessagesSlice";
 import { ethers } from "ethers";
+import { OHM_TICKER, sOHM_TICKER } from "../../constants";
 
 function a11yProps(index) {
   return {
@@ -116,11 +115,11 @@ function Stake() {
     // 1st catch if quantity > balance
     let gweiValue = ethers.utils.parseUnits(quantity, "gwei");
     if (action === "stake" && gweiValue.gt(ethers.utils.parseUnits(ohmBalance, "gwei"))) {
-      return dispatch(error(t`You cannot stake more than your OHM balance.`));
+      return dispatch(error(t`You cannot stake more than your ${OHM_TICKER} balance.`));
     }
 
     if (action === "unstake" && gweiValue.gt(ethers.utils.parseUnits(sohmBalance, "gwei"))) {
-      return dispatch(error(t`You cannot unstake more than your sOHM balance.`));
+      return dispatch(error(t`You cannot unstake more than your ${sOHM_TICKER} balance.`));
     }
 
     await dispatch(changeStake({ address, action, value: quantity.toString(), provider, networkID: chainID }));
@@ -236,7 +235,9 @@ function Stake() {
                       </Typography>
                       <Typography variant="h4">
                         {currentIndex ? (
-                          <span data-testid="index-value">{trim(currentIndex, 1)} OHM</span>
+                          <span data-testid="index-value">
+                            {trim(currentIndex, 1)} {sOHM_TICKER}
+                          </span>
                         ) : (
                           <Skeleton width="150px" data-testid="index-loading" />
                         )}
@@ -254,7 +255,7 @@ function Stake() {
                     {modalButton}
                   </div>
                   <Typography variant="h6">
-                    <Trans>Connect your wallet to stake OHM</Trans>
+                    <Trans>Connect your wallet to stake {OHM_TICKER}</Trans>
                   </Typography>
                 </div>
               ) : (
@@ -288,16 +289,16 @@ function Stake() {
                             <Typography variant="body1" className="stake-note" color="textSecondary">
                               {view === 0 ? (
                                 <>
-                                  <Trans>First time staking</Trans> <b>OHM</b>?
+                                  <Trans>First time staking</Trans> <b>{OHM_TICKER}</b>?
                                   <br />
-                                  <Trans>Please approve Olympus Dao to use your</Trans> <b>OHM</b>{" "}
+                                  <Trans>Please approve Olympus Dao to use your</Trans> <b>{OHM_TICKER}</b>{" "}
                                   <Trans>for staking</Trans>.
                                 </>
                               ) : (
                                 <>
-                                  <Trans>First time unstaking</Trans> <b>sOHM</b>?
+                                  <Trans>First time unstaking</Trans> <b>{sOHM_TICKER}</b>?
                                   <br />
-                                  <Trans>Please approve Olympus Dao to use your</Trans> <b>sOHM</b>{" "}
+                                  <Trans>Please approve Olympus Dao to use your</Trans> <b>{sOHM_TICKER}</b>{" "}
                                   <Trans>for unstaking</Trans>.
                                 </>
                               )}
@@ -341,7 +342,7 @@ function Stake() {
                               onChangeStake("stake");
                             }}
                           >
-                            {txnButtonText(pendingTransactions, "staking", t`Stake OHM`)}
+                            {txnButtonText(pendingTransactions, "staking", t`Stake ${OHM_TICKER}`)}
                           </Button>
                         ) : (
                           <Button
@@ -370,7 +371,7 @@ function Stake() {
                               onChangeStake("unstake");
                             }}
                           >
-                            {txnButtonText(pendingTransactions, "unstaking", t`Unstake OHM`)}
+                            {txnButtonText(pendingTransactions, "unstaking", t`Unstake ${OHM_TICKER}`)}
                           </Button>
                         ) : (
                           <Button
@@ -395,7 +396,13 @@ function Stake() {
                         <Trans>Unstaked Balance</Trans>
                       </Typography>
                       <Typography variant="body1" id="user-balance">
-                        {isAppLoading ? <Skeleton width="80px" /> : <>{trim(ohmBalance, 4)} OHM</>}
+                        {isAppLoading ? (
+                          <Skeleton width="80px" />
+                        ) : (
+                          <>
+                            {trim(ohmBalance, 4)} {OHM_TICKER}
+                          </>
+                        )}
                       </Typography>
                     </div>
 
@@ -404,7 +411,13 @@ function Stake() {
                         <Trans>Staked Balance</Trans>
                       </Typography>
                       <Typography variant="body1" id="user-staked-balance">
-                        {isAppLoading ? <Skeleton width="80px" /> : <>{trimmedBalance} sOHM</>}
+                        {isAppLoading ? (
+                          <Skeleton width="80px" />
+                        ) : (
+                          <>
+                            {trimmedBalance} {sOHM_TICKER}
+                          </>
+                        )}
                       </Typography>
                     </div>
 
@@ -413,27 +426,24 @@ function Stake() {
                         <Trans>Single Staking</Trans>
                       </Typography>
                       <Typography variant="body2" color="textSecondary">
-                        {isAppLoading ? <Skeleton width="80px" /> : <>{trim(sohmBalance, 4)} sOHM</>}
+                        {isAppLoading ? (
+                          <Skeleton width="80px" />
+                        ) : (
+                          <>
+                            {trim(sohmBalance, 4)} {sOHM_TICKER}
+                          </>
+                        )}
                       </Typography>
                     </div>
 
-                    <div className="data-row" style={{ paddingLeft: "10px" }}>
-                      <Typography variant="body2" color="textSecondary">
-                        <Trans>Staked Balance in Fuse</Trans>
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        {isAppLoading ? <Skeleton width="80px" /> : <>{trim(fsohmBalance, 4)} fsOHM</>}
-                      </Typography>
-                    </div>
-
-                    <div className="data-row" style={{ paddingLeft: "10px" }}>
+                    {/*                    <div className="data-row" style={{ paddingLeft: "10px" }}>
                       <Typography variant="body2" color="textSecondary">
                         <Trans>Wrapped Balance</Trans>
                       </Typography>
                       <Typography variant="body2" color="textSecondary">
                         {isAppLoading ? <Skeleton width="80px" /> : <>{trim(wsohmBalance, 4)} wsOHM</>}
                       </Typography>
-                    </div>
+                    </div>*/}
 
                     <Divider color="secondary" />
 
@@ -442,7 +452,13 @@ function Stake() {
                         <Trans>Next Reward Amount</Trans>
                       </Typography>
                       <Typography variant="body1">
-                        {isAppLoading ? <Skeleton width="80px" /> : <>{nextRewardValue} sOHM</>}
+                        {isAppLoading ? (
+                          <Skeleton width="80px" />
+                        ) : (
+                          <>
+                            {nextRewardValue} {sOHM_TICKER}
+                          </>
+                        )}
                       </Typography>
                     </div>
 
@@ -470,8 +486,6 @@ function Stake() {
           </Grid>
         </Paper>
       </Zoom>
-
-      <ExternalStakePool />
     </div>
   );
 }

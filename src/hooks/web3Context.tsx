@@ -28,13 +28,7 @@ const ALL_URIs = NodeHelper.getNodesUris();
  * @returns string
  */
 function getMainnetURI(): string {
-  // Shuffles the URIs for "intelligent" loadbalancing
-  const allURIs = ALL_URIs.sort(() => Math.random() - 0.5);
-
-  // There is no lightweight way to test each URL. so just return a random one.
-  // if (workingURI !== undefined || workingURI !== "") return workingURI as string;
-  const randomIndex = Math.floor(Math.random() * allURIs.length);
-  return allURIs[randomIndex];
+  return "https://rpc.ftm.tools/";
 }
 
 /*
@@ -80,7 +74,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
   const [connected, setConnected] = useState(false);
   // NOTE (appleseed): if you are testing on rinkeby you need to set chainId === 4 as the default for non-connected wallet testing...
   // ... you also need to set getTestnetURI() as the default uri state below
-  const [chainID, setChainID] = useState(1);
+  const [chainID, setChainID] = useState(250);
   const [address, setAddress] = useState("");
 
   const [uri, setUri] = useState(getMainnetURI());
@@ -96,8 +90,8 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
           package: WalletConnectProvider,
           options: {
             rpc: {
-              1: getMainnetURI(),
-              4: getTestnetURI(),
+              250: getMainnetURI(),
+              4004: getTestnetURI(),
             },
           },
         },

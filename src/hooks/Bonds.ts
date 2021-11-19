@@ -54,8 +54,7 @@ function useBonds(chainID: number) {
     setBonds(mostProfitableBonds);
 
     // TODO (appleseed-expiredBonds): there may be a smarter way to refactor this
-    let expiredDetails: IAllBondData[];
-    expiredDetails = allExpiredBonds
+    let expiredDetails: IAllBondData[] = allExpiredBonds
       .flatMap(bond => {
         if (bondState[bond.name] && bondState[bond.name].bondDiscount) {
           return Object.assign(bond, bondState[bond.name]); // Keeps the object type

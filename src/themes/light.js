@@ -1,28 +1,28 @@
 import { createTheme, responsiveFontSizes } from "@material-ui/core/styles";
 import fonts from "./fonts";
-import commonSettings, { handleBackdropFilter } from "./global.js";
+import commonSettings from "./global.js";
 
 const lightTheme = {
-  color: "#253449",
-  gold: "#F8CC82",
+  color: "#000000",
+  gold: "#00D70E", // Dark green
   gray: "#A3A3A3",
-  blueish_gray: "#768299",
+  blueish_gray: "#565A69", // Gray
   textHighlightColor: "#93AEBC", // "#F4D092",
-  backgroundColor: "#AFCDE9",
+  backgroundColor: "#FFFFFF",
   // background:
   // "radial-gradient(circle at 25% 0%, rgba(227,255,240,.5), rgba(227,255,240,0) 50%), radial-gradient(circle at 80% 80%, rgba(131,165,203,.5), rgba(131,165,203,0) 50%)",
-  background: "linear-gradient(180deg, #AFCDE9 1%, #F7FBE7 100%)",
-  paperBg: "rgba(255, 255, 255, 0.6)",
+  background: "#FFFFFF",
+  paperBg: "#f4f4f4",
   modalBg: "#FAFAFAEF",
   popoverBg: "rgba(255, 255, 255, 0.95)",
-  menuBg: handleBackdropFilter("rgba(255, 255, 255, 0.5)"),
+  menuBg: "rgba(255, 255, 255, 0.5)",
   backdropBg: "rgba(200, 200, 200, 0.4)",
   largeTextColor: "#759AAE",
   activeLinkColor: "#222222",
   activeLinkSvgColor: "invert(64%) sepia(11%) saturate(934%) hue-rotate(157deg) brightness(90%) contrast(86%)",
   // primaryButtonBG: "#759AAE",
-  primaryButtonBG: "#93AEBC",
-  primaryButtonHoverBG: "#759AAE",
+  primaryButtonBG: "#00D70E", // Dark green
+  primaryButtonHoverBG: "#00FF11", // Light green
   // these need fixing
   primaryButtonHoverColor: "#333333",
   secondaryButtonHoverBG: "rgba(54, 56, 64, 1)",

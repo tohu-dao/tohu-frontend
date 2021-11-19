@@ -41,7 +41,7 @@ export const loadAppDetails = createAsyncThunk(
 
     const graphData = await apollo(protocolMetricsQuery);
 
-    if (!graphData || graphData == null) {
+    if (!graphData) {
       console.error("Returned a null response when querying TheGraph");
       return;
     }
