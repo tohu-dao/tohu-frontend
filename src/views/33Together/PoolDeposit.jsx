@@ -17,7 +17,7 @@ import { useWeb3Context } from "../../hooks";
 import { getTokenImage } from "src/helpers/index";
 import { trim } from "src/helpers";
 import { calculateOdds } from "../../helpers/33Together";
-import { isPendingTxn, txnButtonText } from "../../slices/PendingTxnsSlice";
+import { isPendingTxn } from "../../slices/PendingTxnsSlice";
 import TxnButtonText from "src/components/TxnButtonText";
 import { changeApproval, poolDeposit } from "../../slices/PoolThunk";
 import { Skeleton } from "@material-ui/lab";

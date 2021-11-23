@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { t, Trans } from "@lingui/macro";
 import { ClaimBondTableData, ClaimBondCardData } from "./ClaimRow";
-import { txnButtonText, isPendingTxn } from "src/slices/PendingTxnsSlice";
+import { isPendingTxn } from "src/slices/PendingTxnsSlice";
 import { TxnButtonTextGeneralPending } from "src/components/TxnButtonText";
 import { redeemAllBonds, redeemBond } from "src/slices/BondSlice";
 import { calculateUserBondDetails } from "src/slices/AccountSlice";
