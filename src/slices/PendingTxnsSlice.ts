@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { t } from "@lingui/macro";
 import { OHM_TICKER, sOHM_TICKER } from "../constants";
 
-interface IPendingTxn {
+export interface IPendingTxn {
   readonly txnHash: string;
   readonly text: string;
   readonly type: string;

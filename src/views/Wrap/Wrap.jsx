@@ -24,7 +24,8 @@ import { getOhmTokenImage, getTokenImage, trim, formatCurrency } from "../../hel
 import { changeApproval, changeWrap } from "../../slices/WrapThunk";
 import "../Stake/stake.scss";
 import { useWeb3Context } from "src/hooks/web3Context";
-import { isPendingTxn, txnButtonText } from "src/slices/PendingTxnsSlice";
+import { isPendingTxn } from "src/slices/PendingTxnsSlice";
+import TxnButtonText from "src/components/TxnButtonText";
 import { Skeleton } from "@material-ui/lab";
 import { error } from "../../slices/MessagesSlice";
 import { ethers } from "ethers";
@@ -283,7 +284,11 @@ function Wrap() {
                               onChangeWrap("wrap");
                             }}
                           >
-                            {txnButtonText(pendingTransactions, "wrapping", "Wrap sOHM")}
+                            <TxnButtonText
+                              pendingTransactions={pendingTransactions}
+                              type="wrapping"
+                              defaultText="Wrap sOHM"
+                            />
                           </Button>
                         ) : (
                           <Button
@@ -295,7 +300,11 @@ function Wrap() {
                               onSeekApproval("sohm");
                             }}
                           >
-                            {txnButtonText(pendingTransactions, "approve_wrapping", "Approve")}
+                            <TxnButtonText
+                              pendingTransactions={pendingTransactions}
+                              type="approve_wrapping"
+                              defaultText="Approve"
+                            />
                           </Button>
                         )}
                       </TabPanel>
@@ -310,7 +319,11 @@ function Wrap() {
                             onChangeWrap("unwrap");
                           }}
                         >
-                          {txnButtonText(pendingTransactions, "unwrapping", "Unwrap sOHM")}
+                          <TxnButtonText
+                            pendingTransactions={pendingTransactions}
+                            type="unwrapping"
+                            defaultText="Unwrap sOHM"
+                          />
                         </Button>
                       </TabPanel>
                     </Box>
