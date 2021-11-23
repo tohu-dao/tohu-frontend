@@ -150,7 +150,7 @@ function OhmMenu() {
                         >
                           <SvgIcon
                             component={sOhmTokenImg}
-                            viewBox="0 0 100 100"
+                            viewBox="0 0 32 32"
                             style={{ height: "25px", width: "25px" }}
                           />
                           <Typography variant="body1">{sOHM_TICKER}</Typography>
