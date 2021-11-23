@@ -1,5 +1,3 @@
-import apollo from "../../lib/apolloClient";
-
 // TODO: add paramaterization
 export const treasuryDataQuery = `
 query {
@@ -41,8 +39,6 @@ query {
   }
 }
 `;
-
-export const treasuryData = () => apollo(treasuryDataQuery).then(r => r.data.protocolMetrics);
 
 // export default treasuryData;
 export const bulletpoints = {

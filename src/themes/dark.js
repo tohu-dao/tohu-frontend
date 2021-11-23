@@ -185,7 +185,7 @@ export const dark = responsiveFontSizes(
           containedPrimary: {
             color: darkTheme.primaryButtonColor,
             backgroundColor: darkTheme.gold,
-            boxShadow: `0px 0px 10px 5px rgba(70,171,21,0.3) !important`,
+            boxShadow: `0px 0px 10px 5px rgba(70,171,21,0.3)`,
             "&:hover": {
               backgroundColor: darkTheme.primaryButtonHoverBG,
               color: darkTheme.primaryButtonHoverColor,
@@ -264,6 +264,9 @@ export const dark = responsiveFontSizes(
             "&:hover": {
               color: darkTheme.textHighlightColor,
             },
+          },
+          disabled: {
+            boxShadow: "none",
           },
         },
       },

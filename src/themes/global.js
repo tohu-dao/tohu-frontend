@@ -237,7 +237,6 @@ const commonSettings = {
       disableRipple: true,
     },
     MuiButton: {
-      disableElevation: true,
       disableFocusRipple: true,
       disableRipple: true,
     },

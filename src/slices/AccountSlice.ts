@@ -2,7 +2,6 @@ import { BigNumber, BigNumberish, ethers } from "ethers";
 import { addresses } from "../constants";
 import { abi as ierc20Abi } from "../abi/IERC20.json";
 import { abi as sOHMv2 } from "../abi/sOhmv2.json";
-import { abi as fuseProxy } from "../abi/FuseProxy.json";
 import { abi as wsOHM } from "../abi/wsOHM.json";
 
 import { setAll } from "../helpers";
@@ -156,15 +155,31 @@ export const calculateUserBondDetails = createAsyncThunk(
 
 interface IAccountSlice extends IUserAccountDetails, IUserBalances {
   bonds: { [key: string]: IUserBondDetails };
+  balances: {
+    ohm: string;
+    sohm: string;
+    dai: string;
+    wsohm: string;
+    wsohmAsSohm: string;
+    pool: string;
+  };
   loading: boolean;
+  staking: {
+    ohmStake: number;
+    ohmUnstake: number;
+  };
+  pooling: {
+    sohmPool: number;
+  };
 }
 
 const initialState: IAccountSlice = {
   loading: false,
   bonds: {},
-  balances: { ohm: "", sohm: "", wsohmAsSohm: "", wsohm: "", pool: "" },
+  balances: { ohm: "", sohm: "", dai: "", wsohmAsSohm: "", wsohm: "", pool: "" },
   staking: { ohmStake: 0, ohmUnstake: 0 },
   wrapping: { sohmWrap: 0, wsohmUnwrap: 0 },
+  pooling: { sohmPool: 0 },
 };
 
 const accountSlice = createSlice({

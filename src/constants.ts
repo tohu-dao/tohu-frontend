@@ -10,7 +10,11 @@ export const OHM_TICKER = "EXOD";
 export const sOHM_TICKER = "sEXOD";
 export const wsOHM_TICKER = "wsEXOD";
 
-export const POOL_GRAPH_URLS = {
+interface IPoolGraphURLS {
+  [index: string]: string;
+}
+
+export const POOL_GRAPH_URLS: IPoolGraphURLS = {
   4: "https://api.thegraph.com/subgraphs/name/pooltogether/rinkeby-v3_4_3",
   250: "https://api.thegraph.com/subgraphs/name/pooltogether/pooltogether-v3_4_3",
 };
