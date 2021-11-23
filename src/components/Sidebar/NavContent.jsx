@@ -103,7 +103,7 @@ function NavContent() {
 
               <div className="dapp-menu-data discounts">
                 <div className="bond-discounts">
-                  <Typography variant="body2">
+                  <Typography variant="body1">
                     <Trans>Bond discounts</Trans>
                   </Typography>
                   {bonds.map((bond, i) => (
@@ -111,7 +111,7 @@ function NavContent() {
                       {!bond.bondDiscount ? (
                         <Skeleton variant="text" width={"150px"} />
                       ) : (
-                        <Typography variant="body2">
+                        <Typography variant="body1">
                           {bond.displayName}
 
                           <span className="bond-pair-roi">
