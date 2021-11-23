@@ -14,7 +14,9 @@ import {
 import { prettifySeconds, secondsUntilBlock, shorten, trim } from "../../helpers";
 import { bondAsset, calcBondDetails, changeApproval } from "../../slices/BondSlice";
 import { useWeb3Context } from "src/hooks/web3Context";
-import { isPendingTxn, txnButtonText } from "src/slices/PendingTxnsSlice";
+import { isPendingTxn } from "src/slices/PendingTxnsSlice";
+import TxnButtonText from "src/components/TxnButtonText";
+
 import { Skeleton } from "@material-ui/lab";
 import useDebounce from "../../hooks/Debounce";
 import { error } from "../../slices/MessagesSlice";
@@ -191,7 +193,11 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
                     disabled={isPendingTxn(pendingTransactions, "bond_" + bond.name)}
                     onClick={onBond}
                   >
-                    {txnButtonText(pendingTransactions, "bond_" + bond.name, "Bond")}
+                    <TxnButtonText
+                      pendingTransactions={pendingTransactions}
+                      type={"bond_" + bond.name}
+                      defaultText="Bond"
+                    />
                   </Button>
                 ) : (
                   <Button
@@ -202,7 +208,11 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
                     disabled={isPendingTxn(pendingTransactions, "approve_" + bond.name)}
                     onClick={onSeekApproval}
                   >
-                    {txnButtonText(pendingTransactions, "approve_" + bond.name, "Approve")}
+                    <TxnButtonText
+                      pendingTransactions={pendingTransactions}
+                      type={"approve_" + bond.name}
+                      defaultText="Approve"
+                    />
                   </Button>
                 )}
               </>

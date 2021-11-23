@@ -19,7 +19,8 @@ import ConnectButton from "../../components/ConnectButton.jsx";
 import { useWeb3Context } from "../../hooks";
 import { getTokenImage } from "src/helpers/index";
 import { trim } from "src/helpers";
-import { isPendingTxn, txnButtonText } from "../../slices/PendingTxnsSlice";
+import { isPendingTxn } from "../../slices/PendingTxnsSlice";
+import TxnButtonText from "src/components/TxnButtonText";
 import { getEarlyExitFee, poolWithdraw } from "../../slices/PoolThunk";
 import { calculateOdds } from "../../helpers/33Together";
 import { ReactComponent as ArrowUp } from "src/assets/icons/arrow-up.svg";
@@ -149,9 +150,19 @@ export const PoolWithdraw = props => {
               disabled={isPendingTxn(pendingTransactions, "pool_withdraw")}
               onClick={() => onWithdraw("withdraw")}
             >
-              {exitFee > 0
-                ? txnButtonText(pendingTransactions, "pool_withdraw", t`Withdraw Early & pay` + exitFee + " sOHM")
-                : txnButtonText(pendingTransactions, "pool_withdraw", t`Withdraw sOHM`)}
+              {exitFee > 0 ? (
+                <TxnButtonText
+                  pendingTransactions={pendingTransactions}
+                  type="pool_withdraw"
+                  defaultText={"Withdraw Early & pa" + exitFee + " sOHM"}
+                />
+              ) : (
+                <TxnButtonText
+                  pendingTransactions={pendingTransactions}
+                  type="pool_withdraw"
+                  defaultText={"Withdraw sOHM"}
+                />
+              )}
               {/* Withdraw sOHM */}
             </Button>
           </Box>

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { t, Trans } from "@lingui/macro";
 import { ClaimBondTableData, ClaimBondCardData } from "./ClaimRow";
-import { txnButtonText, isPendingTxn, txnButtonTextGeneralPending } from "src/slices/PendingTxnsSlice";
+import { isPendingTxn } from "src/slices/PendingTxnsSlice";
+import { TxnButtonTextGeneralPending } from "src/components/TxnButtonText";
 import { redeemAllBonds, redeemBond } from "src/slices/BondSlice";
 import { calculateUserBondDetails } from "src/slices/AccountSlice";
 import CardHeader from "../../components/CardHeader/CardHeader";
@@ -115,7 +116,11 @@ function ClaimBonds({ activeBonds }) {
                         onRedeemAll({ autostake: false });
                       }}
                     >
-                      {txnButtonTextGeneralPending(pendingTransactions, "redeem_all_bonds", t`Claim all`)}
+                      <TxnButtonTextGeneralPending
+                        pendingTransactions={pendingTransactions}
+                        type="redeem_all_bonds"
+                        defaultText="Claim all"
+                      />
                     </Button>
 
                     <Button
@@ -129,11 +134,11 @@ function ClaimBonds({ activeBonds }) {
                         onRedeemAll({ autostake: true });
                       }}
                     >
-                      {txnButtonTextGeneralPending(
-                        pendingTransactions,
-                        "redeem_all_bonds_autostake",
-                        t`Claim all and Stake`,
-                      )}
+                      <TxnButtonTextGeneralPending
+                        pendingTransactions={pendingTransactions}
+                        type="redeem_all_bonds_autostake"
+                        defaultText="Claim all and Stake"
+                      />
                     </Button>
                   </>
                 )}
