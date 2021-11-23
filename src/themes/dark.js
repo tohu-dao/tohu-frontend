@@ -6,6 +6,7 @@ import navBg from "../assets/images/exod-sidebar.jpg";
 // TODO: Break repeated use color values out into list of consts declared here
 // then set the values in darkTheme using the global color variables
 //green rgb(70,171,21)
+//dark green rgb(91,196,34)
 const darkTheme = {
   color: "#FCFCFC",
   gold: "#46ab15", // Light green
@@ -16,20 +17,20 @@ const darkTheme = {
   paperBorder: "#323232",
   modalBg: "#24242699",
   popoverBg: "rgba(54, 56, 64, 0.99)",
-  menuBg: "#36384080",
-  backdropBg: "rgba(54, 56, 64, 0.5)",
+  menuBg: "#080c00",
+  backdropBg: "rgba(3, 10, 0, 0.5)",
   largeTextColor: "#F4D092",
   activeLinkColor: "#F5DDB4",
   activeLinkSvgColor:
     "brightness(0) saturate(100%) invert(84%) sepia(49%) saturate(307%) hue-rotate(326deg) brightness(106%) contrast(92%)",
   primaryButtonColor: "#d7d7d7",
   primaryButtonBG: "#F4D092",
-  primaryButtonHoverBG: "#5bc422", //gold became dark green
+  primaryButtonHoverBG: "#379414", //gold became dark green
   secondaryButtonHoverBG: "rgba(54, 56, 64, 1)",
-  outlinedPrimaryButtonHoverBG: "#5bc422", //gold became dark green
+  outlinedPrimaryButtonHoverBG: "#379414", //gold became dark green
   outlinedPrimaryButtonHoverColor: "#333333",
   outlinedSecondaryButtonHoverBG: "transparent",
-  outlinedSecondaryButtonHoverColor: "#5bc422", //gold became dark green
+  outlinedSecondaryButtonHoverColor: "#379414", //gold became dark green
   containedSecondaryButtonHoverBG: "rgba(255, 255, 255, 0.15)",
   graphStrokeColor: "rgba(255, 255, 255, .1)",
   sidebarBackground: `linear-gradient(0deg, rgba(31,31,31,1) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 100%), url(${navBg})`,
@@ -189,6 +190,7 @@ export const dark = responsiveFontSizes(
             "&:hover": {
               backgroundColor: darkTheme.primaryButtonHoverBG,
               color: darkTheme.primaryButtonHoverColor,
+              boxShadow: `0px 0px 5px 3px rgba(70,171,21,0.3)`,
             },
             "&:active": {
               backgroundColor: darkTheme.primaryButtonHoverBG,

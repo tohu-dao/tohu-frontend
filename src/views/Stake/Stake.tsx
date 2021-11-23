@@ -235,7 +235,7 @@ function Stake() {
                     {modalButton}
                   </div>
                   <Typography variant="h6">
-                    <Trans>Connect your wallet to stake {OHM_TICKER}</Trans>
+                    <Trans>Connect your wallet to stake EXOD</Trans>
                   </Typography>
                 </div>
               ) : (
