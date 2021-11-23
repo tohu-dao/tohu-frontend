@@ -24,7 +24,8 @@ import { getOhmTokenImage, getTokenImage, trim } from "../../helpers";
 import { changeApproval, changeStake } from "../../slices/StakeThunk";
 import "./stake.scss";
 import { useWeb3Context } from "src/hooks/web3Context";
-import { isPendingTxn, txnButtonText } from "src/slices/PendingTxnsSlice";
+import { isPendingTxn } from "src/slices/PendingTxnsSlice";
+import TxnButtonText from "src/components/TxnButtonText";
 import { Skeleton } from "@material-ui/lab";
 import { error } from "../../slices/MessagesSlice";
 import { ethers } from "ethers";
@@ -323,7 +324,11 @@ function Stake() {
                                 onChangeStake("stake");
                               }}
                             >
-                              {txnButtonText(pendingTransactions, "staking", t`Stake ${OHM_TICKER}`)}
+                              <TxnButtonText
+                                pendingTransactions={pendingTransactions}
+                                type="staking"
+                                defaultText={`Stake ${OHM_TICKER}`}
+                              />
                             </Button>
                           </Box>
                         ) : (
@@ -337,7 +342,11 @@ function Stake() {
                                 onSeekApproval("ohm");
                               }}
                             >
-                              {txnButtonText(pendingTransactions, "approve_staking", t`Approve`)}
+                              <TxnButtonText
+                                pendingTransactions={pendingTransactions}
+                                type="approve_staking"
+                                defaultText="Approve"
+                              />
                             </Button>
                           </Box>
                         )}
@@ -356,7 +365,11 @@ function Stake() {
                                 onChangeStake("unstake");
                               }}
                             >
-                              {txnButtonText(pendingTransactions, "unstaking", t`Unstake ${OHM_TICKER}`)}
+                              <TxnButtonText
+                                pendingTransactions={pendingTransactions}
+                                type="unstaking"
+                                defaultText={`Unstake ${OHM_TICKER}`}
+                              />
                             </Button>
                           </Box>
                         ) : (
@@ -370,7 +383,11 @@ function Stake() {
                                 onSeekApproval("sohm");
                               }}
                             >
-                              {txnButtonText(pendingTransactions, "approve_unstaking", t`Approve`)}
+                              <TxnButtonText
+                                pendingTransactions={pendingTransactions}
+                                type="approve_unstaking"
+                                defaultText="Approve"
+                              />
                             </Button>
                           </Box>
                         )}

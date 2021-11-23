@@ -5,7 +5,8 @@ import { t, Trans } from "@lingui/macro";
 import { redeemBond } from "../../slices/BondSlice";
 import { useWeb3Context } from "src/hooks/web3Context";
 import { trim, secondsUntilBlock, prettifySeconds, prettyVestingPeriod } from "../../helpers";
-import { isPendingTxn, txnButtonText } from "src/slices/PendingTxnsSlice";
+import { isPendingTxn } from "src/slices/PendingTxnsSlice";
+import TxnButtonText from "src/components/TxnButtonText";
 import { Skeleton } from "@material-ui/lab";
 import { DisplayBondDiscount } from "./Bond";
 import ConnectButton from "../../components/ConnectButton";
@@ -68,7 +69,11 @@ function BondRedeem({ bond }) {
                 onRedeem({ autostake: false });
               }}
             >
-              {txnButtonText(pendingTransactions, "redeem_bond_" + bond.name, t`Claim`)}
+              <TxnButtonText
+                pendingTransactions={pendingTransactions}
+                type={"redeem_bond_" + bond.name}
+                defaultText="Claim"
+              />
             </Button>
             <Button
               variant="contained"
@@ -84,7 +89,11 @@ function BondRedeem({ bond }) {
                 onRedeem({ autostake: true });
               }}
             >
-              {txnButtonText(pendingTransactions, "redeem_bond_" + bond.name + "_autostake", t`Claim and Autostake`)}
+              <TxnButtonText
+                pendingTransactions={pendingTransactions}
+                type={"redeem_bond_" + bond.name + "_autostake"}
+                defaultText="Claim and Autostake"
+              />
             </Button>
           </>
         )}
