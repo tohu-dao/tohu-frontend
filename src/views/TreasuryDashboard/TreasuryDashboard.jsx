@@ -38,8 +38,7 @@ const TreasuryDashboard = memo(() => {
             </Box>
           </Paper>
         </Box>
-
-        {/*<Zoom in={true}>
+        <Zoom in={true}>
           <Grid container spacing={2} className="data-grid">
             <Grid item lg={6} md={6} sm={12} xs={12}>
               <Paper className="ohm-card ohm-chart-card">
@@ -65,7 +64,7 @@ const TreasuryDashboard = memo(() => {
               </Paper>
             </Grid>
 
-              Temporarily removed until correct data is in the graph
+            {/*  Temporarily removed until correct data is in the graph
              <Grid item lg={6} md={12} sm={12} xs={12}>
               <Paper className="ohm-card">
                 <Chart
@@ -83,18 +82,18 @@ const TreasuryDashboard = memo(() => {
                 />
               </Paper>
             </Grid>
-
+*/}
             <Grid item lg={6} md={6} sm={12} xs={12}>
               <Paper className="ohm-card">
                 <OHMStakedGraph />
               </Paper>
             </Grid>
 
-            <Grid item lg={6} md={6} sm={12} xs={12}>
+            {/*            <Grid item lg={6} md={6} sm={12} xs={12}>
               <Paper className="ohm-card">
                 <APYOverTimeGraph />
               </Paper>
-            </Grid>
+            </Grid>*/}
 
             <Grid item lg={6} md={6} sm={12} xs={12}>
               <Paper className="ohm-card">
@@ -102,7 +101,7 @@ const TreasuryDashboard = memo(() => {
               </Paper>
             </Grid>
           </Grid>
-        </Zoom>*/}
+        </Zoom>
       </Container>
     </div>
   );

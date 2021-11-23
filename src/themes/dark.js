@@ -1,17 +1,19 @@
 import { createTheme, responsiveFontSizes } from "@material-ui/core/styles";
 import fonts from "./fonts";
 import commonSettings from "./global.js";
+import navBg from "../assets/images/exod-sidebar.jpg";
 
 // TODO: Break repeated use color values out into list of consts declared here
 // then set the values in darkTheme using the global color variables
-
+//green rgb(70,171,21)
 const darkTheme = {
   color: "#FCFCFC",
-  gold: "#00FF11", // Light green
+  gold: "#46ab15", // Light green
   gray: "#A3A3A3",
-  textHighlightColor: "#00FFDC",
-  backgroundColor: "#000000",
-  paperBg: "rgba(54, 56, 64, 0.4)",
+  textHighlightColor: "#5bc422",
+  backgroundColor: "#131313",
+  paperBg: "#1F1F1F",
+  paperBorder: "#323232",
   modalBg: "#24242699",
   popoverBg: "rgba(54, 56, 64, 0.99)",
   menuBg: "#36384080",
@@ -20,16 +22,17 @@ const darkTheme = {
   activeLinkColor: "#F5DDB4",
   activeLinkSvgColor:
     "brightness(0) saturate(100%) invert(84%) sepia(49%) saturate(307%) hue-rotate(326deg) brightness(106%) contrast(92%)",
-  primaryButtonColor: "#333333",
+  primaryButtonColor: "#d7d7d7",
   primaryButtonBG: "#F4D092",
-  primaryButtonHoverBG: "#00D70E", //gold became dark green
+  primaryButtonHoverBG: "#5bc422", //gold became dark green
   secondaryButtonHoverBG: "rgba(54, 56, 64, 1)",
-  outlinedPrimaryButtonHoverBG: "#00D70E", //gold became dark green
+  outlinedPrimaryButtonHoverBG: "#5bc422", //gold became dark green
   outlinedPrimaryButtonHoverColor: "#333333",
   outlinedSecondaryButtonHoverBG: "transparent",
-  outlinedSecondaryButtonHoverColor: "#00D70E", //gold became dark green
+  outlinedSecondaryButtonHoverColor: "#5bc422", //gold became dark green
   containedSecondaryButtonHoverBG: "rgba(255, 255, 255, 0.15)",
   graphStrokeColor: "rgba(255, 255, 255, .1)",
+  sidebarBackground: `linear-gradient(0deg, rgba(31,31,31,1) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 100%), url(${navBg})`,
 };
 
 export const dark = responsiveFontSizes(
@@ -86,6 +89,7 @@ export const dark = responsiveFontSizes(
             backgroundColor: darkTheme.paperBg,
             "&.ohm-card": {
               backgroundColor: darkTheme.paperBg,
+              border: "1px solid " + darkTheme.paperBorder,
             },
             "&.ohm-modal": {
               backgroundColor: darkTheme.modalBg,
@@ -181,6 +185,7 @@ export const dark = responsiveFontSizes(
           containedPrimary: {
             color: darkTheme.primaryButtonColor,
             backgroundColor: darkTheme.gold,
+            boxShadow: `0px 0px 10px 5px rgba(70,171,21,0.3) !important`,
             "&:hover": {
               backgroundColor: darkTheme.primaryButtonHoverBG,
               color: darkTheme.primaryButtonHoverColor,

@@ -33,7 +33,7 @@ function LocaleSwitcher() {
         className="toggle-button"
         size="large"
         variant="contained"
-        color="secondary"
+        color="primary"
         title={t`Change locale`}
         aria-describedby={id}
       >

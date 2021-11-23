@@ -168,21 +168,6 @@ function Stake() {
               <div className="card-header">
                 <Typography variant="h5">Single Stake (3, 3)</Typography>
                 <RebaseTimer />
-
-                {address && oldSohmBalance > 0.01 && (
-                  <Link
-                    className="migrate-sohm-button"
-                    style={{ textDecoration: "none" }}
-                    href="https://docs.olympusdao.finance/using-the-website/migrate"
-                    aria-label="migrate-sohm"
-                    target="_blank"
-                  >
-                    <NewReleases viewBox="0 0 24 24" />
-                    <Typography>
-                      <Trans>Migrate sOHM!</Trans>
-                    </Typography>
-                  </Link>
-                )}
               </div>
             </Grid>
 
@@ -333,58 +318,66 @@ function Stake() {
                         {isAllowanceDataLoading ? (
                           <Skeleton />
                         ) : address && hasAllowance("ohm") ? (
-                          <Button
-                            className="stake-button"
-                            variant="contained"
-                            color="primary"
-                            disabled={isPendingTxn(pendingTransactions, "staking")}
-                            onClick={() => {
-                              onChangeStake("stake");
-                            }}
-                          >
-                            {txnButtonText(pendingTransactions, "staking", t`Stake ${OHM_TICKER}`)}
-                          </Button>
+                          <Box p={"10px"}>
+                            <Button
+                              className="stake-button"
+                              variant="contained"
+                              color="primary"
+                              disabled={isPendingTxn(pendingTransactions, "staking")}
+                              onClick={() => {
+                                onChangeStake("stake");
+                              }}
+                            >
+                              {txnButtonText(pendingTransactions, "staking", t`Stake ${OHM_TICKER}`)}
+                            </Button>
+                          </Box>
                         ) : (
-                          <Button
-                            className="stake-button"
-                            variant="contained"
-                            color="primary"
-                            disabled={isPendingTxn(pendingTransactions, "approve_staking")}
-                            onClick={() => {
-                              onSeekApproval("ohm");
-                            }}
-                          >
-                            {txnButtonText(pendingTransactions, "approve_staking", t`Approve`)}
-                          </Button>
+                          <Box p={"10px"}>
+                            <Button
+                              className="stake-button"
+                              variant="contained"
+                              color="primary"
+                              disabled={isPendingTxn(pendingTransactions, "approve_staking")}
+                              onClick={() => {
+                                onSeekApproval("ohm");
+                              }}
+                            >
+                              {txnButtonText(pendingTransactions, "approve_staking", t`Approve`)}
+                            </Button>
+                          </Box>
                         )}
                       </TabPanel>
                       <TabPanel value={view} index={1} className="stake-tab-panel">
                         {isAllowanceDataLoading ? (
                           <Skeleton />
                         ) : address && hasAllowance("sohm") ? (
-                          <Button
-                            className="stake-button"
-                            variant="contained"
-                            color="primary"
-                            disabled={isPendingTxn(pendingTransactions, "unstaking")}
-                            onClick={() => {
-                              onChangeStake("unstake");
-                            }}
-                          >
-                            {txnButtonText(pendingTransactions, "unstaking", t`Unstake ${OHM_TICKER}`)}
-                          </Button>
+                          <Box p={"10px"}>
+                            <Button
+                              className="stake-button"
+                              variant="contained"
+                              color="primary"
+                              disabled={isPendingTxn(pendingTransactions, "unstaking")}
+                              onClick={() => {
+                                onChangeStake("unstake");
+                              }}
+                            >
+                              {txnButtonText(pendingTransactions, "unstaking", t`Unstake ${OHM_TICKER}`)}
+                            </Button>
+                          </Box>
                         ) : (
-                          <Button
-                            className="stake-button"
-                            variant="contained"
-                            color="primary"
-                            disabled={isPendingTxn(pendingTransactions, "approve_unstaking")}
-                            onClick={() => {
-                              onSeekApproval("sohm");
-                            }}
-                          >
-                            {txnButtonText(pendingTransactions, "approve_unstaking", t`Approve`)}
-                          </Button>
+                          <Box p={"10px"}>
+                            <Button
+                              className="stake-button"
+                              variant="contained"
+                              color="primary"
+                              disabled={isPendingTxn(pendingTransactions, "approve_unstaking")}
+                              onClick={() => {
+                                onSeekApproval("sohm");
+                              }}
+                            >
+                              {txnButtonText(pendingTransactions, "approve_unstaking", t`Approve`)}
+                            </Button>
+                          </Box>
                         )}
                       </TabPanel>
                     </Box>
@@ -416,21 +409,6 @@ function Stake() {
                         ) : (
                           <>
                             {trimmedBalance} {sOHM_TICKER}
-                          </>
-                        )}
-                      </Typography>
-                    </div>
-
-                    <div className="data-row" style={{ paddingLeft: "10px" }}>
-                      <Typography variant="body2" color="textSecondary">
-                        <Trans>Single Staking</Trans>
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        {isAppLoading ? (
-                          <Skeleton width="80px" />
-                        ) : (
-                          <>
-                            {trim(sohmBalance, 4)} {sOHM_TICKER}
                           </>
                         )}
                       </Typography>

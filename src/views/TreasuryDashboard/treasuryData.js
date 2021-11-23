@@ -17,13 +17,8 @@ query {
     nextEpochRebase
     nextDistributedOhm
     treasuryDaiRiskFreeValue
-    treasuryFraxMarketValue
     treasuryDaiMarketValue
-    treasuryFraxRiskFreeValue
-    treasuryXsushiMarketValue
     treasuryWETHMarketValue
-    treasuryLusdRiskFreeValue
-    treasuryLusdMarketValue
     currentAPY
     runway10k
     runway20k
@@ -34,7 +29,6 @@ query {
     runwayCurrent
     holders
     treasuryOhmDaiPOL
-    treasuryOhmFraxPOL
   }
 }
 `;
@@ -169,12 +163,12 @@ export const bulletpoints = {
 
 export const tooltipItems = {
   tvl: ["Total Value Deposited"],
-  coin: ["DAI", "FRAX", "ETH", "SUSHI", "LUSD"],
-  rfv: ["DAI", "FRAX", "LUSD"],
-  holder: ["OHMies"],
+  coin: ["DAI", "wFTM"],
+  rfv: ["DAI"],
+  holder: ["Exodians"],
   apy: ["APY"],
   runway: ["Current", "7.5K APY", "5K APY", "2.5K APY"],
-  pol: ["SLP Treasury", "Market SLP"],
+  pol: ["spLP Treasury", "Market spLP"],
 };
 
 export const tooltipInfoMessages = {

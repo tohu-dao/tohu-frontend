@@ -65,7 +65,7 @@ function ConnectMenu({ theme }) {
         id="wallet-button"
         className={buttonStyles}
         variant="contained"
-        color="secondary"
+        color="primary"
         size="large"
         style={pendingTransactions.length > 0 ? { color: primaryColor } : {}}
         onClick={clickFunc}

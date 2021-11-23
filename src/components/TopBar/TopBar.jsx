@@ -41,7 +41,7 @@ function TopBar({ theme, toggleTheme, handleDrawerToggle }) {
           edge="start"
           size="large"
           variant="contained"
-          color="secondary"
+          color="primary"
           onClick={handleDrawerToggle}
           className={classes.menuButton}
         >
@@ -53,8 +53,9 @@ function TopBar({ theme, toggleTheme, handleDrawerToggle }) {
 
           <ConnectMenu theme={theme} />
 
+          {/*
           <ThemeSwitcher theme={theme} toggleTheme={toggleTheme} />
-
+          */}
           <LocaleSwitcher theme={theme} />
         </Box>
       </Toolbar>

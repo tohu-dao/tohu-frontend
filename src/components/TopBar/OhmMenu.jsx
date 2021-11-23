@@ -91,7 +91,7 @@ function OhmMenu() {
       onMouseLeave={e => handleClick(e)}
       id="ohm-menu-button-hover"
     >
-      <Button id="ohm-menu-button" size="large" variant="contained" color="secondary" title="OHM" aria-describedby={id}>
+      <Button id="ohm-menu-button" size="large" variant="contained" color="primary" title="OHM" aria-describedby={id}>
         <SvgIcon component={InfoIcon} color="primary" />
         <Typography>{OHM_TICKER}</Typography>
       </Button>

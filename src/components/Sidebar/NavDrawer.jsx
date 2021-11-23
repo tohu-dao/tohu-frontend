@@ -1,6 +1,7 @@
 import { makeStyles } from "@material-ui/core/styles";
 import { Drawer } from "@material-ui/core";
 import NavContent from "./NavContent.jsx";
+import navBg from "../../assets/images/exod-sidebar.jpg";
 
 const drawerWidth = 280;
 
@@ -12,6 +13,9 @@ const useStyles = makeStyles(theme => ({
     },
   },
   drawerPaper: {
+    "& .MuiPaper-root": {
+      backgroundImage: `linear-gradient(0deg, rgba(31,31,31,1) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 100%), url(${navBg})`,
+    },
     width: drawerWidth,
     borderRight: 0,
   },

@@ -36,13 +36,7 @@ export const MarketValueGraph = () => {
     <Chart
       type="stack"
       data={data}
-      dataKey={[
-        "treasuryDaiMarketValue",
-        "treasuryFraxMarketValue",
-        "treasuryWETHMarketValue",
-        "treasuryXsushiMarketValue",
-        "treasuryLusdMarketValue",
-      ]}
+      dataKey={["treasuryDaiMarketValue", "treasuryWETHMarketValue"]}
       stopColor={[
         ["#F5AC37", "#EA9276"],
         ["#768299", "#98B3E9"],
@@ -189,7 +183,7 @@ export const RunwayAvailableGraph = () => {
     <Chart
       type="multi"
       data={runway}
-      dataKey={["runwayCurrent", "runway7dot5k", "runway5k", "runway2dot5k"]}
+      dataKey={["runwayCurrent", "runway7dot5k"]}
       color={theme.palette.text.primary}
       stroke={colors}
       headerText="Runway Available"
