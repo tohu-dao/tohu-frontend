@@ -11,12 +11,14 @@ import {
   Zoom,
   Slider,
 } from "@material-ui/core";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { Trans } from "@lingui/macro";
 import { useAppSelector } from "src/hooks";
 import styled from "styled-components";
 import CalcHeader from "./CalcHeader";
 import ImportantValues from "./ImportantValues";
 import EstimatedValues from "./EstimatedValues";
+import { useTreasuryMetrics } from "../TreasuryDashboard/hooks/useTreasuryMetrics";
 
 function Calc() {
   const [exodAmountInput, setExodAmountInput] = useState(0);
@@ -34,6 +36,10 @@ function Calc() {
   const wsohmAsSohm = useAppSelector(state => {
     return state.account.balances && state.account.balances.wsohmAsSohm;
   });
+  const { data } = useTreasuryMetrics({ refetchOnMount: false });
+
+  const runway = data && data.filter((metric: any) => metric.runway10k > 5);
+  const currentRunway = runway && runway[0].runwayCurrent;
 
   const trimmedBalance = Number(
     [sohmBalance, wsohmAsSohm]
@@ -95,9 +101,7 @@ function Calc() {
                 onMax={() => setFinalExodPriceInput(marketPrice)}
               />
               <SliderContainer>
-                <Typography variant="h6" color="textSecondary">
-                  <Trans>{calcDays} Days</Trans>
-                </Typography>
+                <SliderHeader currentRunway={currentRunway} calcDays={calcDays} />
                 <Slider
                   aria-label="Days"
                   max={365}
@@ -120,7 +124,15 @@ function Calc() {
   );
 }
 
-export default Calc;
+const queryClient = new QueryClient();
+
+// Normally this would be done
+// much higher up in our App.
+export default () => (
+  <QueryClientProvider client={queryClient}>
+    <Calc />
+  </QueryClientProvider>
+);
 
 type FieldInputProps = {
   fieldName: string;
@@ -157,6 +169,19 @@ const FieldInput = ({ fieldName, value, onChange, maxName, onMax }: FieldInputPr
   );
 };
 
+const SliderHeader = ({ currentRunway, calcDays }: { currentRunway: number; calcDays: number }) => {
+  return (
+    <SliderHeaderContainer>
+      <Typography variant="h6" color="textSecondary">
+        <Trans>{calcDays} Days</Trans>
+      </Typography>
+      <Typography variant="h6" color="textSecondary">
+        <Trans>Current runway: {currentRunway ? `${currentRunway?.toFixed(2)} Days` : "Loading..."} </Trans>
+      </Typography>
+    </SliderHeaderContainer>
+  );
+};
+
 const CalcContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -183,4 +208,10 @@ const CalcRow = styled.div`
 
 const SliderContainer = styled.div`
   margin: 24px 0;
+`;
+
+const SliderHeaderContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 `;
