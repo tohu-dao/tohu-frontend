@@ -95,6 +95,21 @@ function NavContent() {
 
               <Link
                 component={NavLink}
+                id="calc-nav"
+                to="/calc"
+                isActive={(match, location) => {
+                  return checkPage(match, location, "cakc");
+                }}
+                className={`button-dapp-menu ${isActive ? "active" : ""}`}
+              >
+                <Typography variant="h6">
+                  <SvgIcon color="primary" component={StakeIcon} />
+                  <Trans>Calc</Trans>
+                </Typography>
+              </Link>
+
+              <Link
+                component={NavLink}
                 id="bond-nav"
                 to="/bonds"
                 isActive={(match, location) => {

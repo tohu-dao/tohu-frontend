@@ -10,6 +10,7 @@ import navBg from "../assets/images/exod-sidebar.jpg";
 const darkTheme = {
   color: "#FCFCFC",
   gold: "#46ab15", // Light green
+  goldDimmed: "#376e1d",
   gray: "#A3A3A3",
   textHighlightColor: "#5bc422",
   backgroundColor: "#131313",
@@ -138,10 +139,12 @@ export const dark = responsiveFontSizes(
           },
         },
         MuiOutlinedInput: {
-          notchedOutline: {
-            // borderColor: `${darkTheme.gold} !important`,
-            "&:hover": {
-              // borderColor: `${darkTheme.gold} !important`,
+          root: {
+            "&:hover $notchedOutline": {
+              borderColor: darkTheme.goldDimmed,
+            },
+            "&$focused $notchedOutline": {
+              borderColor: darkTheme.gold,
             },
           },
         },
@@ -269,6 +272,23 @@ export const dark = responsiveFontSizes(
           },
           disabled: {
             boxShadow: "none",
+          },
+        },
+        MuiSlider: {
+          thumb: {
+            color: darkTheme.gold,
+            height: 16,
+            width: 16,
+          },
+          track: {
+            color: darkTheme.gold,
+            height: 5,
+            borderRadius: 4,
+          },
+          rail: {
+            color: darkTheme.gold,
+            height: 5,
+            borderRadius: 4,
           },
         },
       },
