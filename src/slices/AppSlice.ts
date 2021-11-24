@@ -107,6 +107,7 @@ export const loadAppDetails = createAsyncThunk(
     const stakingRebase = Number(stakingReward.toString()) / Number(circ.toString());
     const fiveDayRate = Math.pow(1 + stakingRebase, 5 * 3) - 1;
     const stakingAPY = Math.pow(1 + stakingRebase, 365 * 3) - 1;
+    const endBlock = epoch.endBlock;
 
     // Current index
     const currentIndex = await stakingContract.index();
@@ -123,6 +124,7 @@ export const loadAppDetails = createAsyncThunk(
       circSupply,
       totalSupply,
       treasuryMarketValue,
+      endBlock,
     } as IAppData;
   },
 );
@@ -197,6 +199,7 @@ interface IAppData {
   readonly totalSupply?: number;
   readonly treasuryBalance?: number;
   readonly treasuryMarketValue?: number;
+  readonly endBlock?: number;
 }
 
 const initialState: IAppData = {
