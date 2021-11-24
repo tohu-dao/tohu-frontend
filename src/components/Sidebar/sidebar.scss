@@ -1,7 +1,9 @@
 .sidebar {
   min-width: 280px;
-  z-index: 2;
   border-radius: 0 !important;
+  .MuiPaper-root {
+    z-index: 20;
+  }
 }
 
 .MuiDrawer-paper .MuiPaper-root {

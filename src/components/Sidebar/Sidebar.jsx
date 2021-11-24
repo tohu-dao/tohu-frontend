@@ -7,6 +7,8 @@ const useStyles = makeStyles(theme => ({
   drawerPaper: {
     "& .MuiPaper-root": {
       backgroundImage: `linear-gradient(0deg, rgba(31,31,31,1) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 100%), url(${navBg})`,
+      backgroundRepeat: "no-repeat",
+      backgroundColor: "#131313",
     },
   },
 }));
