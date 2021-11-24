@@ -64,7 +64,7 @@ export const eth = new CustomBond({
 });
 
 export const ohm_dai = new LPBond({
-  name: "ohm_dai_lp",
+  name: "exod_dai_lp",
   displayName: "EXOD-DAI LP",
   bondToken: "DAI",
   isAvailable: { [NetworkID.Mainnet]: true },
