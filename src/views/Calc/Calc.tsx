@@ -204,6 +204,9 @@ const CalcRow = styled.div`
   grid-template-columns: 1fr 2fr;
   align-items: center;
   margin: 12px 0;
+  input[type] {
+    font-size: 1rem;
+  }
 `;
 
 const SliderContainer = styled.div`
