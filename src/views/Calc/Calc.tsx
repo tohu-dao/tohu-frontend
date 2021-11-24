@@ -51,7 +51,6 @@ function Calc() {
 
   useEffect(() => {
     setExodAmountInput(trimmedBalance);
-    setFinalExodPriceInput(trimmedBalance);
   }, [trimmedBalance]);
 
   useEffect(() => {
@@ -60,6 +59,7 @@ function Calc() {
 
   useEffect(() => {
     if (marketPrice) {
+      setFinalExodPriceInput(marketPrice);
       setExodPriceInput(marketPrice);
     }
   }, [marketPrice]);
@@ -81,21 +81,21 @@ function Calc() {
               />
               <FieldInput
                 fieldName="Rebase rate"
-                value={rebaseRateInput}
+                value={Number(rebaseRateInput.toFixed(4))}
                 maxName="Current"
                 onChange={setRebaseRateInput}
                 onMax={() => setRebaseRateInput(stakingRebase)}
               />
               <FieldInput
                 fieldName="Price of EXOD at purchase ($)"
-                value={exodPriceInput}
+                value={Number(exodPriceInput.toFixed(2))}
                 maxName="Current"
                 onChange={setExodPriceInput}
                 onMax={() => setExodPriceInput(marketPrice)}
               />
               <FieldInput
                 fieldName="Final market price of EXOD ($)"
-                value={finalExodPriceInput}
+                value={Number(finalExodPriceInput.toFixed(2))}
                 maxName="Current"
                 onChange={setFinalExodPriceInput}
                 onMax={() => setFinalExodPriceInput(marketPrice)}
