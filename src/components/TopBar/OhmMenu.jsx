@@ -71,18 +71,37 @@ function OhmMenu() {
   const [anchorEl, setAnchorEl] = useState(null);
   const isEthereumAPIAvailable = window.ethereum;
   const { chainID, address } = useWeb3Context();
+  const id = "ohm-popper";
+
+  if (chainID !== 250)
+    return (
+      <Box component="div" id="ohm-menu-button-hover" className="wrong-network">
+        <Button
+          id="ohm-menu-button"
+          size="large"
+          variant="contained"
+          color="primary"
+          title="EXOD"
+          aria-describedby={id}
+          disabled
+        >
+          <SvgIcon component={InfoIcon} color="primary" />
+          <Typography>Wrong network!</Typography>
+        </Button>
+      </Box>
+    );
 
   const networkID = chainID;
   const SOHM_ADDRESS = addresses[networkID].SOHM_ADDRESS;
   const OHM_ADDRESS = addresses[networkID].OHM_ADDRESS;
   const PT_TOKEN_ADDRESS = addresses[networkID].PT_TOKEN_ADDRESS;
   const WSOHM_ADDRESS = addresses[networkID].WSOHM_ADDRESS;
+
   const handleClick = event => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
   };
 
   const open = Boolean(anchorEl);
-  const id = "ohm-popper";
   const daiAddress = dai.getAddressForReserve(networkID);
   return (
     <Box
@@ -91,7 +110,7 @@ function OhmMenu() {
       onMouseLeave={e => handleClick(e)}
       id="ohm-menu-button-hover"
     >
-      <Button id="ohm-menu-button" size="large" variant="contained" color="primary" title="OHM" aria-describedby={id}>
+      <Button id="ohm-menu-button" size="large" variant="contained" color="primary" title="EXOD" aria-describedby={id}>
         <SvgIcon component={InfoIcon} color="primary" />
         <Typography>{OHM_TICKER}</Typography>
       </Button>
