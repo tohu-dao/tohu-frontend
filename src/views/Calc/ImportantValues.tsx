@@ -54,6 +54,5 @@ const FieldContainer = styled.div`
   flex-direction: column;
   align-items: center;
   text-overflow: ellipsis;
-  // white-space: nowrap;
   overflow: hidden;
 `;
