@@ -14,6 +14,7 @@ import { useAddress, useWeb3Context } from "src/hooks/web3Context";
 import useBonds from "../../hooks/Bonds";
 import { Paper, Link, Box, Typography, SvgIcon } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
+import HomeIcon from "@material-ui/icons/Home";
 import "./sidebar.scss";
 
 function NavContent() {
@@ -56,6 +57,12 @@ function NavContent() {
 
           <div className="dapp-menu-links">
             <div className="dapp-nav" id="navbarNav">
+              <Link href={`https://www.exodia.finance/`} target="_blank">
+                <Typography variant="h6">
+                  <SvgIcon color="primary" component={HomeIcon} />
+                  <Trans>Home</Trans>
+                </Typography>
+              </Link>
               <Link
                 component={NavLink}
                 id="dash-nav"

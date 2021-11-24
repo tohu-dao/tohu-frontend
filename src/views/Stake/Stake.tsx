@@ -217,7 +217,7 @@ function Stake() {
                       <Typography variant="h4">
                         {currentIndex ? (
                           <span data-testid="index-value">
-                            {trim(Number(currentIndex), 1)} {sOHM_TICKER}
+                            {trim(Number(currentIndex), 2)} {sOHM_TICKER}
                           </span>
                         ) : (
                           <Skeleton width="150px" data-testid="index-loading" />
