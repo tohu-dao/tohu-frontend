@@ -272,14 +272,14 @@ function Stake() {
                                 <>
                                   <Trans>First time staking</Trans> <b>{OHM_TICKER}</b>?
                                   <br />
-                                  <Trans>Please approve Olympus Dao to use your</Trans> <b>{OHM_TICKER}</b>{" "}
+                                  <Trans>Please approve Exodia to use your</Trans> <b>{OHM_TICKER}</b>{" "}
                                   <Trans>for staking</Trans>.
                                 </>
                               ) : (
                                 <>
                                   <Trans>First time unstaking</Trans> <b>{sOHM_TICKER}</b>?
                                   <br />
-                                  <Trans>Please approve Olympus Dao to use your</Trans> <b>{sOHM_TICKER}</b>{" "}
+                                  <Trans>Please approve Exodia to use your</Trans> <b>{sOHM_TICKER}</b>{" "}
                                   <Trans>for unstaking</Trans>.
                                 </>
                               )}

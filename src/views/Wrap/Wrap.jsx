@@ -241,9 +241,9 @@ function Wrap() {
                             <Typography variant="body1" className="stake-note" color="textSecondary">
                               {view === 0 && (
                                 <>
-                                  First time wrapping <b>sOHM</b>?
+                                  First time wrapping <b>sEXOD</b>?
                                   <br />
-                                  Please approve Olympus Dao to use your <b>sOHM</b> for wrapping.
+                                  Please approve Exodia to use your <b>sEXOD</b> for wrapping.
                                 </>
                               )}
                             </Typography>
