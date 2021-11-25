@@ -75,7 +75,7 @@ function NavContent() {
               <Link
                 component={NavLink}
                 id="calc-nav"
-                to="/calc"
+                to="/obliterator"
                 isActive={(match, location) => {
                   return checkPage(match, location, "cakc");
                 }}

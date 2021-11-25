@@ -226,7 +226,7 @@ function App() {
                 <Stake />
               </Route>
 
-              <Route path="/calc">
+              <Route path="/obliterator">
                 <Calc />
               </Route>
               {/*
