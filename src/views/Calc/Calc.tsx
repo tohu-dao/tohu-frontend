@@ -105,7 +105,11 @@ function Calc() {
                 onMax={() => setFinalExodPriceInput(marketPrice)}
               />
               <SliderContainer>
-                <SliderHeader currentRunway={currentRunway} calcDays={calcDays} />
+                <SliderHeader
+                  currentRunway={currentRunway}
+                  calcDays={calcDays}
+                  onClick={() => setCalcDays(Math.floor(Number(currentRunway)))}
+                />
                 <Slider
                   aria-label="Days"
                   max={365}
@@ -173,9 +177,17 @@ const FieldInput = ({ fieldName, value, onChange, maxName, onMax }: FieldInputPr
   );
 };
 
-const SliderHeader = ({ currentRunway, calcDays }: { currentRunway: number; calcDays: number }) => {
+const SliderHeader = ({
+  currentRunway,
+  calcDays,
+  onClick,
+}: {
+  currentRunway: number;
+  calcDays: number;
+  onClick: () => void;
+}) => {
   return (
-    <SliderHeaderContainer>
+    <SliderHeaderContainer onClick={!!currentRunway ? onClick : undefined} runwayLoaded={!!currentRunway}>
       <Typography variant="h6" color="textSecondary">
         <Trans>{calcDays} Days</Trans>
       </Typography>
@@ -217,8 +229,9 @@ const SliderContainer = styled.div`
   margin: 24px 0;
 `;
 
-const SliderHeaderContainer = styled.div`
+const SliderHeaderContainer = styled.div<{ runwayLoaded: boolean }>`
   display: flex;
   justify-content: space-between;
   width: 100%;
+  ${({ runwayLoaded }) => runwayLoaded && "cursor: pointer;"}
 `;
