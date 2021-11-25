@@ -19,7 +19,7 @@ const ImportantValues = ({ marketPrice, stakingRebase, isAppLoading, trimmedBala
   return (
     <Grid item>
       <Grid container spacing={2} alignItems="flex-end">
-        <FieldValue value={trim(marketPrice, 2)} field="EXOD Price" isAppLoading={isAppLoading} />
+        <FieldValue value={`$${trim(marketPrice, 2)}`} field="EXOD Price" isAppLoading={isAppLoading} />
         <FieldValue value={`${stakingRebasePercentage}%`} field="Current Rebase Rate" isAppLoading={isAppLoading} />
         <FieldValue value={`${trimmedBalance} ${sOHM_TICKER}`} field="Your sEXOD Balance" isAppLoading={isAppLoading} />
       </Grid>
