@@ -32,9 +32,9 @@ const PriceMultiplier = ({
   }, [multiplier]);
 
   return (
-    <>
+    <PriceMultiplierContainer>
       <Typography variant="h6" color="textSecondary">
-        <Trans>Final price multiplier</Trans>
+        <Trans>Future price multiplier</Trans>
       </Typography>
       <MultiplierRow>
         <RadioGroup
@@ -56,15 +56,21 @@ const PriceMultiplier = ({
           labelWidth={0}
         />
       </MultiplierRow>
-    </>
+    </PriceMultiplierContainer>
   );
 };
 
 export default PriceMultiplier;
 
+const PriceMultiplierContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin: 12px 0;
+`;
+
 const MultiplierRow = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 200px 1fr;
   path {
     transform: translate(-2px, -2px);
   }

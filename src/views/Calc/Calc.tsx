@@ -88,36 +88,41 @@ function Calc() {
                 onMax={() => setRebaseRateInput(stakingRebase)}
               />
               <FieldInput
-                fieldName="Price of EXOD at purchase ($)"
+                fieldName="EXOD price at purchase ($)"
                 value={Number(exodPriceInput.toFixed(2))}
                 maxName="Current"
                 onChange={setExodPriceInput}
                 onMax={() => setExodPriceInput(marketPrice)}
               />
-              <CalcRow>
-                <PriceMultiplier currentPrice={marketPrice} setFinalExodPriceInput={setFinalExodPriceInput} />
-              </CalcRow>
+
               <FieldInput
-                fieldName="Final market price of EXOD ($)"
+                fieldName="Future EXOD market price ($)"
                 value={Number(finalExodPriceInput.toFixed(2))}
                 maxName="Current"
                 onChange={setFinalExodPriceInput}
                 onMax={() => setFinalExodPriceInput(marketPrice)}
               />
-              <SliderContainer>
-                <SliderHeader
-                  currentRunway={currentRunway}
-                  calcDays={calcDays}
-                  onClick={() => setCalcDays(Math.floor(Number(currentRunway)))}
-                />
-                <Slider
-                  aria-label="Days"
-                  max={365}
-                  value={calcDays}
-                  color="primary"
-                  onChange={(_e, newValue) => setCalcDays(Number(newValue))}
-                />
-              </SliderContainer>
+            </CalcArea>
+            <CalcArea>
+              <CalcRow>
+                <SliderContainer>
+                  <SliderHeader
+                    currentRunway={currentRunway}
+                    calcDays={calcDays}
+                    onClick={() => setCalcDays(Math.floor(Number(currentRunway)))}
+                  />
+                  <Slider
+                    aria-label="Days"
+                    max={365}
+                    value={calcDays}
+                    color="primary"
+                    onChange={(_e, newValue) => setCalcDays(Number(newValue))}
+                  />
+                </SliderContainer>
+              </CalcRow>
+              <CalcRow>
+                <PriceMultiplier currentPrice={marketPrice} setFinalExodPriceInput={setFinalExodPriceInput} />
+              </CalcRow>
             </CalcArea>
             {/* 
               TODO: 
@@ -208,7 +213,7 @@ const CalcContainer = styled.div`
 
 const CalcArea = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   .calc-input {
     width: 100%;
     max-width: revert;
@@ -216,10 +221,19 @@ const CalcArea = styled.div`
 `;
 
 const CalcRow = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  align-items: center;
-  margin: 12px 0;
+  display: flex;
+  flex-direction: column;
+  margin: 12px 12px;
+
+  flex-grow: 0;
+  max-width: 100%;
+  flex-basis: 100%;
+
+  @media (min-width: 600px) {
+    flex-grow: 0;
+    max-width: calc(50% - 24px);
+    flex-basis: 50%;
+  }
   input[type] {
     font-size: 1rem;
   }
