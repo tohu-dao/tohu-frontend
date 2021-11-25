@@ -24,7 +24,7 @@ const EstimatedValues = ({
 }: EstimatedValuesProps) => {
   return (
     <>
-      <EstimationContainer>
+      <EstimationColumn>
         <FieldValue
           fieldName="Initial investment"
           value={new Intl.NumberFormat("en-US", {
@@ -34,6 +34,7 @@ const EstimatedValues = ({
             minimumFractionDigits: 2,
           }).format(initialInvestment)}
         />
+        <div />
         <FieldValue fieldName="Estimated ROI" value={`${estimatedROI ? estimatedROI.toFixed(2) : 0}x`} />
         <FieldValue fieldName="Total sEXOD" value={`${totalSExod.toFixed(2)}`} />
         <FieldValue
@@ -54,8 +55,8 @@ const EstimatedValues = ({
             minimumFractionDigits: 2,
           }).format(totalReturns)}
         />
-      </EstimationContainer>
-      <EstimationContainer>
+      </EstimationColumn>
+      <EstimationColumn>
         <FieldValue
           fieldName="Break even price"
           value={new Intl.NumberFormat("en-US", {
@@ -66,7 +67,7 @@ const EstimatedValues = ({
           }).format(minimumPrice || 0)}
         />
         <FieldValue fieldName="Days to break even" value={`${breakEvenDays}`} />
-      </EstimationContainer>
+      </EstimationColumn>
     </>
   );
 };
@@ -86,9 +87,10 @@ const FieldValue = ({ fieldName, value }: { fieldName: string; value: string }) 
   );
 };
 
-const EstimationContainer = styled.div`
-  display: flex;
-  flex-direction: column;
+const EstimationColumn = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-column-gap: 24px;
   border-top: 1px solid #424242;
   width: 100%;
   padding: 12px;

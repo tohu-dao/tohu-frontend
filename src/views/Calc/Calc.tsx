@@ -138,7 +138,7 @@ function Calc() {
                 onMax={() => setFinalExodPriceInput(marketPrice)}
               />
             </CalcArea>
-            <CalcArea>
+            <SliderArea>
               <CalcRow>
                 <SliderContainer>
                   <SliderHeader
@@ -158,7 +158,7 @@ function Calc() {
               <CalcRow>
                 <PriceMultiplier currentPrice={marketPrice} setFinalExodPriceInput={setFinalExodPriceInput} />
               </CalcRow>
-            </CalcArea>
+            </SliderArea>
             <EstimatedValues
               initialInvestment={initialInvestment}
               estimatedROI={calcRoi(totalReturns, initialInvestment)}
@@ -261,6 +261,12 @@ const CalcArea = styled.div`
   }
 `;
 
+const SliderArea = styled(CalcArea)`
+  @media (max-width: 650px) {
+    flex-direction: column-reverse;
+  }
+`;
+
 const CalcRow = styled.div`
   display: flex;
   flex-direction: column;
@@ -270,7 +276,7 @@ const CalcRow = styled.div`
   max-width: 100%;
   flex-basis: 100%;
 
-  @media (min-width: 600px) {
+  @media (min-width: 650px) {
     flex-grow: 0;
     max-width: calc(50% - 24px);
     flex-basis: 50%;

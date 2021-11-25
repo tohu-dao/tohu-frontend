@@ -5,7 +5,7 @@ import styled from "styled-components";
 const CalcHeader = () => {
   return (
     <Grid item>
-      <Heading variant="h5">OBLITERATOR (🧪 + 🧪 = ?)</Heading>
+      <Heading variant="h5">OBLITERATOR (🧪 + 🧪 = ❔)</Heading>
       <Typography variant="body1">Estimate your returns</Typography>
     </Grid>
   );
