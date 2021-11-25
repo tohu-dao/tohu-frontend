@@ -31,7 +31,6 @@ import {
 } from "./formulas";
 import { useTreasuryMetrics } from "../TreasuryDashboard/hooks/useTreasuryMetrics";
 
-//  Math.pow(1 + 0.6986/100, 365 * 3) - 1
 function Calc() {
   const [exodAmountInput, setExodAmountInput] = useState(0);
   const [rebaseRateInput, setRebaseRateInput] = useState(0);
