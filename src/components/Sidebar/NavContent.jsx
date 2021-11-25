@@ -15,7 +15,6 @@ import useBonds from "../../hooks/Bonds";
 import { Paper, Link, Box, Typography, SvgIcon } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import StarIcon from "@material-ui/icons/Stars";
-import HomeIcon from "@material-ui/icons/Home";
 import "./sidebar.scss";
 
 function NavContent() {
@@ -58,12 +57,6 @@ function NavContent() {
 
           <div className="dapp-menu-links">
             <div className="dapp-nav" id="navbarNav">
-              <Link href={`https://www.exodia.finance/`} target="_blank">
-                <Typography variant="h6">
-                  <SvgIcon color="primary" component={HomeIcon} />
-                  <Trans>Home</Trans>
-                </Typography>
-              </Link>
               <Link
                 component={NavLink}
                 id="dash-nav"
@@ -81,21 +74,6 @@ function NavContent() {
 
               <Link
                 component={NavLink}
-                id="stake-nav"
-                to="/"
-                isActive={(match, location) => {
-                  return checkPage(match, location, "stake");
-                }}
-                className={`button-dapp-menu ${isActive ? "active" : ""}`}
-              >
-                <Typography variant="h6">
-                  <SvgIcon color="primary" component={StakeIcon} />
-                  <Trans>Stake</Trans>
-                </Typography>
-              </Link>
-
-              <Link
-                component={NavLink}
                 id="calc-nav"
                 to="/calc"
                 isActive={(match, location) => {
@@ -106,6 +84,21 @@ function NavContent() {
                 <Typography variant="h6" className="obliterator">
                   <SvgIcon color="primary" component={StarIcon} />
                   <Trans>Obliterator</Trans>
+                </Typography>
+              </Link>
+
+              <Link
+                component={NavLink}
+                id="stake-nav"
+                to="/"
+                isActive={(match, location) => {
+                  return checkPage(match, location, "stake");
+                }}
+                className={`button-dapp-menu ${isActive ? "active" : ""}`}
+              >
+                <Typography variant="h6">
+                  <SvgIcon color="primary" component={StakeIcon} />
+                  <Trans>Stake</Trans>
                 </Typography>
               </Link>
 
