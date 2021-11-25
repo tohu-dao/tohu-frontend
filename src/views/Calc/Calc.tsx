@@ -19,7 +19,16 @@ import CalcHeader from "./CalcHeader";
 import ImportantValues from "./ImportantValues";
 import EstimatedValues from "./EstimatedValues";
 import PriceMultiplier from "./PriceMultiplier";
-import { calcInitialInvestment, calcMinimumDays, calcMinimumPrice, calcProfits, calcRoi, calcTotalReturns, calcYieldPercent, calcTotalExod } from "./formulas";
+import {
+  calcInitialInvestment,
+  calcMinimumDays,
+  calcMinimumPrice,
+  calcProfits,
+  calcRoi,
+  calcTotalReturns,
+  calcYieldPercent,
+  calcTotalExod,
+} from "./formulas";
 import { useTreasuryMetrics } from "../TreasuryDashboard/hooks/useTreasuryMetrics";
 
 function Calc() {
@@ -76,20 +85,20 @@ function Calc() {
   }, [rebaseRateInput, calcDays]);
 
   useEffect(() => {
-    setInitialInvestment(calcInitialInvestment(exodAmountInput, exodPriceInput))
+    setInitialInvestment(calcInitialInvestment(exodAmountInput, exodPriceInput));
   }, [exodAmountInput, exodPriceInput]);
 
   useEffect(() => {
-    setTotalReturns(calcTotalReturns(exodAmountInput, finalExodPriceInput, yieldPercent))
+    setTotalReturns(calcTotalReturns(exodAmountInput, finalExodPriceInput, yieldPercent));
   }, [exodAmountInput, finalExodPriceInput, yieldPercent]);
 
   useEffect(() => {
-    setMinimumDays(calcMinimumDays(initialInvestment, exodAmountInput, finalExodPriceInput, rebaseRateInput))
+    setMinimumDays(calcMinimumDays(initialInvestment, exodAmountInput, finalExodPriceInput, rebaseRateInput));
   }, [initialInvestment, exodAmountInput, finalExodPriceInput, rebaseRateInput]);
 
   useEffect(() => {
-    setMinimumPrice(calcMinimumPrice(initialInvestment, rebaseRateInput, currentRunway, exodAmountInput))
-  }, [initialInvestment, rebaseRateInput, currentRunway, exodAmountInput])
+    setMinimumPrice(calcMinimumPrice(initialInvestment, rebaseRateInput, calcDays, exodAmountInput));
+  }, [initialInvestment, rebaseRateInput, calcDays, exodAmountInput]);
 
   return (
     <CalcContainer id="stake-view">
@@ -150,13 +159,18 @@ function Calc() {
                 <PriceMultiplier currentPrice={marketPrice} setFinalExodPriceInput={setFinalExodPriceInput} />
               </CalcRow>
             </CalcArea>
-            {/* 
-              TODO: 
-              Replace these hard coded values with calls to functions aka: 
-              estimatedROI={estimatedROI(input1, input2, ..etc)}
-            */}
-            <EstimatedValues initialInvestment={initialInvestment} estimatedROI={calcRoi(totalReturns, initialInvestment)} totalSExod={calcTotalExod(exodAmountInput, yieldPercent)} estimatedProfits={calcProfits(totalReturns, initialInvestment)} breakEvenDays={minimumDays} minimumPrice={minimumPrice} totalReturns={totalReturns} />
-            <YugiQuote><Typography variant="subtitle2">My grandpa's deck has no pathetic cards, Kaiba 🃏</Typography></YugiQuote>
+            <EstimatedValues
+              initialInvestment={initialInvestment}
+              estimatedROI={calcRoi(totalReturns, initialInvestment)}
+              totalSExod={calcTotalExod(exodAmountInput, yieldPercent)}
+              estimatedProfits={calcProfits(totalReturns, initialInvestment)}
+              breakEvenDays={minimumDays}
+              minimumPrice={minimumPrice}
+              totalReturns={totalReturns}
+            />
+            <YugiQuote>
+              <Typography variant="subtitle2">My grandpa's deck has no pathetic cards, Kaiba 🃏</Typography>
+            </YugiQuote>
           </Grid>
         </Paper>
       </Zoom>
@@ -282,5 +296,5 @@ const YugiQuote = styled.div`
   font-style: italic;
   opacity: 0.6;
   font-size: 0.7rem;
-  margin-top: 2rem;
-`
+  margin-top: 1rem;
+`;
