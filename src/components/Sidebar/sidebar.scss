@@ -59,6 +59,12 @@
   min-height: 30vh;
 }
 
+.obliterator {
+  path {
+    transform: scale(0.85);
+  }
+}
+
 .dapp-menu-links {
   min-height: 35vh;
   display: flex;

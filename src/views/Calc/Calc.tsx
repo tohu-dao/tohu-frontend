@@ -31,6 +31,7 @@ import {
 } from "./formulas";
 import { useTreasuryMetrics } from "../TreasuryDashboard/hooks/useTreasuryMetrics";
 
+//  Math.pow(1 + 0.6986/100, 365 * 3) - 1
 function Calc() {
   const [exodAmountInput, setExodAmountInput] = useState(0);
   const [rebaseRateInput, setRebaseRateInput] = useState(0);
@@ -109,7 +110,7 @@ function Calc() {
             <ImportantValues {...{ marketPrice, stakingRebase, isAppLoading, trimmedBalance }} />
             <CalcArea>
               <FieldInput
-                fieldName="sEXOD amount"
+                fieldName="sEXOD Amount"
                 value={exodAmountInput}
                 maxName="Max"
                 onChange={setExodAmountInput}
@@ -207,7 +208,7 @@ const FieldInput = ({ fieldName, value, onChange, maxName, onMax }: FieldInputPr
         <OutlinedInput
           type="number"
           placeholder={`Enter ${fieldName}`}
-          value={value}
+          value={value || null}
           onChange={e => onChange(Number(e.target.value))}
           labelWidth={0}
           endAdornment={

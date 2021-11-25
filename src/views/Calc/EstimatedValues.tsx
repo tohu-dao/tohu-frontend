@@ -34,7 +34,7 @@ const EstimatedValues = ({
             minimumFractionDigits: 2,
           }).format(initialInvestment)}
         />
-        <FieldValue fieldName="Estimated ROI" value={`${estimatedROI.toFixed(2)}x`} />
+        <FieldValue fieldName="Estimated ROI" value={`${estimatedROI ? estimatedROI.toFixed(2) : 0}x`} />
         <FieldValue fieldName="Total sEXOD" value={`${totalSExod.toFixed(2)}`} />
         <FieldValue
           fieldName="Estimated profits"
@@ -57,13 +57,13 @@ const EstimatedValues = ({
       </EstimationContainer>
       <EstimationContainer>
         <FieldValue
-          fieldName="Minimum price"
+          fieldName="Break even price"
           value={new Intl.NumberFormat("en-US", {
             style: "currency",
             currency: "USD",
             maximumFractionDigits: 2,
             minimumFractionDigits: 2,
-          }).format(minimumPrice)}
+          }).format(minimumPrice || 0)}
         />
         <FieldValue fieldName="Days to break even" value={`${breakEvenDays}`} />
       </EstimationContainer>
