@@ -4,19 +4,25 @@ import { Trans } from "@lingui/macro";
 import styled from "styled-components";
 
 type EstimatedValuesProps = {
+  initialInvestment: number;
   estimatedROI: number;
   estimatedProfits: number;
+  totalSExod: number
+  totalReturns: number;
   breakEvenDays: number;
   minimumPrice: number;
 };
 
-const EstimatedValues = ({ estimatedROI, estimatedProfits, breakEvenDays, minimumPrice }: EstimatedValuesProps) => {
+const EstimatedValues = ({ initialInvestment, estimatedROI, estimatedProfits, totalSExod, breakEvenDays, minimumPrice, totalReturns }: EstimatedValuesProps) => {
   return (
     <EstimationContainer>
-      <FieldValue fieldName="Estimated ROI" value={`${estimatedROI}x`} />
-      <FieldValue fieldName="Estimated profits" value={`$${estimatedProfits}`} />
+      <FieldValue fieldName="Initial investment" value={`$${initialInvestment.toFixed(2).toLocaleString()}x`} />
+      <FieldValue fieldName="Estimated ROI" value={`${estimatedROI.toFixed(2)}x`} />
+      <FieldValue fieldName="Total returns" value={`$${totalReturns.toFixed(2)}`} />
+      <FieldValue fieldName="Estimated profits" value={`$${estimatedProfits.toFixed(2).toLocaleString()}`} />
+      <FieldValue fieldName="Total sEXOD" value={`${totalSExod.toFixed(2)}`} />
       <FieldValue fieldName="Min days to break even" value={`${breakEvenDays}`} />
-      <FieldValue fieldName="Min price" value={`$${minimumPrice}`} />
+      <FieldValue fieldName="Min price" value={`$${minimumPrice.toFixed(2)}`} />
     </EstimationContainer>
   );
 };
