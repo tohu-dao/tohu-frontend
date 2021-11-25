@@ -1,0 +1,71 @@
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import {
+  Button,
+  FormControl,
+  Grid,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+  Paper,
+  Typography,
+  Zoom,
+  Slider,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormLabel,
+} from "@material-ui/core";
+import { Trans } from "@lingui/macro";
+
+const PriceMultiplier = ({
+  currentPrice,
+  setFinalExodPriceInput,
+}: {
+  currentPrice: number;
+  setFinalExodPriceInput: (value: number) => void;
+}) => {
+  const [multiplier, setMultiplier] = useState();
+
+  useEffect(() => {
+    setFinalExodPriceInput(currentPrice * (multiplier || 1));
+  }, [multiplier]);
+
+  return (
+    <>
+      <Typography variant="h6" color="textSecondary">
+        <Trans>Final price multiplier</Trans>
+      </Typography>
+      <MultiplierRow>
+        <RadioGroup
+          row
+          aria-label="multiplier"
+          name="row-radio-buttons-group"
+          value={multiplier || 1}
+          onChange={e => setMultiplier(Number(e.target.value))}
+        >
+          <FormControlLabel value={1 || null} control={<Radio size="small" color="primary" />} label="1x" />
+          <FormControlLabel value={5} control={<Radio size="small" color="primary" />} label="5x" />
+          <FormControlLabel value={10} control={<Radio size="small" color="primary" />} label="10x" />
+        </RadioGroup>
+        <OutlinedInput
+          type="number"
+          placeholder={`Custom...`}
+          value={multiplier || null}
+          onChange={e => setMultiplier(Number(e.target.value) || null)}
+          labelWidth={0}
+        />
+      </MultiplierRow>
+    </>
+  );
+};
+
+export default PriceMultiplier;
+
+const MultiplierRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  path {
+    transform: translate(-2px, -2px);
+  }
+`;

@@ -68,7 +68,7 @@ export const dark = responsiveFontSizes(
       },
       props: {
         MuiSvgIcon: {
-          htmlColor: darkTheme.color,
+          color: darkTheme.color,
         },
       },
       overrides: {
@@ -272,6 +272,17 @@ export const dark = responsiveFontSizes(
           },
           disabled: {
             boxShadow: "none",
+          },
+        },
+        MuiRadio: {
+          colorPrimary: {
+            color: darkTheme.color,
+            "&$checked": {
+              color: darkTheme.gold,
+            },
+            "&:hover": {
+              color: darkTheme.gold,
+            },
           },
         },
         MuiSlider: {

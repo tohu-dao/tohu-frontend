@@ -18,6 +18,7 @@ import styled from "styled-components";
 import CalcHeader from "./CalcHeader";
 import ImportantValues from "./ImportantValues";
 import EstimatedValues from "./EstimatedValues";
+import PriceMultiplier from "./PriceMultiplier";
 import { useTreasuryMetrics } from "../TreasuryDashboard/hooks/useTreasuryMetrics";
 
 function Calc() {
@@ -93,6 +94,9 @@ function Calc() {
                 onChange={setExodPriceInput}
                 onMax={() => setExodPriceInput(marketPrice)}
               />
+              <CalcRow>
+                <PriceMultiplier currentPrice={marketPrice} setFinalExodPriceInput={setFinalExodPriceInput} />
+              </CalcRow>
               <FieldInput
                 fieldName="Final market price of EXOD ($)"
                 value={Number(finalExodPriceInput.toFixed(2))}
