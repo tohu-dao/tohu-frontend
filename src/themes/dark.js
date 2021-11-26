@@ -187,6 +187,11 @@ export const dark = responsiveFontSizes(
           },
         },
         MuiButton: {
+          root: {
+            "&$disabled": {
+              boxShadow: "none",
+            },
+          },
           containedPrimary: {
             color: darkTheme.primaryButtonColor,
             backgroundColor: darkTheme.gold,

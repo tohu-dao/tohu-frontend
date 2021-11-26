@@ -270,7 +270,11 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
               <Trans>Debt Ratio</Trans>
             </Typography>
             <Typography>
-              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.debtRatio / 10000000, 2)}%`}
+              {isBondLoading ? (
+                <Skeleton width="100px" />
+              ) : (
+                `${trim(bond.isLP ? bond.debtRatio / 10000000 : bond.debtRatio * 10, 2)}%`
+              )}
             </Typography>
           </div>
 

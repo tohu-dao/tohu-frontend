@@ -42,7 +42,7 @@ function NavContent() {
       <Box className="dapp-sidebar-inner" display="flex" justifyContent="space-between" flexDirection="column">
         <div className="dapp-menu-top">
           <Box className="branding-header">
-            <Link href="https://exodia.finance" target="_blank">
+            <Link href="https://exodia.fi" target="_blank">
               <img src={ExodiaLogo} alt={"Exodia logo"} />
             </Link>
 
@@ -57,6 +57,12 @@ function NavContent() {
 
           <div className="dapp-menu-links">
             <div className="dapp-nav" id="navbarNav">
+              <Link href={`https://www.exodia.fi/`} target="_blank">
+                <Typography variant="h6">
+                  <SvgIcon color="primary" component={HomeIcon} />
+                  <Trans>Home</Trans>
+                </Typography>
+              </Link>
               <Link
                 component={NavLink}
                 id="dash-nav"
