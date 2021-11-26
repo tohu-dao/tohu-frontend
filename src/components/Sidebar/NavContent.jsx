@@ -15,6 +15,7 @@ import useBonds from "../../hooks/Bonds";
 import { Paper, Link, Box, Typography, SvgIcon } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import StarIcon from "@material-ui/icons/Stars";
+import HomeIcon from "@material-ui/icons/Home";
 import "./sidebar.scss";
 
 function NavContent() {
