@@ -61,7 +61,7 @@ function NavContent() {
               <Link href={`https://www.exodia.fi/`} target="_blank">
                 <Typography variant="h6">
                   <SvgIcon color="primary" component={HomeIcon} />
-                  <Trans>Home</Trans>
+                  <Trans>Landing Page</Trans>
                 </Typography>
               </Link>
               <Link
@@ -76,21 +76,6 @@ function NavContent() {
                 <Typography variant="h6">
                   <SvgIcon color="primary" component={DashboardIcon} />
                   <Trans>Dashboard</Trans>
-                </Typography>
-              </Link>
-
-              <Link
-                component={NavLink}
-                id="calc-nav"
-                to="/obliterator"
-                isActive={(match, location) => {
-                  return checkPage(match, location, "cakc");
-                }}
-                className={`button-dapp-menu ${isActive ? "active" : ""} obliterator`}
-              >
-                <Typography variant="h6" className="obliterator">
-                  <SvgIcon color="primary" component={StarIcon} />
-                  <Trans>Obliterator</Trans>
                 </Typography>
               </Link>
 
@@ -148,6 +133,21 @@ function NavContent() {
                   ))}
                 </div>
               </div>
+
+              <Link
+                component={NavLink}
+                id="calc-nav"
+                to="/obliterator"
+                isActive={(match, location) => {
+                  return checkPage(match, location, "cakc");
+                }}
+                className={`button-dapp-menu ${isActive ? "active" : ""} obliterator`}
+              >
+                <Typography variant="h6" className="obliterator">
+                  <SvgIcon color="primary" component={StarIcon} />
+                  <Trans>Obliterator</Trans>
+                </Typography>
+              </Link>
             </div>
           </div>
         </div>
