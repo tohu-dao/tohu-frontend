@@ -10,6 +10,8 @@ import navBg from "../assets/images/exod-sidebar.jpg";
 const darkTheme = {
   color: "#FCFCFC",
   gold: "#46ab15", // Light green
+  goldDimmed: "#376e1d",
+  goldBright: "#6dd63a",
   gray: "#A3A3A3",
   textHighlightColor: "#5bc422",
   backgroundColor: "#131313",
@@ -67,7 +69,7 @@ export const dark = responsiveFontSizes(
       },
       props: {
         MuiSvgIcon: {
-          htmlColor: darkTheme.color,
+          color: darkTheme.color,
         },
       },
       overrides: {
@@ -138,10 +140,12 @@ export const dark = responsiveFontSizes(
           },
         },
         MuiOutlinedInput: {
-          notchedOutline: {
-            // borderColor: `${darkTheme.gold} !important`,
-            "&:hover": {
-              // borderColor: `${darkTheme.gold} !important`,
+          root: {
+            "&:hover $notchedOutline": {
+              borderColor: darkTheme.goldDimmed,
+            },
+            "&$focused $notchedOutline": {
+              borderColor: darkTheme.gold,
             },
           },
         },
@@ -274,6 +278,38 @@ export const dark = responsiveFontSizes(
           },
           disabled: {
             boxShadow: "none",
+          },
+        },
+        MuiRadio: {
+          colorPrimary: {
+            color: darkTheme.color,
+            "&$checked": {
+              color: darkTheme.gold,
+            },
+            "&:hover": {
+              color: darkTheme.gold,
+            },
+          },
+        },
+        MuiSlider: {
+          thumb: {
+            border: `2px solid ${darkTheme.gold}`,
+            color: darkTheme.paperBg,
+            boxShadow: `0px 0px 10px ${darkTheme.gold}`,
+            height: 18,
+            width: 18,
+          },
+          track: {
+            background: `linear-gradient(90deg,${darkTheme.goldBright},${darkTheme.gold} 90%)`,
+            boxShadow: `0px 0px 10px ${darkTheme.gold}`,
+            height: 8,
+            borderRadius: 7,
+          },
+          rail: {
+            border: `2px solid ${darkTheme.gold}`,
+            color: darkTheme.paperBg,
+            height: 5,
+            borderRadius: 7,
           },
         },
       },
