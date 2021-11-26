@@ -78,10 +78,10 @@ const FieldValue = ({ fieldName, value }: { fieldName: string; value: string }) 
   return (
     <EstimationRow>
       <Typography variant="h6" color="textSecondary">
-        <Trans>{fieldName}</Trans>
+        {fieldName}
       </Typography>
       <Typography variant="h6" color="textPrimary">
-        <Trans>{value}</Trans>
+        {value}
       </Typography>
     </EstimationRow>
   );
