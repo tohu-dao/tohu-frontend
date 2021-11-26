@@ -34,7 +34,7 @@ const FieldValue = ({ field, value, isAppLoading }: { field: string; value: any;
     <Grid item xs={12} sm={4} md={4} lg={4}>
       <FieldContainer>
         <Typography variant="h5" color="textSecondary">
-          <Trans>{field}</Trans>
+          {field}
         </Typography>
         <Typography variant="h4">
           {isAppLoading ? (
