@@ -200,7 +200,7 @@ const FieldInput = ({ fieldName, value, onChange, maxName, onMax }: FieldInputPr
   return (
     <CalcRow>
       <Typography variant="h6" color="textSecondary">
-        <Trans>{fieldName}</Trans>
+        {fieldName}
       </Typography>
       <FormControl variant="outlined" color="primary">
         <InputLabel htmlFor="amount-input"></InputLabel>
@@ -235,10 +235,10 @@ const SliderHeader = ({
   return (
     <SliderHeaderContainer onClick={!!currentRunway ? onClick : undefined} runwayLoaded={!!currentRunway}>
       <Typography variant="h6" color="textSecondary">
-        <Trans>{calcDays} Days</Trans>
+        {calcDays} Days
       </Typography>
       <Typography variant="h6" color="textSecondary">
-        <Trans>Current runway: {currentRunway ? `${currentRunway?.toFixed(2)} Days` : "Loading..."} </Trans>
+        Current runway: {currentRunway ? `${currentRunway?.toFixed(2)} Days` : "Loading..."}
       </Typography>
     </SliderHeaderContainer>
   );
