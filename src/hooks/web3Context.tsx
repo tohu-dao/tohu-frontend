@@ -28,7 +28,7 @@ const ALL_URIs = NodeHelper.getNodesUris();
  * @returns string
  */
 function getMainnetURI(): string {
-  return "https://rpc.ftm.tools/";
+  return "https://rpc.ftm.tools";
 }
 
 /*
