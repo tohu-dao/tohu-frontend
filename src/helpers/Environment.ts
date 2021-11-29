@@ -100,6 +100,8 @@ export class EnvHelper {
    * @returns array of API urls
    */
   static getAPIUris() {
+    //voluntarily return early
+    return ["https://rpc.ftm.tools"];
     let ALL_URIs = EnvHelper.getSelfHostedNode();
     if (EnvHelper.env.NODE_ENV === "development" && ALL_URIs.length === 0) {
       // push in the common ethers key in development

@@ -18,7 +18,7 @@ interface IBondingStateView {
 }
 
 // Smash all the interfaces together to get the BondData Type
-interface IAllBondData extends Bond, IBondDetails, IUserBondDetails {}
+export interface IAllBondData extends Bond, IBondDetails, IUserBondDetails {}
 
 const initialBondArray = allBonds;
 const initialExpiredArray = allExpiredBonds;
@@ -54,8 +54,7 @@ function useBonds(chainID: number) {
     setBonds(mostProfitableBonds);
 
     // TODO (appleseed-expiredBonds): there may be a smarter way to refactor this
-    let expiredDetails: IAllBondData[];
-    expiredDetails = allExpiredBonds
+    let expiredDetails: IAllBondData[] = allExpiredBonds
       .flatMap(bond => {
         if (bondState[bond.name] && bondState[bond.name].bondDiscount) {
           return Object.assign(bond, bondState[bond.name]); // Keeps the object type

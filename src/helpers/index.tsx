@@ -54,6 +54,8 @@ export function formatCurrency(c: number, precision = 0) {
 export function trim(number = 0, precision = 0) {
   // why would number ever be undefined??? what are we trimming?
   const array = number.toString().split(".");
+  if (number > 0 && number < 10 ** -precision) return 0;
+  if (number < 0 && number > -(10 ** -precision)) return 0;
   if (array.length === 1) return number.toString();
   if (precision === 0) return array[0].toString();
 
@@ -129,10 +131,12 @@ export function getTokenImage(name: string) {
 // TS-REFACTOR-NOTE - Used for:
 // AccountSlice.ts, AppSlice.ts, LusdSlice.ts
 export function setAll(state: any, properties: any) {
-  const props = Object.keys(properties);
-  props.forEach(key => {
-    state[key] = properties[key];
-  });
+  if (properties) {
+    const props = Object.keys(properties);
+    props.forEach(key => {
+      state[key] = properties[key];
+    });
+  }
 }
 
 export function contractForRedeemHelper({

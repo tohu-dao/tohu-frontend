@@ -10,5 +10,4 @@ import Root from "./Root";
 //   uri: subgraphUri,
 //   cache: new InMemoryCache(),
 // });
-
 ReactDOM.render(<Root />, document.getElementById("root"));

@@ -10,7 +10,8 @@ import { NavLink } from "react-router-dom";
 import "./choosebond.scss";
 import { Skeleton } from "@material-ui/lab";
 import { useWeb3Context, useBonds } from "src/hooks";
-import { isPendingTxn, txnButtonTextGeneralPending } from "src/slices/PendingTxnsSlice";
+import { isPendingTxn } from "src/slices/PendingTxnsSlice";
+import { TxnButtonTextGeneralPending } from "src/components/TxnButtonText";
 
 export function ClaimBondTableData({ userBond }) {
   const dispatch = useDispatch();
@@ -65,7 +66,11 @@ export function ClaimBondTableData({ userBond }) {
           onClick={() => onRedeem({ autostake: false })}
         >
           <Typography variant="h6">
-            {txnButtonTextGeneralPending(pendingTransactions, "redeem_bond_" + bondName, "Claim")}
+            <TxnButtonTextGeneralPending
+              pendingTransactions={pendingTransactions}
+              type={"redeem_bond_" + bondName}
+              defaultText="Claim"
+            />
           </Typography>
         </Button>
       </TableCell>
@@ -130,16 +135,20 @@ export function ClaimBondCardData({ userBond }) {
           onClick={() => onRedeem({ autostake: false })}
         >
           <Typography variant="h5">
-            {txnButtonTextGeneralPending(pendingTransactions, "redeem_bond_" + bondName, t`Claim`)}
+            <TxnButtonTextGeneralPending
+              pendingTransactions={pendingTransactions}
+              type={"redeem_bond_" + bondName}
+              defaultText="Claim"
+            />
           </Typography>
         </Button>
         <Button variant="outlined" color="primary" onClick={() => onRedeem({ autostake: true })}>
           <Typography variant="h5">
-            {txnButtonTextGeneralPending(
-              pendingTransactions,
-              "redeem_bond_" + bondName + "_autostake",
-              t`Claim and Stake`,
-            )}
+            <TxnButtonTextGeneralPending
+              pendingTransactions={pendingTransactions}
+              type={"redeem_bond_" + bondName + "_autostake"}
+              defaultText="Claim and Stake"
+            />
           </Typography>
         </Button>
       </Box>

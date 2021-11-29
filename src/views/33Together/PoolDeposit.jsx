@@ -17,7 +17,8 @@ import { useWeb3Context } from "../../hooks";
 import { getTokenImage } from "src/helpers/index";
 import { trim } from "src/helpers";
 import { calculateOdds } from "../../helpers/33Together";
-import { isPendingTxn, txnButtonText } from "../../slices/PendingTxnsSlice";
+import { isPendingTxn } from "../../slices/PendingTxnsSlice";
+import TxnButtonText from "src/components/TxnButtonText";
 import { changeApproval, poolDeposit } from "../../slices/PoolThunk";
 import { Skeleton } from "@material-ui/lab";
 import { error } from "../../slices/MessagesSlice";
@@ -159,7 +160,11 @@ export const PoolDeposit = props => {
                 onClick={() => onDeposit("deposit")}
                 fullWidth
               >
-                {txnButtonText(pendingTransactions, "pool_deposit", t`Deposit sOHM`)}
+                <TxnButtonText
+                  pendingTransactions={pendingTransactions}
+                  type="pool_deposit"
+                  defaultText={"Deposit sOHM"}
+                />
               </Button>
             ) : (
               <Button
@@ -169,7 +174,11 @@ export const PoolDeposit = props => {
                 disabled={isPendingTxn(pendingTransactions, "approve_pool_together")}
                 onClick={() => onSeekApproval("sohm")}
               >
-                {txnButtonText(pendingTransactions, "approve_pool_together", t`Approve`)}
+                <TxnButtonText
+                  pendingTransactions={pendingTransactions}
+                  type="approve_pool_together"
+                  defaultText="Approve"
+                />
               </Button>
             )}
           </Box>

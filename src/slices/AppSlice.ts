@@ -3,16 +3,24 @@ import { addresses } from "../constants";
 import { abi as OlympusStakingv2ABI } from "../abi/OlympusStakingv2.json";
 import { abi as sOHMv2 } from "../abi/sOhmv2.json";
 import { setAll, getTokenPrice, getMarketPrice } from "../helpers";
-import apollo from "../lib/apolloClient.js";
+import apollo from "../lib/apolloClient";
 import { createSlice, createSelector, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "src/store";
 import { IBaseAsyncThunk } from "./interfaces";
 import { OlympusStakingv2, SOhmv2 } from "../typechain";
 
-const initialState = {
-  loading: false,
-  loadingMarketPrice: false,
-};
+interface IProtocolMetrics {
+  readonly timestamp: string;
+  readonly ohmCirculatingSupply: string;
+  readonly sOhmCirculatingSupply: string;
+  readonly totalSupply: string;
+  readonly ohmPrice: string;
+  readonly marketCap: string;
+  readonly totalValueLocked: string;
+  readonly treasuryMarketValue: string;
+  readonly nextEpochRebase: string;
+  readonly nextDistributedOhm: string;
+}
 
 export const loadAppDetails = createAsyncThunk(
   "app/loadAppDetails",
@@ -39,9 +47,9 @@ export const loadAppDetails = createAsyncThunk(
   }
 `;
 
-    const graphData = await apollo(protocolMetricsQuery);
+    const graphData = await apollo<{ protocolMetrics: IProtocolMetrics[] }>(protocolMetricsQuery);
 
-    if (!graphData || graphData == null) {
+    if (!graphData) {
       console.error("Returned a null response when querying TheGraph");
       return;
     }
@@ -76,7 +84,7 @@ export const loadAppDetails = createAsyncThunk(
         circSupply,
         totalSupply,
         treasuryMarketValue,
-      };
+      } as IAppData;
     }
     const currentBlock = await provider.getBlockNumber();
 
@@ -99,6 +107,7 @@ export const loadAppDetails = createAsyncThunk(
     const stakingRebase = Number(stakingReward.toString()) / Number(circ.toString());
     const fiveDayRate = Math.pow(1 + stakingRebase, 5 * 3) - 1;
     const stakingAPY = Math.pow(1 + stakingRebase, 365 * 3) - 1;
+    const endBlock = epoch.endBlock;
 
     // Current index
     const currentIndex = await stakingContract.index();
@@ -115,6 +124,7 @@ export const loadAppDetails = createAsyncThunk(
       circSupply,
       totalSupply,
       treasuryMarketValue,
+      endBlock,
     } as IAppData;
   },
 );
@@ -175,19 +185,27 @@ const loadMarketPrice = createAsyncThunk("app/loadMarketPrice", async ({ network
 });
 
 interface IAppData {
-  readonly circSupply: number;
+  readonly circSupply?: number;
   readonly currentIndex?: string;
   readonly currentBlock?: number;
   readonly fiveDayRate?: number;
-  readonly marketCap: number;
-  readonly marketPrice: number;
+  readonly loading: boolean;
+  readonly loadingMarketPrice: boolean;
+  readonly marketCap?: number;
+  readonly marketPrice?: number;
   readonly stakingAPY?: number;
   readonly stakingRebase?: number;
-  readonly stakingTVL: number;
-  readonly totalSupply: number;
+  readonly stakingTVL?: number;
+  readonly totalSupply?: number;
   readonly treasuryBalance?: number;
   readonly treasuryMarketValue?: number;
+  readonly endBlock?: number;
 }
+
+const initialState: IAppData = {
+  loading: false,
+  loadingMarketPrice: false,
+};
 
 const appSlice = createSlice({
   name: "app",

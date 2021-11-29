@@ -16,6 +16,7 @@ import {
   IRedeemBondAsyncThunk,
 } from "./interfaces";
 import { segmentUA } from "../helpers/userAnalyticHelpers";
+import { OHM_TICKER } from "../constants";
 
 export const changeApproval = createAsyncThunk(
   "bonding/changeApproval",
@@ -89,12 +90,9 @@ export const calcBondDetails = createAsyncThunk(
     const terms = await bondContract.terms();
     const maxBondPrice = await bondContract.maxPayout();
     let debtRatio: BigNumberish;
-    // TODO (appleseed): improve this logic
-    if (bond.name === "cvx") {
-      debtRatio = await bondContract.debtRatio();
-    } else {
-      debtRatio = await bondContract.standardizedDebtRatio();
-    }
+
+    debtRatio = await bondContract.standardizedDebtRatio();
+    console.log(bond.name, debtRatio.toString());
     debtRatio = Number(debtRatio.toString()) / Math.pow(10, 9);
 
     let marketPrice: number = 0;
@@ -109,17 +107,10 @@ export const calcBondDetails = createAsyncThunk(
     }
 
     try {
-      // TODO (appleseed): improve this logic
-      if (bond.name === "cvx") {
-        let bondPriceRaw = await bondContract.bondPrice();
-        let assetPriceUSD = await bond.getBondReservePrice(networkID, provider);
-        bondPrice = bondPriceRaw.mul(BigNumber.from(String(assetPriceUSD * 10 ** 14)));
-      } else {
-        bondPrice = await bondContract.bondPriceInUSD();
-      }
+      bondPrice = await bondContract.bondPriceInUSD();
       bondDiscount = (marketPrice * Math.pow(10, 18) - Number(bondPrice.toString())) / Number(bondPrice.toString()); // 1 - bondPrice / (bondPrice * Math.pow(10, 9));
     } catch (e) {
-      console.log("error getting bondPriceInUSD", e);
+      console.log("error getting bondPriceInUSD", bond.name, e);
     }
 
     if (Number(value) === 0) {
@@ -155,13 +146,15 @@ export const calcBondDetails = createAsyncThunk(
       const errorString =
         "You're trying to bond more than the maximum payout available! The maximum bond payout is " +
         (Number(maxBondPrice.toString()) / Math.pow(10, 9)).toFixed(2).toString() +
-        " OHM.";
+        " " +
+        OHM_TICKER +
+        ".";
       dispatch(error(errorString));
     }
 
     // Calculate bonds purchased
     let purchased = await bond.getTreasuryBalance(networkID, provider);
-
+    console.log(bond.name, debtRatio);
     return {
       bond: bond.name,
       bondDiscount,

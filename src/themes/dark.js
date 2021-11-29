@@ -1,44 +1,41 @@
 import { createTheme, responsiveFontSizes } from "@material-ui/core/styles";
 import fonts from "./fonts";
-import commonSettings, { handleBackdropFilter } from "./global.js";
+import commonSettings from "./global.js";
+import navBg from "../assets/images/exod-sidebar.jpg";
 
 // TODO: Break repeated use color values out into list of consts declared here
 // then set the values in darkTheme using the global color variables
-
+//green rgb(70,171,21)
+//dark green rgb(91,196,34)
 const darkTheme = {
   color: "#FCFCFC",
-  gold: "#F8CC82",
+  gold: "#46ab15", // Light green
+  goldDimmed: "#376e1d",
+  goldBright: "#6dd63a",
   gray: "#A3A3A3",
-  textHighlightColor: "#F4D092",
-  backgroundColor: "rgba(8, 15, 53, 1)",
-  background: `
-    linear-gradient(180deg, rgba(8, 15, 53, 0), rgba(0, 0, 10, 0.9)),
-    linear-gradient(333deg, rgba(153, 207, 255, 0.2), rgba(180, 255, 217, 0.08)),
-    radial-gradient(circle at 77% 89%, rgba(125, 163, 169, 0.8), rgba(125, 163, 169, 0) 50%),
-    radial-gradient(circle at 15% 95%, rgba(125, 163, 169, 0.8), rgba(125, 163, 169, 0) 43%),
-    radial-gradient(circle at 65% 23%, rgba(137, 151, 119, 0.4), rgba(137, 151, 119, 0) 70%),
-    radial-gradient(circle at 10% 0%, rgba(187, 211, 204, 0.33), rgba(187,211,204,0) 35%),
-    radial-gradient(circle at 11% 100%, rgba(131, 165, 203, 0.3), rgba(131, 165, 203, 0) 30%)
-    `,
-  paperBg: "rgba(54, 56, 64, 0.4)",
+  textHighlightColor: "#5bc422",
+  backgroundColor: "#131313",
+  paperBg: "#1F1F1F",
+  paperBorder: "#323232",
   modalBg: "#24242699",
   popoverBg: "rgba(54, 56, 64, 0.99)",
-  menuBg: handleBackdropFilter("rgba(54, 56, 64, 0.5)"),
-  backdropBg: "rgba(54, 56, 64, 0.5)",
+  menuBg: "#080c00",
+  backdropBg: "rgba(3, 10, 0, 0.5)",
   largeTextColor: "#F4D092",
   activeLinkColor: "#F5DDB4",
   activeLinkSvgColor:
     "brightness(0) saturate(100%) invert(84%) sepia(49%) saturate(307%) hue-rotate(326deg) brightness(106%) contrast(92%)",
-  primaryButtonColor: "#333333",
+  primaryButtonColor: "#f9f9f9",
   primaryButtonBG: "#F4D092",
-  primaryButtonHoverBG: "#EDD8B4",
+  primaryButtonHoverBG: "#379414", //gold became dark green
   secondaryButtonHoverBG: "rgba(54, 56, 64, 1)",
-  outlinedPrimaryButtonHoverBG: "#F8CC82",
+  outlinedPrimaryButtonHoverBG: "#379414", //gold became dark green
   outlinedPrimaryButtonHoverColor: "#333333",
   outlinedSecondaryButtonHoverBG: "transparent",
-  outlinedSecondaryButtonHoverColor: "#F8CC82", //gold
+  outlinedSecondaryButtonHoverColor: "#379414", //gold became dark green
   containedSecondaryButtonHoverBG: "rgba(255, 255, 255, 0.15)",
   graphStrokeColor: "rgba(255, 255, 255, .1)",
+  sidebarBackground: `linear-gradient(0deg, rgba(31,31,31,1) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 100%), url(${navBg})`,
 };
 
 export const dark = responsiveFontSizes(
@@ -66,14 +63,13 @@ export const dark = responsiveFontSizes(
           secondary: darkTheme.gray,
         },
         graphStrokeColor: darkTheme.graphStrokeColor,
-        highlight: darkTheme.textHighlightColor,
       },
       typography: {
         fontFamily: "Square",
       },
       props: {
         MuiSvgIcon: {
-          htmlColor: darkTheme.color,
+          color: darkTheme.color,
         },
       },
       overrides: {
@@ -96,6 +92,7 @@ export const dark = responsiveFontSizes(
             backgroundColor: darkTheme.paperBg,
             "&.ohm-card": {
               backgroundColor: darkTheme.paperBg,
+              border: "1px solid " + darkTheme.paperBorder,
             },
             "&.ohm-modal": {
               backgroundColor: darkTheme.modalBg,
@@ -143,10 +140,12 @@ export const dark = responsiveFontSizes(
           },
         },
         MuiOutlinedInput: {
-          notchedOutline: {
-            // borderColor: `${darkTheme.gold} !important`,
-            "&:hover": {
-              // borderColor: `${darkTheme.gold} !important`,
+          root: {
+            "&:hover $notchedOutline": {
+              borderColor: darkTheme.goldDimmed,
+            },
+            "&$focused $notchedOutline": {
+              borderColor: darkTheme.gold,
             },
           },
         },
@@ -188,12 +187,19 @@ export const dark = responsiveFontSizes(
           },
         },
         MuiButton: {
+          root: {
+            "&$disabled": {
+              boxShadow: "none",
+            },
+          },
           containedPrimary: {
             color: darkTheme.primaryButtonColor,
             backgroundColor: darkTheme.gold,
+            boxShadow: `0px 0px 10px 5px rgba(70,171,21,0.3)`,
             "&:hover": {
               backgroundColor: darkTheme.primaryButtonHoverBG,
               color: darkTheme.primaryButtonHoverColor,
+              boxShadow: `0px 0px 5px 3px rgba(70,171,21,0.3)`,
             },
             "&:active": {
               backgroundColor: darkTheme.primaryButtonHoverBG,
@@ -269,6 +275,41 @@ export const dark = responsiveFontSizes(
             "&:hover": {
               color: darkTheme.textHighlightColor,
             },
+          },
+          disabled: {
+            boxShadow: "none",
+          },
+        },
+        MuiRadio: {
+          colorPrimary: {
+            color: darkTheme.color,
+            "&$checked": {
+              color: darkTheme.gold,
+            },
+            "&:hover": {
+              color: darkTheme.gold,
+            },
+          },
+        },
+        MuiSlider: {
+          thumb: {
+            border: `2px solid ${darkTheme.gold}`,
+            color: darkTheme.paperBg,
+            boxShadow: `0px 0px 10px ${darkTheme.gold}`,
+            height: 18,
+            width: 18,
+          },
+          track: {
+            background: `linear-gradient(90deg,${darkTheme.goldBright},${darkTheme.gold} 90%)`,
+            boxShadow: `0px 0px 10px ${darkTheme.gold}`,
+            height: 8,
+            borderRadius: 7,
+          },
+          rail: {
+            border: `2px solid ${darkTheme.gold}`,
+            color: darkTheme.paperBg,
+            height: 5,
+            borderRadius: 7,
           },
         },
       },

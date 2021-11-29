@@ -1,7 +1,9 @@
 .sidebar {
   min-width: 280px;
-  z-index: 2;
   border-radius: 0 !important;
+  .MuiPaper-root {
+    z-index: 20;
+  }
 }
 
 .MuiDrawer-paper .MuiPaper-root {
@@ -55,6 +57,12 @@
 .dapp-menu-bottom {
   height: 40vh;
   min-height: 30vh;
+}
+
+.obliterator {
+  path {
+    transform: scale(0.85);
+  }
 }
 
 .dapp-menu-links {

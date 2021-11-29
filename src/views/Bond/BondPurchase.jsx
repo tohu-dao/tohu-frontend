@@ -14,12 +14,15 @@ import {
 import { prettifySeconds, secondsUntilBlock, shorten, trim } from "../../helpers";
 import { bondAsset, calcBondDetails, changeApproval } from "../../slices/BondSlice";
 import { useWeb3Context } from "src/hooks/web3Context";
-import { isPendingTxn, txnButtonText } from "src/slices/PendingTxnsSlice";
+import { isPendingTxn } from "src/slices/PendingTxnsSlice";
+import TxnButtonText from "src/components/TxnButtonText";
+
 import { Skeleton } from "@material-ui/lab";
 import useDebounce from "../../hooks/Debounce";
 import { error } from "../../slices/MessagesSlice";
 import { DisplayBondDiscount } from "./Bond";
 import ConnectButton from "../../components/ConnectButton";
+import { OHM_TICKER } from "../../constants";
 
 function BondPurchase({ bond, slippage, recipientAddress }) {
   const SECONDS_TO_REFRESH = 60;
@@ -144,7 +147,7 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
                     <em>
                       <Typography variant="body1" align="center" color="textSecondary">
                         <Trans>First time bonding</Trans> <b>{bond.displayName}</b>? <br />{" "}
-                        <Trans>Please approve Olympus Dao to use your</Trans> <b>{bond.displayName}</b>{" "}
+                        <Trans>Please approve Exodia to use your</Trans> <b>{bond.displayName}</b>{" "}
                         <Trans>for bonding</Trans>.
                       </Typography>
                     </em>
@@ -190,7 +193,11 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
                     disabled={isPendingTxn(pendingTransactions, "bond_" + bond.name)}
                     onClick={onBond}
                   >
-                    {txnButtonText(pendingTransactions, "bond_" + bond.name, "Bond")}
+                    <TxnButtonText
+                      pendingTransactions={pendingTransactions}
+                      type={"bond_" + bond.name}
+                      defaultText="Bond"
+                    />
                   </Button>
                 ) : (
                   <Button
@@ -201,7 +208,11 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
                     disabled={isPendingTxn(pendingTransactions, "approve_" + bond.name)}
                     onClick={onSeekApproval}
                   >
-                    {txnButtonText(pendingTransactions, "approve_" + bond.name, "Approve")}
+                    <TxnButtonText
+                      pendingTransactions={pendingTransactions}
+                      type={"approve_" + bond.name}
+                      defaultText="Approve"
+                    />
                   </Button>
                 )}
               </>
@@ -232,7 +243,7 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
               <Trans>You Will Get</Trans>
             </Typography>
             <Typography id="bond-value-id" className="price-data">
-              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.bondQuote, 4) || "0"} OHM`}
+              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.bondQuote, 4) || "0"} ${OHM_TICKER}`}
             </Typography>
           </div>
 
@@ -241,7 +252,7 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
               <Trans>Max You Can Buy</Trans>
             </Typography>
             <Typography id="bond-value-id" className="price-data">
-              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.maxBondPrice, 4) || "0"} OHM`}
+              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.maxBondPrice, 4) || "0"} ${OHM_TICKER}`}
             </Typography>
           </div>
 
@@ -259,7 +270,11 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
               <Trans>Debt Ratio</Trans>
             </Typography>
             <Typography>
-              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.debtRatio / 10000000, 2)}%`}
+              {isBondLoading ? (
+                <Skeleton width="100px" />
+              ) : (
+                `${trim(bond.isLP ? bond.debtRatio / 10000000 : bond.debtRatio * 10, 2)}%`
+              )}
             </Typography>
           </div>
 

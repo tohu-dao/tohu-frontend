@@ -5,10 +5,12 @@ import { t, Trans } from "@lingui/macro";
 import { redeemBond } from "../../slices/BondSlice";
 import { useWeb3Context } from "src/hooks/web3Context";
 import { trim, secondsUntilBlock, prettifySeconds, prettyVestingPeriod } from "../../helpers";
-import { isPendingTxn, txnButtonText } from "src/slices/PendingTxnsSlice";
+import { isPendingTxn } from "src/slices/PendingTxnsSlice";
+import TxnButtonText from "src/components/TxnButtonText";
 import { Skeleton } from "@material-ui/lab";
 import { DisplayBondDiscount } from "./Bond";
 import ConnectButton from "../../components/ConnectButton";
+import { OHM_TICKER } from "../../constants";
 
 function BondRedeem({ bond }) {
   // const { bond: bondName } = bond;
@@ -68,7 +70,11 @@ function BondRedeem({ bond }) {
                 onRedeem({ autostake: false });
               }}
             >
-              {txnButtonText(pendingTransactions, "redeem_bond_" + bond.name, t`Claim`)}
+              <TxnButtonText
+                pendingTransactions={pendingTransactions}
+                type={"redeem_bond_" + bond.name}
+                defaultText="Claim"
+              />
             </Button>
             <Button
               variant="contained"
@@ -84,7 +90,11 @@ function BondRedeem({ bond }) {
                 onRedeem({ autostake: true });
               }}
             >
-              {txnButtonText(pendingTransactions, "redeem_bond_" + bond.name + "_autostake", t`Claim and Autostake`)}
+              <TxnButtonText
+                pendingTransactions={pendingTransactions}
+                type={"redeem_bond_" + bond.name + "_autostake"}
+                defaultText="Claim and Autostake"
+              />
             </Button>
           </>
         )}
@@ -96,7 +106,7 @@ function BondRedeem({ bond }) {
               <Trans>Pending Rewards</Trans>
             </Typography>
             <Typography className="price-data">
-              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.interestDue, 4)} OHM`}
+              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.interestDue, 4)} ${OHM_TICKER}`}
             </Typography>
           </div>
           <div className="data-row">
@@ -104,7 +114,7 @@ function BondRedeem({ bond }) {
               <Trans>Claimable Rewards</Trans>
             </Typography>
             <Typography id="claimable" className="price-data">
-              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.pendingPayout, 4)} OHM`}
+              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.pendingPayout, 4)} ${OHM_TICKER}`}
             </Typography>
           </div>
           <div className="data-row">

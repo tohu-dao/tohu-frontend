@@ -33,10 +33,11 @@ function LocaleSwitcher() {
         className="toggle-button"
         size="large"
         variant="contained"
-        color="secondary"
+        color="primary"
         title={t`Change locale`}
         aria-describedby={id}
       >
+        <span>&nbsp;</span>
         <FlagIcon code={getLocaleFlag(i18n.locale)} />
         <span>&nbsp;</span>
       </Button>

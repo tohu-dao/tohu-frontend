@@ -3,6 +3,7 @@ import { Skeleton } from "@material-ui/lab";
 import { Typography, Box } from "@material-ui/core";
 import { trim, formatCurrency } from "../../../../helpers";
 import InfoTooltip from "src/components/InfoTooltip/InfoTooltip.jsx";
+import { OHM_TICKER, sOHM_TICKER, wsOHM_TICKER } from "../../../../constants";
 
 export const Metric = props => <Box className={`metric ${props.className}`}>{props.children}</Box>;
 
@@ -16,7 +17,6 @@ Metric.Title = props => (
 
 export const MarketCap = () => {
   const marketCap = useSelector(state => state.app.marketCap);
-
   return (
     <Metric className="market">
       <Metric.Title>Market Cap</Metric.Title>
@@ -30,7 +30,7 @@ export const OHMPrice = () => {
 
   return (
     <Metric className="price">
-      <Metric.Title>OHM Price</Metric.Title>
+      <Metric.Title>{OHM_TICKER} Price</Metric.Title>
       <Metric.Value>{marketPrice && formatCurrency(marketPrice, 2)}</Metric.Value>
     </Metric>
   );
@@ -55,7 +55,7 @@ export const BackingPerOHM = () => {
 
   return (
     <Metric className="bpo">
-      <Metric.Title>Backing per OHM</Metric.Title>
+      <Metric.Title>Backing per {OHM_TICKER}</Metric.Title>
       <Metric.Value>{!isNaN(backingPerOhm) && formatCurrency(backingPerOhm, 2)}</Metric.Value>
     </Metric>
   );
@@ -68,9 +68,9 @@ export const CurrentIndex = () => {
     <Metric className="index">
       <Metric.Title>
         Current Index
-        <InfoTooltip message="The current index tracks the amount of sOHM accumulated since the beginning of staking. Basically, how much sOHM one would have if they staked and held a single OHM from day 1." />
+        <InfoTooltip message="The current index tracks the amount of sEXOD accumulated since the beginning of staking. Basically, how much sEXOD one would have if they staked and held a single EXOD from day 1." />
       </Metric.Title>
-      <Metric.Value>{currentIndex && trim(currentIndex, 2) + " sOHM"}</Metric.Value>
+      <Metric.Value>{currentIndex && trim(currentIndex, 2) + " " + sOHM_TICKER}</Metric.Value>
     </Metric>
   );
 };
@@ -81,10 +81,10 @@ export const WSOHMPrice = () => {
   return (
     <Metric className="wsoprice">
       <Metric.Title>
-        wsOHM Price
+        {wsOHM_TICKER} Price
         <InfoTooltip
           message={
-            "wsOHM = sOHM * index\n\nThe price of wsOHM is equal to the price of OHM multiplied by the current index"
+            "wsEXOD = sEXOD * index\n\nThe price of wsEXOD is equal to the price of EXOD multiplied by the current index"
           }
         />
       </Metric.Title>

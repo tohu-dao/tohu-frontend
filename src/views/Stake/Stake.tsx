@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   Box,
   Button,
@@ -22,16 +22,17 @@ import RebaseTimer from "../../components/RebaseTimer/RebaseTimer";
 import TabPanel from "../../components/TabPanel";
 import { getOhmTokenImage, getTokenImage, trim } from "../../helpers";
 import { changeApproval, changeStake } from "../../slices/StakeThunk";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
 import "./stake.scss";
 import { useWeb3Context } from "src/hooks/web3Context";
-import { isPendingTxn, txnButtonText } from "src/slices/PendingTxnsSlice";
+import { isPendingTxn } from "src/slices/PendingTxnsSlice";
+import TxnButtonText from "src/components/TxnButtonText";
 import { Skeleton } from "@material-ui/lab";
-import ExternalStakePool from "./ExternalStakePool";
 import { error } from "../../slices/MessagesSlice";
 import { ethers } from "ethers";
+import { OHM_TICKER, sOHM_TICKER } from "../../constants";
+import { useAppSelector } from "src/hooks";
 
-function a11yProps(index) {
+function a11yProps(index: number) {
   return {
     id: `simple-tab-${index}`,
     "aria-controls": `simple-tabpanel-${index}`,
@@ -47,80 +48,74 @@ function Stake() {
 
   const [zoomed, setZoomed] = useState(false);
   const [view, setView] = useState(0);
-  const [quantity, setQuantity] = useState("");
+  const [quantity, setQuantity] = useState(0);
 
-  const isAppLoading = useSelector(state => state.app.loading);
-  const currentIndex = useSelector(state => {
+  const isAppLoading = useAppSelector(state => state.app.loading);
+  const currentIndex = useAppSelector(state => {
     return state.app.currentIndex;
   });
-  const fiveDayRate = useSelector(state => {
+  const fiveDayRate = useAppSelector(state => {
     return state.app.fiveDayRate;
   });
-  const ohmBalance = useSelector(state => {
+  const ohmBalance = useAppSelector(state => {
     return state.account.balances && state.account.balances.ohm;
   });
-  const oldSohmBalance = useSelector(state => {
-    return state.account.balances && state.account.balances.oldsohm;
-  });
-  const sohmBalance = useSelector(state => {
+  const sohmBalance = useAppSelector(state => {
     return state.account.balances && state.account.balances.sohm;
   });
-  const fsohmBalance = useSelector(state => {
-    return state.account.balances && state.account.balances.fsohm;
-  });
-  const wsohmBalance = useSelector(state => {
+  const wsohmBalance = useAppSelector(state => {
     return state.account.balances && state.account.balances.wsohm;
   });
-  const wsohmAsSohm = useSelector(state => {
+  const wsohmAsSohm = useAppSelector(state => {
     return state.account.balances && state.account.balances.wsohmAsSohm;
   });
-  const stakeAllowance = useSelector(state => {
-    return state.account.staking && state.account.staking.ohmStake;
+  const stakeAllowance = useAppSelector(state => {
+    return (state.account.staking && state.account.staking.ohmStake) || 0;
   });
-  const unstakeAllowance = useSelector(state => {
-    return state.account.staking && state.account.staking.ohmUnstake;
+  const unstakeAllowance = useAppSelector(state => {
+    return (state.account.staking && state.account.staking.ohmUnstake) || 0;
   });
-  const stakingRebase = useSelector(state => {
-    return state.app.stakingRebase;
+  const stakingRebase = useAppSelector(state => {
+    return state.app.stakingRebase || 0;
   });
-  const stakingAPY = useSelector(state => {
-    return state.app.stakingAPY;
+  const stakingAPY = useAppSelector(state => {
+    return state.app.stakingAPY || 0;
   });
-  const stakingTVL = useSelector(state => {
+  const stakingTVL = useAppSelector(state => {
     return state.app.stakingTVL;
   });
 
-  const pendingTransactions = useSelector(state => {
+  const pendingTransactions = useAppSelector(state => {
     return state.pendingTransactions;
   });
 
   const setMax = () => {
     if (view === 0) {
-      setQuantity(ohmBalance);
+      setQuantity(Number(ohmBalance));
     } else {
-      setQuantity(sohmBalance);
+      setQuantity(Number(sohmBalance));
     }
   };
 
-  const onSeekApproval = async token => {
+  const onSeekApproval = async (token: string) => {
     await dispatch(changeApproval({ address, token, provider, networkID: chainID }));
   };
 
-  const onChangeStake = async action => {
+  const onChangeStake = async (action: string) => {
     // eslint-disable-next-line no-restricted-globals
-    if (isNaN(quantity) || quantity === 0 || quantity === "") {
+    if (isNaN(quantity) || quantity === 0) {
       // eslint-disable-next-line no-alert
       return dispatch(error(t`Please enter a value!`));
     }
 
     // 1st catch if quantity > balance
-    let gweiValue = ethers.utils.parseUnits(quantity, "gwei");
+    let gweiValue = ethers.utils.parseUnits(quantity.toString(), "gwei");
     if (action === "stake" && gweiValue.gt(ethers.utils.parseUnits(ohmBalance, "gwei"))) {
-      return dispatch(error(t`You cannot stake more than your OHM balance.`));
+      return dispatch(error(t`You cannot stake more than your ${OHM_TICKER} balance.`));
     }
 
     if (action === "unstake" && gweiValue.gt(ethers.utils.parseUnits(sohmBalance, "gwei"))) {
-      return dispatch(error(t`You cannot unstake more than your sOHM balance.`));
+      return dispatch(error(t`You cannot unstake more than your ${sOHM_TICKER} balance.`));
     }
 
     await dispatch(changeStake({ address, action, value: quantity.toString(), provider, networkID: chainID }));
@@ -145,12 +140,12 @@ function Stake() {
     </Button>,
   );
 
-  const changeView = (event, newView) => {
+  const changeView = (_event: React.ChangeEvent<{}>, newView: number) => {
     setView(newView);
   };
 
   const trimmedBalance = Number(
-    [sohmBalance, fsohmBalance, wsohmAsSohm]
+    [sohmBalance, wsohmAsSohm]
       .filter(Boolean)
       .map(balance => Number(balance))
       .reduce((a, b) => a + b, 0)
@@ -158,7 +153,7 @@ function Stake() {
   );
   const trimmedStakingAPY = trim(stakingAPY * 100, 1);
   const stakingRebasePercentage = trim(stakingRebase * 100, 4);
-  const nextRewardValue = trim((stakingRebasePercentage / 100) * trimmedBalance, 4);
+  const nextRewardValue = trim((Number(stakingRebasePercentage) / 100) * trimmedBalance, 4);
 
   return (
     <div id="stake-view">
@@ -169,21 +164,6 @@ function Stake() {
               <div className="card-header">
                 <Typography variant="h5">Single Stake (3, 3)</Typography>
                 <RebaseTimer />
-
-                {address && oldSohmBalance > 0.01 && (
-                  <Link
-                    className="migrate-sohm-button"
-                    style={{ textDecoration: "none" }}
-                    href="https://docs.olympusdao.finance/using-the-website/migrate"
-                    aria-label="migrate-sohm"
-                    target="_blank"
-                  >
-                    <NewReleases viewBox="0 0 24 24" />
-                    <Typography>
-                      <Trans>Migrate sOHM!</Trans>
-                    </Typography>
-                  </Link>
-                )}
               </div>
             </Grid>
 
@@ -198,7 +178,7 @@ function Stake() {
                       <Typography variant="h4">
                         {stakingAPY ? (
                           <span data-testid="apy-value">
-                            {new Intl.NumberFormat("en-US").format(trimmedStakingAPY)}%
+                            {new Intl.NumberFormat("en-US").format(Number(trimmedStakingAPY))}%
                           </span>
                         ) : (
                           <Skeleton width="150px" data-testid="apy-loading" />
@@ -236,7 +216,9 @@ function Stake() {
                       </Typography>
                       <Typography variant="h4">
                         {currentIndex ? (
-                          <span data-testid="index-value">{trim(currentIndex, 1)} OHM</span>
+                          <span data-testid="index-value">
+                            {trim(Number(currentIndex), 2)} {sOHM_TICKER}
+                          </span>
                         ) : (
                           <Skeleton width="150px" data-testid="index-loading" />
                         )}
@@ -254,7 +236,7 @@ function Stake() {
                     {modalButton}
                   </div>
                   <Typography variant="h6">
-                    <Trans>Connect your wallet to stake OHM</Trans>
+                    <Trans>Connect your wallet to stake EXOD</Trans>
                   </Typography>
                 </div>
               ) : (
@@ -270,7 +252,7 @@ function Stake() {
                       onChange={changeView}
                       aria-label="stake tabs"
                       //hides the tab underline sliding animation in while <Zoom> is loading
-                      TabIndicatorProps={!zoomed && { style: { display: "none" } }}
+                      TabIndicatorProps={!zoomed ? { style: { display: "none" } } : undefined}
                     >
                       <Tab
                         label={t({
@@ -288,16 +270,16 @@ function Stake() {
                             <Typography variant="body1" className="stake-note" color="textSecondary">
                               {view === 0 ? (
                                 <>
-                                  <Trans>First time staking</Trans> <b>OHM</b>?
+                                  <Trans>First time staking</Trans> <b>{OHM_TICKER}</b>?
                                   <br />
-                                  <Trans>Please approve Olympus Dao to use your</Trans> <b>OHM</b>{" "}
+                                  <Trans>Please approve Exodia to use your</Trans> <b>{OHM_TICKER}</b>{" "}
                                   <Trans>for staking</Trans>.
                                 </>
                               ) : (
                                 <>
-                                  <Trans>First time unstaking</Trans> <b>sOHM</b>?
+                                  <Trans>First time unstaking</Trans> <b>{sOHM_TICKER}</b>?
                                   <br />
-                                  <Trans>Please approve Olympus Dao to use your</Trans> <b>sOHM</b>{" "}
+                                  <Trans>Please approve Exodia to use your</Trans> <b>{sOHM_TICKER}</b>{" "}
                                   <Trans>for unstaking</Trans>.
                                 </>
                               )}
@@ -312,7 +294,7 @@ function Stake() {
                               placeholder="Enter an amount"
                               className="stake-input"
                               value={quantity}
-                              onChange={e => setQuantity(e.target.value)}
+                              onChange={e => setQuantity(Number(e.target.value))}
                               labelWidth={0}
                               endAdornment={
                                 <InputAdornment position="end">
@@ -332,58 +314,82 @@ function Stake() {
                         {isAllowanceDataLoading ? (
                           <Skeleton />
                         ) : address && hasAllowance("ohm") ? (
-                          <Button
-                            className="stake-button"
-                            variant="contained"
-                            color="primary"
-                            disabled={isPendingTxn(pendingTransactions, "staking")}
-                            onClick={() => {
-                              onChangeStake("stake");
-                            }}
-                          >
-                            {txnButtonText(pendingTransactions, "staking", t`Stake OHM`)}
-                          </Button>
+                          <Box p={"10px"}>
+                            <Button
+                              className="stake-button"
+                              variant="contained"
+                              color="primary"
+                              disabled={isPendingTxn(pendingTransactions, "staking")}
+                              onClick={() => {
+                                onChangeStake("stake");
+                              }}
+                            >
+                              <TxnButtonText
+                                pendingTransactions={pendingTransactions}
+                                type="staking"
+                                defaultText={`Stake ${OHM_TICKER}`}
+                              />
+                            </Button>
+                          </Box>
                         ) : (
-                          <Button
-                            className="stake-button"
-                            variant="contained"
-                            color="primary"
-                            disabled={isPendingTxn(pendingTransactions, "approve_staking")}
-                            onClick={() => {
-                              onSeekApproval("ohm");
-                            }}
-                          >
-                            {txnButtonText(pendingTransactions, "approve_staking", t`Approve`)}
-                          </Button>
+                          <Box p={"10px"}>
+                            <Button
+                              className="stake-button"
+                              variant="contained"
+                              color="primary"
+                              disabled={isPendingTxn(pendingTransactions, "approve_staking")}
+                              onClick={() => {
+                                onSeekApproval("ohm");
+                              }}
+                            >
+                              <TxnButtonText
+                                pendingTransactions={pendingTransactions}
+                                type="approve_staking"
+                                defaultText="Approve"
+                              />
+                            </Button>
+                          </Box>
                         )}
                       </TabPanel>
                       <TabPanel value={view} index={1} className="stake-tab-panel">
                         {isAllowanceDataLoading ? (
                           <Skeleton />
                         ) : address && hasAllowance("sohm") ? (
-                          <Button
-                            className="stake-button"
-                            variant="contained"
-                            color="primary"
-                            disabled={isPendingTxn(pendingTransactions, "unstaking")}
-                            onClick={() => {
-                              onChangeStake("unstake");
-                            }}
-                          >
-                            {txnButtonText(pendingTransactions, "unstaking", t`Unstake OHM`)}
-                          </Button>
+                          <Box p={"10px"}>
+                            <Button
+                              className="stake-button"
+                              variant="contained"
+                              color="primary"
+                              disabled={isPendingTxn(pendingTransactions, "unstaking")}
+                              onClick={() => {
+                                onChangeStake("unstake");
+                              }}
+                            >
+                              <TxnButtonText
+                                pendingTransactions={pendingTransactions}
+                                type="unstaking"
+                                defaultText={`Unstake ${OHM_TICKER}`}
+                              />
+                            </Button>
+                          </Box>
                         ) : (
-                          <Button
-                            className="stake-button"
-                            variant="contained"
-                            color="primary"
-                            disabled={isPendingTxn(pendingTransactions, "approve_unstaking")}
-                            onClick={() => {
-                              onSeekApproval("sohm");
-                            }}
-                          >
-                            {txnButtonText(pendingTransactions, "approve_unstaking", t`Approve`)}
-                          </Button>
+                          <Box p={"10px"}>
+                            <Button
+                              className="stake-button"
+                              variant="contained"
+                              color="primary"
+                              disabled={isPendingTxn(pendingTransactions, "approve_unstaking")}
+                              onClick={() => {
+                                onSeekApproval("sohm");
+                              }}
+                            >
+                              <TxnButtonText
+                                pendingTransactions={pendingTransactions}
+                                type="approve_unstaking"
+                                defaultText="Approve"
+                              />
+                            </Button>
+                          </Box>
                         )}
                       </TabPanel>
                     </Box>
@@ -395,7 +401,13 @@ function Stake() {
                         <Trans>Unstaked Balance</Trans>
                       </Typography>
                       <Typography variant="body1" id="user-balance">
-                        {isAppLoading ? <Skeleton width="80px" /> : <>{trim(ohmBalance, 4)} OHM</>}
+                        {isAppLoading ? (
+                          <Skeleton width="80px" />
+                        ) : (
+                          <>
+                            {trim(Number(ohmBalance), 4)} {OHM_TICKER}
+                          </>
+                        )}
                       </Typography>
                     </div>
 
@@ -404,36 +416,24 @@ function Stake() {
                         <Trans>Staked Balance</Trans>
                       </Typography>
                       <Typography variant="body1" id="user-staked-balance">
-                        {isAppLoading ? <Skeleton width="80px" /> : <>{trimmedBalance} sOHM</>}
+                        {isAppLoading ? (
+                          <Skeleton width="80px" />
+                        ) : (
+                          <>
+                            {trimmedBalance} {sOHM_TICKER}
+                          </>
+                        )}
                       </Typography>
                     </div>
 
-                    <div className="data-row" style={{ paddingLeft: "10px" }}>
-                      <Typography variant="body2" color="textSecondary">
-                        <Trans>Single Staking</Trans>
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        {isAppLoading ? <Skeleton width="80px" /> : <>{trim(sohmBalance, 4)} sOHM</>}
-                      </Typography>
-                    </div>
-
-                    <div className="data-row" style={{ paddingLeft: "10px" }}>
-                      <Typography variant="body2" color="textSecondary">
-                        <Trans>Staked Balance in Fuse</Trans>
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        {isAppLoading ? <Skeleton width="80px" /> : <>{trim(fsohmBalance, 4)} fsOHM</>}
-                      </Typography>
-                    </div>
-
-                    <div className="data-row" style={{ paddingLeft: "10px" }}>
+                    {/*                    <div className="data-row" style={{ paddingLeft: "10px" }}>
                       <Typography variant="body2" color="textSecondary">
                         <Trans>Wrapped Balance</Trans>
                       </Typography>
                       <Typography variant="body2" color="textSecondary">
-                        {isAppLoading ? <Skeleton width="80px" /> : <>{trim(wsohmBalance, 4)} wsOHM</>}
+                        {isAppLoading ? <Skeleton width="80px" /> : <>{trim(Number(wsohmBalance), 4)} wsOHM</>}
                       </Typography>
-                    </div>
+                    </div>*/}
 
                     <Divider color="secondary" />
 
@@ -442,7 +442,13 @@ function Stake() {
                         <Trans>Next Reward Amount</Trans>
                       </Typography>
                       <Typography variant="body1">
-                        {isAppLoading ? <Skeleton width="80px" /> : <>{nextRewardValue} sOHM</>}
+                        {isAppLoading ? (
+                          <Skeleton width="80px" />
+                        ) : (
+                          <>
+                            {nextRewardValue} {sOHM_TICKER}
+                          </>
+                        )}
                       </Typography>
                     </div>
 
@@ -460,7 +466,7 @@ function Stake() {
                         <Trans>ROI (5-Day Rate)</Trans>
                       </Typography>
                       <Typography variant="body1">
-                        {isAppLoading ? <Skeleton width="80px" /> : <>{trim(fiveDayRate * 100, 4)}%</>}
+                        {isAppLoading ? <Skeleton width="80px" /> : <>{trim(Number(fiveDayRate) * 100, 4)}%</>}
                       </Typography>
                     </div>
                   </div>
@@ -470,8 +476,6 @@ function Stake() {
           </Grid>
         </Paper>
       </Zoom>
-
-      <ExternalStakePool />
     </div>
   );
 }

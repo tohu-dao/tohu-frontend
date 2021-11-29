@@ -1,12 +1,12 @@
 import { ThemeProvider } from "@material-ui/core/styles";
 import { useEffect, useState, useCallback } from "react";
-import { Route, Redirect, Switch, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Route, Redirect, Switch, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useMediaQuery } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import useTheme from "./hooks/useTheme";
-import useBonds from "./hooks/Bonds";
+import useBonds, { IAllBondData } from "./hooks/Bonds";
 import { useAddress, useWeb3Context } from "./hooks/web3Context";
 import useSegmentAnalytics from "./hooks/useSegmentAnalytics";
 import { segmentUA } from "./helpers/userAnalyticHelpers";
@@ -17,7 +17,7 @@ import { loadAppDetails } from "./slices/AppSlice";
 import { loadAccountDetails, calculateUserBondDetails } from "./slices/AccountSlice";
 import { info } from "./slices/MessagesSlice";
 
-import { Stake, ChooseBond, Bond, Wrap, TreasuryDashboard, PoolTogether } from "./views";
+import { Stake, ChooseBond, Bond, Wrap, TreasuryDashboard, PoolTogether, Calc } from "./views";
 import Sidebar from "./components/Sidebar/Sidebar.jsx";
 import TopBar from "./components/TopBar/TopBar.jsx";
 import NavDrawer from "./components/Sidebar/NavDrawer.jsx";
@@ -28,6 +28,7 @@ import { dark as darkTheme } from "./themes/dark.js";
 import { light as lightTheme } from "./themes/light.js";
 import { girth as gTheme } from "./themes/girth.js";
 import "./style.scss";
+import { Bond as IBond } from "./lib/Bond";
 import { useGoogleAnalytics } from "./hooks/useGoogleAnalytics";
 
 // 😬 Sorry for all the console logging
@@ -74,8 +75,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function App() {
-  useSegmentAnalytics();
-  useGoogleAnalytics();
+  //useSegmentAnalytics();
+  //useGoogleAnalytics();
   const location = useLocation();
   const dispatch = useDispatch();
   const [theme, toggleTheme, mounted] = useTheme();
@@ -157,7 +158,7 @@ function App() {
       setWalletChecked(true);
     }
     if (shouldTriggerSafetyCheck()) {
-      dispatch(info("Safety Check: Always verify you're on app.olympusdao.finance!"));
+      dispatch(info("Safety Check: Always verify you're on app.exodia.fi!"));
     }
   }, []);
 
@@ -197,56 +198,62 @@ function App() {
 
   return (
     <ThemeProvider theme={themeMode}>
-      <CssBaseline />
-      {/* {isAppLoading && <LoadingSplash />} */}
-      <div className={`app ${isSmallerScreen && "tablet"} ${isSmallScreen && "mobile"} ${theme}`}>
-        <Messages />
-        <TopBar theme={theme} toggleTheme={toggleTheme} handleDrawerToggle={handleDrawerToggle} />
-        <nav className={classes.drawer}>
-          {isSmallerScreen ? (
-            <NavDrawer mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} />
-          ) : (
-            <Sidebar />
-          )}
-        </nav>
+      <Router>
+        <CssBaseline />
+        {/* {isAppLoading && <LoadingSplash />} */}
+        <div className={`app ${isSmallerScreen && "tablet"} ${isSmallScreen && "mobile"} ${theme}`}>
+          <Messages />
+          <TopBar theme={theme} toggleTheme={toggleTheme} handleDrawerToggle={handleDrawerToggle} />
+          <nav className={classes.drawer}>
+            {isSmallerScreen ? (
+              <NavDrawer mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} />
+            ) : (
+              <Sidebar />
+            )}
+          </nav>
 
-        <div className={`${classes.content} ${isSmallerScreen && classes.contentShift}`}>
-          <Switch>
-            <Route exact path="/dashboard">
-              <TreasuryDashboard />
-            </Route>
+          <div className={`${classes.content} ${isSmallerScreen && classes.contentShift}`}>
+            <Switch>
+              <Route exact path="/dashboard">
+                <TreasuryDashboard />
+              </Route>
 
-            <Route exact path="/">
-              <Redirect to="/stake" />
-            </Route>
+              <Route exact path="/">
+                <Redirect to="/stake" />
+              </Route>
 
-            <Route path="/stake">
-              <Stake />
-            </Route>
+              <Route path="/stake">
+                <Stake />
+              </Route>
 
-            <Route path="/wrap">
-              <Wrap />
-            </Route>
+              <Route path="/obliterator">
+                <Calc />
+              </Route>
+              {/*
+                <Route path="/wrap">
+                  <Wrap />
+                </Route>
 
-            <Route path="/33-together">
-              <PoolTogether />
-            </Route>
+                <Route path="/33-together">
+                  <PoolTogether />
+                </Route>
+   */}
+              <Route path="/bonds">
+                {(bonds as IAllBondData[]).map(bond => {
+                  return (
+                    <Route exact key={bond.name} path={`/bonds/${bond.name}`}>
+                      <Bond bond={bond} />
+                    </Route>
+                  );
+                })}
+                <ChooseBond />
+              </Route>
 
-            <Route path="/bonds">
-              {bonds.map(bond => {
-                return (
-                  <Route exact key={bond.name} path={`/bonds/${bond.name}`}>
-                    <Bond bond={bond} />
-                  </Route>
-                );
-              })}
-              <ChooseBond />
-            </Route>
-
-            <Route component={NotFound} />
-          </Switch>
+              <Route component={NotFound} />
+            </Switch>
+          </div>
         </div>
-      </div>
+      </Router>
     </ThemeProvider>
   );
 }

@@ -3,7 +3,8 @@ import { useTheme } from "@material-ui/core/styles";
 import { trim, formatCurrency } from "../../../../helpers";
 import { useTreasuryMetrics } from "../../hooks/useTreasuryMetrics";
 import { useTreasuryRebases } from "../../hooks/useTreasuryRebases";
-import { bulletpoints, tooltipItems, tooltipInfoMessages, itemType } from "../../treasuryData.js";
+import { bulletpoints, tooltipItems, tooltipInfoMessages, itemType } from "../../treasuryData";
+import { OHM_TICKER } from "../../../../constants";
 
 export const Graph = ({ children }) => <>{children}</>;
 
@@ -36,13 +37,7 @@ export const MarketValueGraph = () => {
     <Chart
       type="stack"
       data={data}
-      dataKey={[
-        "treasuryDaiMarketValue",
-        "treasuryFraxMarketValue",
-        "treasuryWETHMarketValue",
-        "treasuryXsushiMarketValue",
-        "treasuryLusdMarketValue",
-      ]}
+      dataKey={["treasuryDaiMarketValue", "treasuryWETHMarketValue"]}
       stopColor={[
         ["#F5AC37", "#EA9276"],
         ["#768299", "#98B3E9"],
@@ -70,7 +65,7 @@ export const RiskFreeValueGraph = () => {
       type="stack"
       data={data}
       format="currency"
-      dataKey={["treasuryDaiRiskFreeValue", "treasuryFraxRiskFreeValue", "treasuryLusdRiskFreeValue"]}
+      dataKey={["treasuryDaiRiskFreeValue"]}
       stopColor={[
         ["#F5AC37", "#EA9276"],
         ["#768299", "#98B3E9"],
@@ -104,7 +99,7 @@ export const ProtocolOwnedLiquidityGraph = () => {
       dataKey={["treasuryOhmDaiPOL"]}
       bulletpointColors={bulletpoints.pol}
       infoTooltipMessage={tooltipInfoMessages.pol}
-      headerText="Protocol Owned Liquidity OHM-DAI"
+      headerText="Protocol Owned Liquidity EXOD-DAI"
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
       headerSubText={`${data && trim(data[0].treasuryOhmDaiPOL, 2)}% `}
       stopColor={[["rgba(128, 204, 131, 1)", "rgba(128, 204, 131, 0)"]]}
@@ -132,7 +127,7 @@ export const OHMStakedGraph = () => {
       data={staked}
       dataKey={["staked"]}
       dataFormat="percent"
-      headerText="OHM Staked"
+      headerText={`${OHM_TICKER} staked`}
       stopColor={[["#55EBC7", "#47ACEB"]]}
       bulletpointColors={bulletpoints.staked}
       infoTooltipMessage={tooltipInfoMessages.staked}
@@ -189,7 +184,7 @@ export const RunwayAvailableGraph = () => {
     <Chart
       type="multi"
       data={runway}
-      dataKey={["runwayCurrent", "runway7dot5k", "runway5k", "runway2dot5k"]}
+      dataKey={["runwayCurrent", "runway7dot5k"]}
       color={theme.palette.text.primary}
       stroke={colors}
       headerText="Runway Available"
