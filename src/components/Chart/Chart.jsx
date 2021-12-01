@@ -269,7 +269,7 @@ const renderMultiLineChart = (
   <LineChart data={data}>
     <XAxis
       dataKey="timestamp"
-      interval={30}
+      interval={300}
       axisLine={false}
       tickCount={3}
       tickLine={false}
@@ -283,7 +283,7 @@ const renderMultiLineChart = (
       axisLine={false}
       tickLine={false}
       width={25}
-      tickFormatter={number => (number !== 0 ? `${trim(parseFloat(number), 2)}` : "")}
+      tickFormatter={number => (number !== 0 ? `${trim(parseFloat(number), 2)}%` : "")}
       domain={[0, "auto"]}
       connectNulls={true}
       allowDataOverflow={false}

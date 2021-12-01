@@ -40,6 +40,14 @@ query {
 }
 `;
 
+export const treasuryOhmQuery = `
+query {
+  balances(first: 100, orderBy: timestamp, orderDirection: desc) {
+    sOHMBalanceUSD
+  }
+}
+`;
+
 // export default treasuryData;
 export const bulletpoints = {
   tvl: [
@@ -159,7 +167,7 @@ export const bulletpoints = {
 
 export const tooltipItems = {
   tvl: ["Total Value Deposited"],
-  coin: ["DAI", "wFTM"],
+  coin: ["DAI", "wFTM", "sOHM"],
   rfv: ["DAI"],
   holder: ["Exodians"],
   apy: ["APY"],

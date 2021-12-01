@@ -5,6 +5,7 @@ import { useTreasuryMetrics } from "../../hooks/useTreasuryMetrics";
 import { useTreasuryRebases } from "../../hooks/useTreasuryRebases";
 import { bulletpoints, tooltipItems, tooltipInfoMessages, itemType } from "../../treasuryData";
 import { OHM_TICKER } from "../../../../constants";
+import { useTreasuryOhm } from "../../hooks/useTreasuryOhm";
 
 export const Graph = ({ children }) => <>{children}</>;
 
@@ -32,12 +33,27 @@ export const TotalValueDepositedGraph = () => {
 export const MarketValueGraph = () => {
   const theme = useTheme();
   const { data } = useTreasuryMetrics({ refetchOnMount: false });
+  let { data: ethData } = useTreasuryOhm({ refetchOnMount: false });
+
+  const datalength = data && data.length;
+  const ethDatalength = ethData && ethData.length;
+
+  for (let i = 0; i < datalength - ethDatalength; i++) {
+    ethData && ethData.push({sOHMBalanceUSD: 0})
+  }
+  console.log(ethData);
+  console.log(data)
+  const stats = ethData && data && data.map((e, i) => ({
+    timestamp: e.id,
+    ...e,
+    sOHMBalanceUSD: ethData[i].sOHMBalanceUSD,
+  }))
 
   return (
     <Chart
       type="stack"
-      data={data}
-      dataKey={["treasuryDaiMarketValue", "treasuryWETHMarketValue"]}
+      data={stats}
+      dataKey={["treasuryDaiMarketValue", "treasuryWETHMarketValue", "sOHMBalanceUSD"]}
       stopColor={[
         ["#F5AC37", "#EA9276"],
         ["#768299", "#98B3E9"],
@@ -46,7 +62,7 @@ export const MarketValueGraph = () => {
         ["#ff758f", "#c9184a"],
       ]}
       headerText="Market Value of Treasury Assets"
-      headerSubText={`${data && formatCurrency(data[0].treasuryMarketValue)}`}
+      headerSubText={`${ethData && data && formatCurrency(data[0].treasuryMarketValue + ethData[0].sOHMBalanceUSD)}`}
       bulletpointColors={bulletpoints.coin}
       itemNames={tooltipItems.coin}
       itemType={itemType.dollar}

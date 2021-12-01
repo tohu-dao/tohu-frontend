@@ -18,6 +18,24 @@ const apollo = async <T>(queryString: string) => {
   }
 };
 
+const testClient = () =>
+  new ApolloClient({
+    uri: "https://api.thegraph.com/subgraphs/id/Qmc5K2rRRvfmN5XV6Tek3Zouk5NG1wsUmDzznVzNCVcdJ1",
+    cache: new InMemoryCache(),
+  });
+
+
+export const testApollo = async <T>(queryString: string) => {
+  try {
+    const data = testClient().query<T>({
+      query: gql(queryString),
+    });
+    return data;
+  } catch (err) {
+    console.error("graph ql error: ", err);
+  }
+};
+
 const extClient = (uri: string) =>
   new ApolloClient({
     uri: uri,

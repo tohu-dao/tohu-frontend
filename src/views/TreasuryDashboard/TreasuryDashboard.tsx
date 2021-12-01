@@ -40,6 +40,7 @@ const TreasuryDashboard = memo(() => {
         </Box>
         <Zoom in={true}>
           <Grid container spacing={2} className="data-grid">
+
             <Grid item lg={6} md={6} sm={12} xs={12}>
               <Paper className="ohm-card ohm-chart-card">
                 <TotalValueDepositedGraph />
