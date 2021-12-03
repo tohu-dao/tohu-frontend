@@ -1,5 +1,6 @@
 import {
   Box,
+  Container,
   Grid,
   Paper,
   Table,
@@ -25,6 +26,8 @@ import isEmpty from "lodash/isEmpty";
 import { allBondsMap } from "src/helpers/AllBonds";
 import { useAppSelector } from "src/hooks";
 import { IUserBondDetails } from "src/slices/AccountSlice";
+import { DebtRatioGraph, OhmMintedGraph, OhmMintedPerTotalSupplyGraph, TotalValueDepositedGraph } from "../TreasuryDashboard/components/Graph/Graph";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 function ChooseBond() {
   const { chainID } = useWeb3Context();
@@ -140,7 +143,6 @@ function ChooseBond() {
           )}
         </Paper>
       </Zoom>
-
       {isSmallScreen && (
         <Box className="ohm-card-container">
           <Grid container item spacing={2}>
@@ -152,8 +154,37 @@ function ChooseBond() {
           </Grid>
         </Box>
       )}
+
+      <Zoom in={true}>
+        <Grid container spacing={2} className="ohm-card">
+          <Grid item lg={6} md={6} sm={12} xs={12}>
+            <Paper className="ohm-card">
+              <OhmMintedGraph />
+            </Paper>
+          </Grid>
+          <Grid item lg={6} md={6} sm={12} xs={12}>
+            <Paper className="ohm-card">
+              <OhmMintedPerTotalSupplyGraph />
+            </Paper>
+          </Grid>
+          <Grid item xs={12}>
+            <Paper className="ohm-card">
+              <DebtRatioGraph />
+            </Paper>
+          </Grid>
+        </Grid>
+      </Zoom>
     </div>
   );
 }
 
-export default ChooseBond;
+
+const queryClient = new QueryClient();
+
+// Normally this would be done
+// much higher up in our App.
+export default () => (
+  <QueryClientProvider client={queryClient}>
+    <ChooseBond />
+  </QueryClientProvider>
+);

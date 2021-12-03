@@ -27,6 +27,8 @@ query {
     runwayCurrent
     holders
     treasuryOhmDaiPOL
+    index
+    ohmMinted
   }
 }
 `;
@@ -44,6 +46,17 @@ export const treasuryOhmQuery = `
 query {
   balances(first: 100, orderBy: timestamp, orderDirection: desc) {
     sOHMBalanceUSD
+  }
+}
+`;
+
+export const debtQuery = `
+query {
+  bondDiscounts(first: 1000, orderBy: timestamp, orderDirection: desc) {
+    dai_debt_ratio
+    eth_debt_ratio
+    ohmdai_debt_ratio
+    timestamp
   }
 }
 `;
@@ -163,6 +176,18 @@ export const bulletpoints = {
       border: "1px solid rgba(118, 130, 153, 1)",
     },
   ],
+  dilution: [
+    {
+      right: 15,
+      top: -12,
+      background: "linear-gradient(180deg, #F5AC37 -10%, #EA9276 100%)",
+    },
+    {
+      right: 25,
+      top: -12,
+      background: "linear-gradient(180deg, #55EBC7 -10%, #47ACEB 100%)",
+    },
+  ]
 };
 
 export const tooltipItems = {
@@ -173,6 +198,10 @@ export const tooltipItems = {
   apy: ["APY"],
   runway: ["Current", "7.5K APY", "5K APY", "2.5K APY"],
   pol: ["spLP Treasury", "Market spLP"],
+  dilution: ["Dilution Percentage", "wsEXOD Price"],
+  minted: ["EXOD minted"],
+  mcs: ["EXOD Minted/Total Supply"],
+  debtratio: ["DAI Debt Ratio", "ETH Debt Ratio", "OHM-DAI spLP Debt Ratio"]
 };
 
 export const tooltipInfoMessages = {
@@ -184,9 +213,13 @@ export const tooltipInfoMessages = {
   staked: "EXOD Staked, is the ratio of sEXOD to EXOD (staked vs unstaked)",
   apy: "Annual Percentage Yield, is the normalized representation of an interest rate, based on a compounding period over one year. Note that APYs provided are rather ballpark level indicators and not so much precise future results.",
   runway: "Runway, is the number of days sEXOD emissions can be sustained at a given rate. Lower APY = longer runway",
+  dilution: "Dilution, is the ratio between index growth and total supply growth. It indicates how much stakers have been diluted. Slower decline is better.",
+  minted: "EXOD Minted, is the number of EXOD minted each day from bonds",
+  mcs: "EXOD minted/Total Supply, is the number of EXOD minted per total supply of EXOD. As total supply increases, this percentage decreases."
 };
 
 export const itemType = {
   dollar: "$",
   percentage: "%",
+  OHM: "EXOD"
 };

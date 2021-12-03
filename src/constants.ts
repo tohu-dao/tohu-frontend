@@ -1,4 +1,4 @@
-export const THE_GRAPH_URL = "https://api.thegraph.com/subgraphs/name/exodiafinance/exodia-subgraph";
+export const THE_GRAPH_URL = "https://api.thegraph.com/subgraphs/name/hazelnutcloud/exodia-subgraph";
 export const THE_GRAPH_URL_ETH = "https://api.thegraph.com/subgraphs/name/exodiafinance/exodia-eth-treasury";
 export const EPOCH_INTERVAL = 28800;
 
