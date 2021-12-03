@@ -16,6 +16,7 @@ import { Paper, Link, Box, Typography, SvgIcon } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import StarIcon from "@material-ui/icons/Stars";
 import HomeIcon from "@material-ui/icons/Home";
+import Tooltip from "@material-ui/core/Tooltip";
 import "./sidebar.scss";
 
 function NavContent() {
@@ -143,10 +144,14 @@ function NavContent() {
                 }}
                 className={`button-dapp-menu ${isActive ? "active" : ""} obliterator`}
               >
-                <Typography variant="h6" className="obliterator">
-                  <SvgIcon color="primary" component={StarIcon} />
-                  <Trans>Obliterator</Trans>
-                </Typography>
+                <Tooltip
+                  title={<Trans>Estimate and visualize your potential returns over time by staking with Exodia</Trans>}
+                >
+                  <Typography variant="h6" className="obliterator">
+                    <SvgIcon color="primary" component={StarIcon} />
+                    <Trans>Obliterator</Trans>
+                  </Typography>
+                </Tooltip>
               </Link>
             </div>
           </div>
