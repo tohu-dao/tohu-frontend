@@ -1,4 +1,5 @@
 export const THE_GRAPH_URL = "https://api.thegraph.com/subgraphs/name/exodiafinance/exodia-subgraph";
+export const THE_GRAPH_URL_ETH = "https://api.thegraph.com/subgraphs/name/exodiafinance/exodia-eth-treasury";
 export const EPOCH_INTERVAL = 28800;
 
 // NOTE could get this from an outside source since it changes slightly over time
