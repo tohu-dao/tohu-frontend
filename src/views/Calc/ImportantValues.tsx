@@ -19,9 +19,17 @@ const ImportantValues = ({ marketPrice, stakingRebase, isAppLoading, trimmedBala
   return (
     <Grid item>
       <Grid container spacing={2} alignItems="flex-end">
-        <FieldValue value={`$${trim(marketPrice, 2)}`} field="EXOD Price" isAppLoading={isAppLoading} />
-        <FieldValue value={`${stakingRebasePercentage}%`} field="Current Rebase Rate" isAppLoading={isAppLoading} />
-        <FieldValue value={`${trimmedBalance} ${sOHM_TICKER}`} field="Your sEXOD Balance" isAppLoading={isAppLoading} />
+        <FieldValue value={`$${trim(marketPrice, 2)}`} field={<Trans>EXOD Price</Trans>} isAppLoading={isAppLoading} />
+        <FieldValue
+          value={`${stakingRebasePercentage}%`}
+          field={<Trans>Current Rebase Rate</Trans>}
+          isAppLoading={isAppLoading}
+        />
+        <FieldValue
+          value={`${trimmedBalance} ${sOHM_TICKER}`}
+          field={<Trans>Your sEXOD Balance</Trans>}
+          isAppLoading={isAppLoading}
+        />
       </Grid>
     </Grid>
   );
@@ -29,7 +37,7 @@ const ImportantValues = ({ marketPrice, stakingRebase, isAppLoading, trimmedBala
 
 export default ImportantValues;
 
-const FieldValue = ({ field, value, isAppLoading }: { field: string; value: any; isAppLoading: boolean }) => {
+const FieldValue = ({ field, value, isAppLoading }: { field: any; value: any; isAppLoading: boolean }) => {
   return (
     <Grid item xs={12} sm={4} md={4} lg={4}>
       <FieldContainer>

@@ -1,21 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import {
-  Button,
-  FormControl,
-  Grid,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
-  Paper,
-  Typography,
-  Zoom,
-  Slider,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  FormLabel,
-} from "@material-ui/core";
+import { OutlinedInput, Typography, Radio, RadioGroup, FormControlLabel } from "@material-ui/core";
 import { Trans } from "@lingui/macro";
 
 const PriceMultiplier = ({
@@ -50,7 +35,7 @@ const PriceMultiplier = ({
         </RadioGroup>
         <OutlinedInput
           type="number"
-          placeholder={`Custom...`}
+          placeholder={<Trans>Custom...</Trans>}
           value={multiplier || null}
           onChange={e => setMultiplier(Number(e.target.value) || null)}
           labelWidth={0}

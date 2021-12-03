@@ -111,31 +111,31 @@ function Calc() {
               <ImportantValues {...{ marketPrice, stakingRebase, isAppLoading, trimmedBalance }} />
               <CalcArea>
                 <FieldInput
-                  fieldName="sEXOD Amount"
+                  field={<Trans>sEXOD Amount</Trans>}
                   value={exodAmountInput}
-                  maxName="Max"
+                  max={<Trans>Max</Trans>}
                   onChange={setExodAmountInput}
                   onMax={() => setExodAmountInput(trimmedBalance)}
                 />
                 <FieldInput
-                  fieldName="Rebase rate"
+                  field={<Trans>Rebase rate</Trans>}
                   value={Number(rebaseRateInput.toFixed(4))}
-                  maxName="Current"
+                  max={<Trans>Current</Trans>}
                   onChange={setRebaseRateInput}
                   onMax={() => setRebaseRateInput(stakingRebase * 100)}
                 />
                 <FieldInput
-                  fieldName="EXOD price at purchase ($)"
+                  field={<Trans>EXOD price at purchase ($)</Trans>}
                   value={Number(exodPriceInput.toFixed(2))}
-                  maxName="Current"
+                  max={<Trans>Current</Trans>}
                   onChange={setExodPriceInput}
                   onMax={() => setExodPriceInput(marketPrice)}
                 />
 
                 <FieldInput
-                  fieldName="Future EXOD market price ($)"
+                  field={<Trans>Future EXOD market price ($)</Trans>}
                   value={Number(finalExodPriceInput.toFixed(2))}
-                  maxName="Current"
+                  max={<Trans>Current</Trans>}
                   onChange={setFinalExodPriceInput}
                   onMax={() => setFinalExodPriceInput(marketPrice)}
                 />
@@ -205,31 +205,31 @@ export default () => (
 );
 
 type FieldInputProps = {
-  fieldName: string;
+  field: any;
   value: number;
   onChange: (value: number) => void;
-  maxName: string;
+  max: any;
   onMax: (value: any) => void;
 };
 
-const FieldInput = ({ fieldName, value, onChange, maxName, onMax }: FieldInputProps) => {
+const FieldInput = ({ field, value, onChange, max, onMax }: FieldInputProps) => {
   return (
     <CalcRow>
       <Typography variant="h6" color="textSecondary">
-        {fieldName}
+        {field}
       </Typography>
       <FormControl variant="outlined" color="primary">
         <InputLabel htmlFor="amount-input"></InputLabel>
         <OutlinedInput
           type="number"
-          placeholder={`Enter ${fieldName}`}
+          placeholder={`${(<Trans>Enter</Trans>)} ${field}`}
           value={value || null}
           onChange={e => onChange(Number(e.target.value))}
           labelWidth={0}
           endAdornment={
             <InputAdornment position="end">
               <Button variant="text" onClick={onMax} color="inherit">
-                {maxName}
+                {max}
               </Button>
             </InputAdornment>
           }
@@ -251,10 +251,11 @@ const SliderHeader = ({
   return (
     <SliderHeaderContainer onClick={!!currentRunway ? onClick : undefined} runwayLoaded={!!currentRunway}>
       <Typography variant="h6" color="textSecondary">
-        {calcDays} Days
+        {calcDays} <Trans>Days</Trans>
       </Typography>
       <Typography variant="h6" color="textSecondary">
-        Current runway: {currentRunway ? `${currentRunway?.toFixed(2)} Days` : "Loading..."}
+        <Trans>Current runway:</Trans>{" "}
+        {currentRunway ? `${currentRunway?.toFixed(2)} ${(<Trans>Days</Trans>)}` : <Trans>Loading...</Trans>}
       </Typography>
     </SliderHeaderContainer>
   );
