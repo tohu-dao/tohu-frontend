@@ -19,6 +19,7 @@ import CalcHeader from "./CalcHeader";
 import ImportantValues from "./ImportantValues";
 import EstimatedValues from "./EstimatedValues";
 import PriceMultiplier from "./PriceMultiplier";
+import CalcChart from "./CalcChart";
 import {
   calcInitialInvestment,
   calcMinimumDays,
@@ -101,80 +102,95 @@ function Calc() {
   }, [initialInvestment, rebaseRateInput, calcDays, exodAmountInput]);
 
   return (
-    <CalcContainer id="stake-view">
-      <Zoom in={true}>
-        <Paper className="ohm-card">
-          <Grid container direction="column" spacing={2}>
-            <CalcHeader />
-            <ImportantValues {...{ marketPrice, stakingRebase, isAppLoading, trimmedBalance }} />
-            <CalcArea>
-              <FieldInput
-                fieldName="sEXOD Amount"
-                value={exodAmountInput}
-                maxName="Max"
-                onChange={setExodAmountInput}
-                onMax={() => setExodAmountInput(trimmedBalance)}
-              />
-              <FieldInput
-                fieldName="Rebase rate"
-                value={Number(rebaseRateInput.toFixed(4))}
-                maxName="Current"
-                onChange={setRebaseRateInput}
-                onMax={() => setRebaseRateInput(stakingRebase * 100)}
-              />
-              <FieldInput
-                fieldName="EXOD price at purchase ($)"
-                value={Number(exodPriceInput.toFixed(2))}
-                maxName="Current"
-                onChange={setExodPriceInput}
-                onMax={() => setExodPriceInput(marketPrice)}
-              />
+    <>
+      <CalcContainer id="stake-view">
+        <Zoom in={true}>
+          <Paper className="ohm-card">
+            <Grid container direction="column" spacing={2}>
+              <CalcHeader />
+              <ImportantValues {...{ marketPrice, stakingRebase, isAppLoading, trimmedBalance }} />
+              <CalcArea>
+                <FieldInput
+                  fieldName="sEXOD Amount"
+                  value={exodAmountInput}
+                  maxName="Max"
+                  onChange={setExodAmountInput}
+                  onMax={() => setExodAmountInput(trimmedBalance)}
+                />
+                <FieldInput
+                  fieldName="Rebase rate"
+                  value={Number(rebaseRateInput.toFixed(4))}
+                  maxName="Current"
+                  onChange={setRebaseRateInput}
+                  onMax={() => setRebaseRateInput(stakingRebase * 100)}
+                />
+                <FieldInput
+                  fieldName="EXOD price at purchase ($)"
+                  value={Number(exodPriceInput.toFixed(2))}
+                  maxName="Current"
+                  onChange={setExodPriceInput}
+                  onMax={() => setExodPriceInput(marketPrice)}
+                />
 
-              <FieldInput
-                fieldName="Future EXOD market price ($)"
-                value={Number(finalExodPriceInput.toFixed(2))}
-                maxName="Current"
-                onChange={setFinalExodPriceInput}
-                onMax={() => setFinalExodPriceInput(marketPrice)}
+                <FieldInput
+                  fieldName="Future EXOD market price ($)"
+                  value={Number(finalExodPriceInput.toFixed(2))}
+                  maxName="Current"
+                  onChange={setFinalExodPriceInput}
+                  onMax={() => setFinalExodPriceInput(marketPrice)}
+                />
+              </CalcArea>
+              <SliderArea>
+                <CalcRow>
+                  <SliderContainer>
+                    <SliderHeader
+                      currentRunway={currentRunway}
+                      calcDays={calcDays}
+                      onClick={() => setCalcDays(Math.floor(Number(currentRunway)))}
+                    />
+                    <Slider
+                      aria-label="Days"
+                      max={365}
+                      value={calcDays}
+                      color="primary"
+                      onChange={(_e, newValue) => setCalcDays(Number(newValue))}
+                    />
+                  </SliderContainer>
+                </CalcRow>
+                <CalcRow>
+                  <PriceMultiplier currentPrice={marketPrice} setFinalExodPriceInput={setFinalExodPriceInput} />
+                </CalcRow>
+              </SliderArea>
+              <EstimatedValues
+                initialInvestment={initialInvestment}
+                estimatedROI={calcRoi(totalReturns, initialInvestment)}
+                totalSExod={calcTotalExod(exodAmountInput, yieldPercent)}
+                estimatedProfits={calcProfits(totalReturns, initialInvestment)}
+                breakEvenDays={minimumDays}
+                minimumPrice={minimumPrice}
+                totalReturns={totalReturns}
               />
-            </CalcArea>
-            <SliderArea>
-              <CalcRow>
-                <SliderContainer>
-                  <SliderHeader
-                    currentRunway={currentRunway}
-                    calcDays={calcDays}
-                    onClick={() => setCalcDays(Math.floor(Number(currentRunway)))}
-                  />
-                  <Slider
-                    aria-label="Days"
-                    max={365}
-                    value={calcDays}
-                    color="primary"
-                    onChange={(_e, newValue) => setCalcDays(Number(newValue))}
-                  />
-                </SliderContainer>
-              </CalcRow>
-              <CalcRow>
-                <PriceMultiplier currentPrice={marketPrice} setFinalExodPriceInput={setFinalExodPriceInput} />
-              </CalcRow>
-            </SliderArea>
-            <EstimatedValues
-              initialInvestment={initialInvestment}
-              estimatedROI={calcRoi(totalReturns, initialInvestment)}
-              totalSExod={calcTotalExod(exodAmountInput, yieldPercent)}
-              estimatedProfits={calcProfits(totalReturns, initialInvestment)}
-              breakEvenDays={minimumDays}
-              minimumPrice={minimumPrice}
-              totalReturns={totalReturns}
+              <YugiQuote>
+                <Typography variant="subtitle2">My grandpa's deck has no pathetic cards, Kaiba 🃏</Typography>
+              </YugiQuote>
+            </Grid>
+          </Paper>
+        </Zoom>
+      </CalcContainer>
+      <CalcContainer>
+        <Zoom in={true}>
+          <Paper className="ohm-card">
+            <CalcChart
+              calcDays={calcDays}
+              exodAmountInput={exodAmountInput}
+              rebaseRateInput={rebaseRateInput}
+              finalExodPriceInput={finalExodPriceInput}
+              exodPriceInput={exodPriceInput}
             />
-            <YugiQuote>
-              <Typography variant="subtitle2">My grandpa's deck has no pathetic cards, Kaiba 🃏</Typography>
-            </YugiQuote>
-          </Grid>
-        </Paper>
-      </Zoom>
-    </CalcContainer>
+          </Paper>
+        </Zoom>
+      </CalcContainer>
+    </>
   );
 }
 

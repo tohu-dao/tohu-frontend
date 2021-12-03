@@ -81,8 +81,8 @@ const renderAreaChart = (
           ? dataFormat === "percent"
             ? `${trim(parseFloat(number), 2)}%`
             : dataFormat === "OHM"
-              ? number
-              : `${formatCurrency(parseFloat(number) / 1000000)}M`
+            ? number
+            : `${formatCurrency(parseFloat(number) / 1000000)}M`
           : ""
       }
       domain={[0, "auto"]}
@@ -229,11 +229,12 @@ const renderLineChart = (
   isExpanded,
   expandedGraphStrokeColor,
   scale,
+  xInterval = 100,
 ) => (
   <LineChart data={data}>
     <XAxis
       dataKey="timestamp"
-      interval={100}
+      interval={xInterval}
       axisLine={false}
       tickCount={3}
       tickLine={false}
@@ -293,7 +294,9 @@ const renderMultiLineChart = (
       axisLine={false}
       tickLine={false}
       width={25}
-      tickFormatter={number => (number !== 0 ? dataFormat !== "percent" ? `${trim(parseFloat(number), 2)}` : `${number}%` : "")}
+      tickFormatter={number =>
+        number !== 0 ? (dataFormat !== "percent" ? `${trim(parseFloat(number), 2)}` : `${number}%`) : ""
+      }
       domain={[0, "auto"]}
       connectNulls={true}
       allowDataOverflow={false}
@@ -401,17 +404,12 @@ const renderComposedChart = (
     />
     <Tooltip
       // formatter={value => trim(parseFloat(value), 2)}
-      content={<CustomTooltip itemNames={itemNames} itemType={itemType} bulletpointColors={bulletpointColors} isDilution />}
+      content={
+        <CustomTooltip itemNames={itemNames} itemType={itemType} bulletpointColors={bulletpointColors} isDilution />
+      }
     />
     <Area yAxisId="left" dataKey={dataKey[0]} stroke="none" fill={`url(#color-${dataKey[0]})`} fillOpacity={1} />
-    <Line
-      yAxisId="right"
-      type="basis"
-      dataKey={dataKey[1]}
-      stroke={stroke}
-      strokeWidth={3}
-      dot={false}
-    />;
+    <Line yAxisId="right" type="basis" dataKey={dataKey[1]} stroke={stroke} strokeWidth={3} dot={false} />;
     {renderExpandedChartStroke(isExpanded, expandedGraphStrokeColor)}
   </ComposedChart>
 );
@@ -435,6 +433,8 @@ function Chart({
   expandedGraphStrokeColor,
   isPOL,
   isDebt,
+  todayMessage = "Today",
+  xInterval,
 }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -474,6 +474,7 @@ function Chart({
         isExpanded,
         expandedGraphStrokeColor,
         scale,
+        xInterval,
       );
     if (type === "area")
       return renderAreaChart(
@@ -589,7 +590,7 @@ function Chart({
               {headerSubText}
             </Typography>
             <Typography variant="h4" color="textSecondary" style={{ fontWeight: 400 }}>
-              {itemNames === tooltipItems.mcs || itemNames === tooltipItems.minted ? "5-day Average" : "Today"}
+              {type !== "multi" && todayMessage}
             </Typography>
           </Box>
         )}
