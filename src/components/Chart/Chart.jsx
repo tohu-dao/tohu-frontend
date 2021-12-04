@@ -22,6 +22,7 @@ import { Skeleton } from "@material-ui/lab";
 import { trim } from "../../helpers";
 import { format } from "date-fns";
 import "./chart.scss";
+import { tooltipItems } from "src/views/TreasuryDashboard/treasuryData";
 
 const formatCurrency = c => {
   return new Intl.NumberFormat("en-US", {
@@ -588,7 +589,7 @@ function Chart({
               {headerSubText}
             </Typography>
             <Typography variant="h4" color="textSecondary" style={{ fontWeight: 400 }}>
-              {"Today"}
+              {itemNames === tooltipItems.mcs || itemNames === tooltipItems.minted ? "5-day Average" : "Today"}
             </Typography>
           </Box>
         )}

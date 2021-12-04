@@ -26,8 +26,9 @@ import isEmpty from "lodash/isEmpty";
 import { allBondsMap } from "src/helpers/AllBonds";
 import { useAppSelector } from "src/hooks";
 import { IUserBondDetails } from "src/slices/AccountSlice";
-import { DebtRatioGraph, OhmMintedGraph, OhmMintedPerTotalSupplyGraph, TotalValueDepositedGraph } from "../TreasuryDashboard/components/Graph/Graph";
+import { DebtRatioGraph, OhmMintedGraph, OhmMintedPerTotalSupplyGraph } from "../TreasuryDashboard/components/Graph/Graph";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { useTreasuryOhm } from "../TreasuryDashboard/hooks/useTreasuryOhm";
 
 function ChooseBond() {
   const { chainID } = useWeb3Context();
@@ -52,6 +53,8 @@ function ChooseBond() {
     return state.app.marketPrice;
   });
 
+  const {data: ethTreasury} = useTreasuryOhm({refetchOnMount: false});
+
   const treasuryBalance: number | undefined = useAppSelector(state => {
     if (state.bonding.loading == false) {
       let tokenBalances = 0;
@@ -60,6 +63,7 @@ function ChooseBond() {
           tokenBalances += state.bonding[bond].purchased;
         }
       }
+      tokenBalances += ethTreasury && ethTreasury[0].sOHMBalanceUSD;
       return tokenBalances;
     }
   });
@@ -158,17 +162,17 @@ function ChooseBond() {
       <Zoom in={true}>
         <Grid container spacing={2} className="ohm-card">
           <Grid item lg={6} md={6} sm={12} xs={12}>
-            <Paper className="ohm-card">
+            <Paper className="ohm-card ohm-card-graph">
               <OhmMintedGraph />
             </Paper>
           </Grid>
           <Grid item lg={6} md={6} sm={12} xs={12}>
-            <Paper className="ohm-card">
+            <Paper className="ohm-card ohm-card-graph">
               <OhmMintedPerTotalSupplyGraph />
             </Paper>
           </Grid>
           <Grid item xs={12}>
-            <Paper className="ohm-card">
+            <Paper className="ohm-card ohm-card-graph">
               <DebtRatioGraph />
             </Paper>
           </Grid>

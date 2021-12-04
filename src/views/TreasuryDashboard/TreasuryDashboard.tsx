@@ -96,24 +96,24 @@ const TreasuryDashboard = memo(() => {
               </Paper>
             </Grid>
 
-            {/*            <Grid item lg={6} md={6} sm={12} xs={12}>
+            {/* <Grid item lg={6} md={6} sm={12} xs={12}>
               <Paper className="ohm-card">
                 <APYOverTimeGraph />
               </Paper>
-            </Grid>*/}
+            </Grid> */}
 
             <Grid item lg={6} md={6} sm={12} xs={12}>
               <Paper className="ohm-card">
                 <RunwayAvailableGraph />
               </Paper>
             </Grid>
-            
+
             {/* temporarily removed until better price action */}
-            <Grid item xs={12}>
+            {/* <Grid xs={12}>
               <Paper className="ohm-card">
                 <DilutionGraph />
               </Paper>
-            </Grid>
+            </Grid> */}
           </Grid>
         </Zoom>
       </Container>

@@ -7,6 +7,7 @@ import { useDebtMetrics } from "../../hooks/useDebtMetrics";
 import { bulletpoints, tooltipItems, tooltipInfoMessages, itemType } from "../../treasuryData";
 import { OHM_TICKER } from "../../../../constants";
 import { useTreasuryOhm } from "../../hooks/useTreasuryOhm";
+import { parse } from "date-fns";
 
 export const Graph = ({ children }) => <>{children}</>;
 
@@ -158,15 +159,14 @@ export const APYOverTimeGraph = () => {
   const theme = useTheme();
   const { data } = useTreasuryRebases({ refetchOnMount: false });
 
-  let apy =
+  const apy =
     data &&
     data
       .map(entry => ({
         timestamp: entry.timestamp,
-        apy: Math.pow(parseFloat(entry.percentage) + 1, 365 * 3) * 100,
+        apy: (Math.pow(parseFloat(entry.percentage) + 1, 365 * 3) * 100),
       }))
-      .filter(pm => pm.apy < 300000);
-
+  
   return (
     <Chart
       type="line"
@@ -181,7 +181,7 @@ export const APYOverTimeGraph = () => {
       bulletpointColors={bulletpoints.apy}
       stroke={[theme.palette.text.primary]}
       infoTooltipMessage={tooltipInfoMessages.apy}
-      headerSubText={`${data && trim(apy[0].apy, 2)}%`}
+      headerSubText={`${apy && (apy[0].apy).toLocaleString("en-us")}%`}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
     />
   );
@@ -258,7 +258,14 @@ export const OhmMintedGraph = () => {
         timestamp: entry.timestamp,
         ohmMinted: entry.ohmMinted,
       }))
+      .slice(0, data.length-1)
 
+  const fiveDaySlice = minted && minted.slice(0, 5);
+  //react-query is so weird why won't it let me use .reduce() T_T
+  let fiveDayTotal = 0;
+  for (let i = 0; i < 5; i++) {
+    fiveDayTotal += fiveDaySlice && fiveDaySlice[i].ohmMinted
+  }
   return (
     <Chart
       type="area"
@@ -272,7 +279,7 @@ export const OhmMintedGraph = () => {
       bulletpointColors={bulletpoints.staked}
       infoTooltipMessage={tooltipInfoMessages.minted}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
-      headerSubText={`${minted && trim(minted[0].ohmMinted, 2)} EXOD`}
+      headerSubText={`${(fiveDayTotal && fiveDayTotal / 5).toFixed(2)} EXOD`}
     />
   );
 }
@@ -288,7 +295,12 @@ export const OhmMintedPerTotalSupplyGraph = () => {
         timestamp: entry.timestamp,
         percentage: (entry.ohmMinted / entry.totalSupply) * 100,
       }))
-
+      .slice(0, data.length - 1);
+  const fiveDaySlice = minted && minted.slice(0, 5);
+  let fiveDayTotal = 0;
+  for (let i = 0; i < 5; i++) {
+    fiveDayTotal += fiveDaySlice && fiveDaySlice[i].percentage;
+  }
   return (
     <Chart
       type="area"
@@ -302,7 +314,7 @@ export const OhmMintedPerTotalSupplyGraph = () => {
       bulletpointColors={bulletpoints.tvl}
       infoTooltipMessage={tooltipInfoMessages.mcs}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
-      headerSubText={`${minted && trim(minted[0].percentage, 2)}%`}
+      headerSubText={`${(fiveDayTotal && fiveDayTotal / 5).toFixed(2)}%`}
     />
   );
 }
@@ -337,7 +349,7 @@ export const DebtRatioGraph = () => {
       bulletpointColors={runwayBulletpoints}
       itemNames={tooltipItems.debtratio}
       itemType={itemType.percentage}
-      infoTooltipMessage={tooltipInfoMessages.runway}
+      infoTooltipMessage={tooltipInfoMessages.debtratio}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
       isDebt={true}
     />

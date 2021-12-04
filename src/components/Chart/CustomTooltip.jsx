@@ -19,7 +19,7 @@ const renderItem = (type, item) => {
   return type === "$" ? (
     <Typography variant="body2">{`${type}${Math.round(item).toLocaleString("en-US")}`}</Typography>
   ) : type ==="%" ? (
-    <Typography variant="body2">{`${item.toFixed(2)}${type}`}</Typography>
+    <Typography variant="body2">{`${item.toLocaleString("en-us")}${type}`}</Typography>
   ) : (
     <Typography variant="body2">{`${item.toFixed(2)} ${type}`}</Typography>
   );

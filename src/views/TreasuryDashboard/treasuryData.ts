@@ -35,7 +35,7 @@ query {
 
 export const rebasesDataQuery = `
 query {
-  rebases(where: {contract: "0xfd31c7d00ca47653c6ce64af53c1571f9c36566a"}, orderBy: timestamp, first: 1000, orderDirection: desc) {
+  rebases(orderBy: timestamp, first: 1000, orderDirection: desc) {
     percentage
     timestamp
   }
@@ -215,7 +215,8 @@ export const tooltipInfoMessages = {
   runway: "Runway, is the number of days sEXOD emissions can be sustained at a given rate. Lower APY = longer runway",
   dilution: "Dilution, is the ratio between index growth and total supply growth. It indicates how much stakers have been diluted. Slower decline is better.",
   minted: "EXOD Minted, is the number of EXOD minted each day from bonds",
-  mcs: "EXOD minted/Total Supply, is the number of EXOD minted per total supply of EXOD. As total supply increases, this percentage decreases."
+  mcs: "EXOD minted/Total Supply, is the number of EXOD minted from bonds over total supply of EXOD.",
+  debtratio: "Debt ratio, is a metric that tells you how much EXOD is currently vesting in relation to the total EXOD supply. The numbers dont reflect the actual values, but, it can be used to form an impression of how much EXOD is being minted from bonding in relation to the total supply.",
 };
 
 export const itemType = {
