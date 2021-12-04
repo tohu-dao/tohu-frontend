@@ -108,6 +108,11 @@ export const dark = responsiveFontSizes(
             },
           },
         },
+        MuiTooltip: {
+          tooltip: {
+            fontSize: "1.1em",
+          },
+        },
         MuiBackdrop: {
           root: {
             backgroundColor: darkTheme.backdropBg,
