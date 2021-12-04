@@ -109,7 +109,7 @@ const TreasuryDashboard = memo(() => {
             </Grid>
 
             {/* temporarily removed until better price action */}
-            {/* <Grid xs={12}>
+            {/* <Grid item xs={12}>
               <Paper className="ohm-card">
                 <DilutionGraph />
               </Paper>

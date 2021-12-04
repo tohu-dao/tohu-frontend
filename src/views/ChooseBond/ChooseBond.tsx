@@ -160,7 +160,7 @@ function ChooseBond() {
       )}
 
       <Zoom in={true}>
-        <Grid container spacing={2} className="ohm-card">
+        <Grid container item spacing={2} className="ohm-card">
           <Grid item lg={6} md={6} sm={12} xs={12}>
             <Paper className="ohm-card ohm-card-graph">
               <OhmMintedGraph />
