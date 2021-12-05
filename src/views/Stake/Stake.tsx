@@ -428,6 +428,25 @@ function Stake() {
                         )}
                       </Typography>
                     </div>
+                    <div className="data-row">
+                      <Typography variant="body1">
+                        <Trans>Staked Balance Value ($)</Trans>
+                      </Typography>
+                      <Typography variant="body1" id="user-staked-balance">
+                        {isAppLoading ? (
+                          <Skeleton width="80px" />
+                        ) : (
+                          <>
+                            {new Intl.NumberFormat("en-US", {
+                              style: "currency",
+                              currency: "USD",
+                              maximumFractionDigits: 2,
+                              minimumFractionDigits: 2,
+                            }).format(marketPrice * trimmedBalance)}
+                          </>
+                        )}
+                      </Typography>
+                    </div>
 
                     {/*                    <div className="data-row" style={{ paddingLeft: "10px" }}>
                       <Typography variant="body2" color="textSecondary">
