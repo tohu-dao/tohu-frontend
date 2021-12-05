@@ -3,7 +3,7 @@ import { useTheme } from "@material-ui/core/styles";
 import Chart from "src/components/Chart/Chart";
 import { trim, formatCurrency } from "src/helpers";
 import { darkTheme } from "src/themes/dark.js";
-import { Trans } from "@lingui/macro";
+import { Trans, t } from "@lingui/macro";
 import { calcYieldPercent, calcTotalExod } from "../../views/Calc/formulas";
 import styled from "styled-components";
 
@@ -41,8 +41,8 @@ const PersonalExodChart = ({
   const [mode, setMode] = useState(stakingView ? "USD" : "sEXOD");
   const data =
     mode === "sEXOD"
-      ? calcSExodChart(calcDays, exodAmount, rebaseRate)
-      : calcUsdChart(calcDays, exodAmount, rebaseRate, finalExodPrice, exodPrice);
+      ? calcSExodChart(calcDays, exodAmount || 1, rebaseRate)
+      : calcUsdChart(calcDays, exodAmount || 1, rebaseRate, finalExodPrice, exodPrice);
 
   const switchMode = () => {
     setMode(mode === "sEXOD" ? "USD" : "sEXOD");
@@ -57,7 +57,7 @@ const PersonalExodChart = ({
           maximumFractionDigits: 2,
           minimumFractionDigits: 2,
         }).format(data[0][mode]);
-
+  console.log(exodAmount);
   return (
     <Chart
       type="line"
@@ -82,6 +82,7 @@ const PersonalExodChart = ({
               <Trans>if price remains stable</Trans>
             </>
           )}
+          {exodAmount === 0 && <> ({t`Staking`} 1 EXOD)</>}
         </>
       }
       itemNames={[mode]}
