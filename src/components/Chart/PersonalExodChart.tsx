@@ -38,7 +38,7 @@ const PersonalExodChart = ({
   stakingView,
 }: PersonalExodChartProps) => {
   const theme = useTheme();
-  const [mode, setMode] = useState("sEXOD");
+  const [mode, setMode] = useState(stakingView ? "USD" : "sEXOD");
   const data =
     mode === "sEXOD"
       ? calcSExodChart(calcDays, exodAmount, rebaseRate)
