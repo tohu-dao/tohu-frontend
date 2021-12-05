@@ -16,6 +16,7 @@ import {
   Zoom,
   Divider,
 } from "@material-ui/core";
+import styled from "styled-components";
 import { t, Trans } from "@lingui/macro";
 import NewReleases from "@material-ui/icons/NewReleases";
 import RebaseTimer from "../../components/RebaseTimer/RebaseTimer";
@@ -31,6 +32,7 @@ import { error } from "../../slices/MessagesSlice";
 import { ethers } from "ethers";
 import { OHM_TICKER, sOHM_TICKER } from "../../constants";
 import { useAppSelector } from "src/hooks";
+import PersonalExodChart from "../../components/Chart/PersonalExodChart";
 
 function a11yProps(index: number) {
   return {
@@ -51,6 +53,7 @@ function Stake() {
   const [quantity, setQuantity] = useState(0);
 
   const isAppLoading = useAppSelector(state => state.app.loading);
+  const marketPrice = useAppSelector(state => state.app.marketPrice || 0);
   const currentIndex = useAppSelector(state => {
     return state.app.currentIndex;
   });
@@ -476,8 +479,31 @@ function Stake() {
           </Grid>
         </Paper>
       </Zoom>
+      <ChartContainer>
+        <Zoom in={true}>
+          <Paper className="ohm-card">
+            <PersonalExodChart
+              calcDays={90}
+              exodAmount={(trimmedBalance || 0) + (quantity || trim(Number(ohmBalance), 4) || 0)}
+              rebaseRate={stakingRebase * 100}
+              finalExodPrice={marketPrice}
+              exodPrice={marketPrice}
+              stakingView
+            />
+          </Paper>
+        </Zoom>
+      </ChartContainer>
     </div>
   );
 }
 
 export default Stake;
+
+const ChartContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  width: 100%;
+`;

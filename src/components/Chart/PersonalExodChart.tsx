@@ -4,15 +4,16 @@ import Chart from "src/components/Chart/Chart";
 import { trim, formatCurrency } from "src/helpers";
 import { darkTheme } from "src/themes/dark.js";
 import { Trans } from "@lingui/macro";
-import { calcYieldPercent, calcTotalExod } from "./formulas";
+import { calcYieldPercent, calcTotalExod } from "../../views/Calc/formulas";
 import styled from "styled-components";
 
-type CalcChartProps = {
+type PersonalExodChartProps = {
   calcDays: number;
   exodAmount: number;
   rebaseRate: number;
   finalExodPrice: number;
   exodPrice: number;
+  stakingView?: boolean;
 };
 
 const infoTooltipMessage = (
@@ -28,7 +29,14 @@ const usdTooltip = (
   </Trans>
 );
 
-const CalcChart = ({ calcDays, exodAmount, rebaseRate, finalExodPrice, exodPrice }: CalcChartProps) => {
+const PersonalExodChart = ({
+  calcDays,
+  exodAmount,
+  rebaseRate,
+  finalExodPrice,
+  exodPrice,
+  stakingView,
+}: PersonalExodChartProps) => {
   const theme = useTheme();
   const [mode, setMode] = useState("sEXOD");
   const data =
@@ -64,9 +72,17 @@ const CalcChart = ({ calcDays, exodAmount, rebaseRate, finalExodPrice, exodPrice
         </HeaderContainer>,
       ]}
       headerSubText={
-        <Trans>
-          {profits} after {calcDays} days
-        </Trans>
+        <>
+          <Trans>
+            {profits} after {calcDays} days
+          </Trans>
+          {stakingView && mode === "USD" && (
+            <>
+              {" "}
+              <Trans>if price remains stable</Trans>
+            </>
+          )}
+        </>
       }
       itemNames={[mode]}
       todayMessage=""
@@ -87,7 +103,7 @@ const CalcChart = ({ calcDays, exodAmount, rebaseRate, finalExodPrice, exodPrice
   );
 };
 
-export default CalcChart;
+export default PersonalExodChart;
 
 const calcSExodChart = (calcDays: number, exodAmount: number, rebaseRate: number) => {
   const data = [];

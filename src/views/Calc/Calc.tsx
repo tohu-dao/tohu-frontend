@@ -19,7 +19,7 @@ import CalcHeader from "./CalcHeader";
 import ImportantValues from "./ImportantValues";
 import EstimatedValues from "./EstimatedValues";
 import PriceMultiplier from "./PriceMultiplier";
-import CalcChart from "./CalcChart";
+import PersonalExodChart from "src/components/Chart/PersonalExodChart";
 import {
   calcInitialInvestment,
   calcMinimumDays,
@@ -182,12 +182,12 @@ function Calc() {
       <CalcContainer>
         <Zoom in={true}>
           <Paper className="ohm-card">
-            <CalcChart
+            <PersonalExodChart
               calcDays={calcDays}
-              exodAmountInput={exodAmountInput}
-              rebaseRateInput={rebaseRateInput}
-              finalExodPriceInput={finalExodPriceInput}
-              exodPriceInput={exodPriceInput}
+              exodAmount={exodAmountInput}
+              rebaseRate={rebaseRateInput}
+              finalExodPrice={finalExodPriceInput}
+              exodPrice={exodPriceInput}
             />
           </Paper>
         </Zoom>
