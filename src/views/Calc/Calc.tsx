@@ -111,21 +111,21 @@ function Calc() {
               <ImportantValues {...{ marketPrice, stakingRebase, isAppLoading, trimmedBalance }} />
               <CalcArea>
                 <FieldInput
-                  field={<Trans>sEXOD Amount</Trans>}
+                  field={t`sEXOD Amount`}
                   value={exodAmountInput}
                   max={<Trans>Max</Trans>}
                   onChange={setExodAmountInput}
                   onMax={() => setExodAmountInput(trimmedBalance)}
                 />
                 <FieldInput
-                  field={<Trans>Rebase rate</Trans>}
+                  field={t`Rebase rate`}
                   value={Number(rebaseRateInput.toFixed(4))}
                   max={<Trans>Current</Trans>}
                   onChange={setRebaseRateInput}
                   onMax={() => setRebaseRateInput(stakingRebase * 100)}
                 />
                 <FieldInput
-                  field={<Trans>EXOD price at purchase ($)</Trans>}
+                  field={t`EXOD price at purchase ($)`}
                   value={Number(exodPriceInput.toFixed(2))}
                   max={<Trans>Current</Trans>}
                   onChange={setExodPriceInput}
@@ -133,7 +133,7 @@ function Calc() {
                 />
 
                 <FieldInput
-                  field={<Trans>Future EXOD market price ($)</Trans>}
+                  field={t`Future EXOD market price ($)`}
                   value={Number(finalExodPriceInput.toFixed(2))}
                   max={<Trans>Current</Trans>}
                   onChange={setFinalExodPriceInput}
@@ -224,7 +224,7 @@ const FieldInput = ({ field, value, onChange, max, onMax }: FieldInputProps) => 
         <InputLabel htmlFor="amount-input"></InputLabel>
         <OutlinedInput
           type="number"
-          placeholder={`${(<Trans>Enter</Trans>)} ${field}`}
+          placeholder={`${t`Enter`} ${field}`}
           value={value || null}
           onChange={e => onChange(Number(e.target.value))}
           labelWidth={0}
