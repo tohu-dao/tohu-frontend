@@ -33,7 +33,7 @@ import {
 import { useTreasuryMetrics } from "../TreasuryDashboard/hooks/useTreasuryMetrics";
 
 function Calc() {
-  const [exodAmountInput, setExodAmountInput] = useState(0);
+  const [exodAmountInput, setExodAmountInput] = useState(1);
   const [rebaseRateInput, setRebaseRateInput] = useState(0);
   const [exodPriceInput, setExodPriceInput] = useState(0);
   const [finalExodPriceInput, setFinalExodPriceInput] = useState(0);
@@ -67,7 +67,7 @@ function Calc() {
   );
 
   useEffect(() => {
-    setExodAmountInput(trimmedBalance);
+    trimmedBalance && setExodAmountInput(trimmedBalance);
   }, [trimmedBalance]);
 
   useEffect(() => {
@@ -188,6 +188,7 @@ function Calc() {
               rebaseRate={rebaseRateInput}
               finalExodPrice={finalExodPriceInput}
               exodPrice={exodPriceInput}
+              stakingView={false}
             />
           </Paper>
         </Zoom>

@@ -39,10 +39,11 @@ const PersonalExodChart = ({
 }: PersonalExodChartProps) => {
   const theme = useTheme();
   const [mode, setMode] = useState(stakingView ? "USD" : "sEXOD");
+  const defaultExod = stakingView ? 1 : 0;
   const data =
     mode === "sEXOD"
-      ? calcSExodChart(calcDays, exodAmount || 1, rebaseRate)
-      : calcUsdChart(calcDays, exodAmount || 1, rebaseRate, finalExodPrice, exodPrice);
+      ? calcSExodChart(calcDays, exodAmount || defaultExod, rebaseRate)
+      : calcUsdChart(calcDays, exodAmount || defaultExod, rebaseRate, finalExodPrice, exodPrice);
 
   const switchMode = () => {
     setMode(mode === "sEXOD" ? "USD" : "sEXOD");
@@ -64,26 +65,15 @@ const PersonalExodChart = ({
       domain={["dataMin", "auto"]}
       data={data}
       dataKey={[mode]}
-      headerText={[
-        <HeaderContainer>
-          <SwitchToUSD onClick={switchMode}>
-            <Trans>Switch to</Trans> {mode === "sEXOD" ? "USD" : "sEXOD"}
-          </SwitchToUSD>
-        </HeaderContainer>,
-      ]}
+      headerText={[<HeaderText mode={mode} switchMode={switchMode} />]}
       headerSubText={
-        <>
-          <Trans>
-            {profits} after {calcDays} days
-          </Trans>
-          {stakingView && mode === "USD" && (
-            <>
-              {" "}
-              <Trans>if price remains stable</Trans>
-            </>
-          )}
-          {exodAmount === 0 && <> ({t`Staking`} 1 EXOD)</>}
-        </>
+        <HeaderSubText
+          profits={profits}
+          calcDays={calcDays}
+          stakingView={stakingView}
+          mode={mode}
+          exodAmount={exodAmount}
+        />
       }
       itemNames={[mode]}
       todayMessage=""
@@ -93,13 +83,7 @@ const PersonalExodChart = ({
       infoTooltipMessage={mode === "sEXOD" ? infoTooltipMessage : usdTooltip}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
       xInterval={30}
-      bulletpointColors={[
-        {
-          right: 20,
-          top: -12,
-          background: darkTheme.gold,
-        },
-      ]}
+      bulletpointColors={bulletpointColors}
     />
   );
 };
@@ -144,6 +128,53 @@ const calcUsdChart = (
 const nowPlusDays = (days: number) => {
   return Date.now() / 1000 + 86400 * days;
 };
+
+const HeaderText = ({ mode, switchMode }: { mode: string; switchMode: () => void }) => {
+  return (
+    <HeaderContainer>
+      <SwitchToUSD onClick={switchMode}>
+        <Trans>Switch to</Trans> {mode === "sEXOD" ? "USD" : "sEXOD"}
+      </SwitchToUSD>
+    </HeaderContainer>
+  );
+};
+
+const HeaderSubText = ({
+  profits,
+  calcDays,
+  stakingView,
+  mode,
+  exodAmount,
+}: {
+  profits: number;
+  calcDays: number;
+  stakingView: boolean;
+  mode: string;
+  exodAmount: number;
+}) => {
+  return (
+    <>
+      <Trans>
+        {profits} after {calcDays} days
+      </Trans>
+      {stakingView && mode === "USD" && (
+        <>
+          {" "}
+          <Trans>if price remains stable</Trans>
+        </>
+      )}
+      {!exodAmount && stakingView && <> ({t`Staking`} 1 EXOD)</>}
+    </>
+  );
+};
+
+const bulletpointColors = [
+  {
+    right: 20,
+    top: -12,
+    background: darkTheme.gold,
+  },
+];
 
 const HeaderContainer = styled.div`
   display: flex;
