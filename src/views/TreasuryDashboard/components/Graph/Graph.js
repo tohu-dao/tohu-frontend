@@ -41,15 +41,18 @@ export const MarketValueGraph = () => {
   const ethDatalength = ethData && ethData.length;
 
   for (let i = 0; i < datalength - ethDatalength; i++) {
-    ethData && ethData.push({ sOHMBalanceUSD: 0 })
+    ethData && ethData.push({ sOHMBalanceUSD: 0 });
   }
   console.log(ethData);
-  console.log(data)
-  const stats = ethData && data && data.map((e, i) => ({
-    timestamp: e.id,
-    ...e,
-    sOHMBalanceUSD: ethData[i].sOHMBalanceUSD,
-  }))
+  console.log(data);
+  const stats =
+    ethData &&
+    data &&
+    data.map((e, i) => ({
+      timestamp: e.id,
+      ...e,
+      sOHMBalanceUSD: ethData[i].sOHMBalanceUSD,
+    }));
 
   return (
     <Chart
@@ -161,12 +164,11 @@ export const APYOverTimeGraph = () => {
 
   const apy =
     data &&
-    data
-      .map(entry => ({
-        timestamp: entry.timestamp,
-        apy: (Math.pow(parseFloat(entry.percentage) + 1, 365 * 3) * 100),
-      }))
-  
+    data.map(entry => ({
+      timestamp: entry.timestamp,
+      apy: Math.pow(parseFloat(entry.percentage) + 1, 365 * 3) * 100,
+    }));
+
   return (
     <Chart
       type="line"
@@ -181,7 +183,7 @@ export const APYOverTimeGraph = () => {
       bulletpointColors={bulletpoints.apy}
       stroke={[theme.palette.text.primary]}
       infoTooltipMessage={tooltipInfoMessages.apy}
-      headerSubText={`${apy && (apy[0].apy).toLocaleString("en-us")}%`}
+      headerSubText={`${apy && apy[0].apy.toLocaleString("en-us")}%`}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
     />
   );
@@ -222,12 +224,11 @@ export const DilutionGraph = () => {
 
   const dilution =
     data &&
-    data
-      .map(entry => ({
-        timestamp: entry.timestamp,
-        percentage: (entry.index / (entry.ohmCirculatingSupply / 2000)) * 100, //initial total supply of 2000
-        wsExodPrice: entry.index  * entry.ohmPrice,
-      }))
+    data.map(entry => ({
+      timestamp: entry.timestamp,
+      percentage: (entry.index / (entry.ohmCirculatingSupply / 2000)) * 100, //initial total supply of 2000
+      wsExodPrice: entry.index * entry.ohmPrice,
+    }));
 
   return (
     <Chart
@@ -245,7 +246,7 @@ export const DilutionGraph = () => {
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
     />
   );
-}
+};
 
 export const OhmMintedGraph = () => {
   const theme = useTheme();
@@ -258,13 +259,13 @@ export const OhmMintedGraph = () => {
         timestamp: entry.timestamp,
         ohmMinted: entry.ohmMinted,
       }))
-      .slice(0, data.length-1)
+      .slice(0, data.length - 1);
 
   const fiveDaySlice = minted && minted.slice(0, 5);
   //react-query is so weird why won't it let me use .reduce() T_T
   let fiveDayTotal = 0;
   for (let i = 0; i < 5; i++) {
-    fiveDayTotal += fiveDaySlice && fiveDaySlice[i].ohmMinted
+    fiveDayTotal += fiveDaySlice && fiveDaySlice[i].ohmMinted;
   }
   return (
     <Chart
@@ -280,9 +281,10 @@ export const OhmMintedGraph = () => {
       infoTooltipMessage={tooltipInfoMessages.minted}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
       headerSubText={`${(fiveDayTotal && fiveDayTotal / 5).toFixed(2)} EXOD`}
+      todayMessage="5-day Average"
     />
   );
-}
+};
 
 export const OhmMintedPerTotalSupplyGraph = () => {
   const theme = useTheme();
@@ -315,9 +317,10 @@ export const OhmMintedPerTotalSupplyGraph = () => {
       infoTooltipMessage={tooltipInfoMessages.mcs}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
       headerSubText={`${(fiveDayTotal && fiveDayTotal / 5).toFixed(2)}%`}
+      todayMessage="5-day Average"
     />
   );
-}
+};
 
 export const DebtRatioGraph = () => {
   const theme = useTheme();
@@ -325,13 +328,12 @@ export const DebtRatioGraph = () => {
 
   const debtRatios =
     data &&
-    data
-      .map(entry => ({
-        timestamp: entry.timestamp,
-        daiDebtRatio: entry.dai_debt_ratio / 1e10,
-        ethDebtRatio: entry.eth_debt_ratio / 1e10,
-        ohmDaiDebtRatio: entry.ohmdai_debt_ratio / 1e19,
-      }))
+    data.map(entry => ({
+      timestamp: entry.timestamp,
+      daiDebtRatio: entry.dai_debt_ratio / 1e10,
+      ethDebtRatio: entry.eth_debt_ratio / 1e10,
+      ohmDaiDebtRatio: entry.ohmdai_debt_ratio / 1e19,
+    }));
   const [current, ...others] = bulletpoints.runway;
   const runwayBulletpoints = [{ ...current, background: theme.palette.text.primary }, ...others];
   const colors = runwayBulletpoints.map(b => b.background);
@@ -344,7 +346,9 @@ export const DebtRatioGraph = () => {
       color={theme.palette.text.primary}
       stroke={colors}
       headerText="Debt Ratios"
-      headerSubText={`Total ${debtRatios && trim(debtRatios[0].daiDebtRatio + debtRatios[0].ethDebtRatio + debtRatios[0].ohmDaiDebtRatio, 2)}%`}
+      headerSubText={`Total ${
+        debtRatios && trim(debtRatios[0].daiDebtRatio + debtRatios[0].ethDebtRatio + debtRatios[0].ohmDaiDebtRatio, 2)
+      }%`}
       dataFormat="percent"
       bulletpointColors={runwayBulletpoints}
       itemNames={tooltipItems.debtratio}
@@ -354,4 +358,4 @@ export const DebtRatioGraph = () => {
       isDebt={true}
     />
   );
-}
+};

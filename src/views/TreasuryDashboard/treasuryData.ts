@@ -1,3 +1,5 @@
+import { t } from "@lingui/macro";
+
 // TODO: add paramaterization
 export const treasuryDataQuery = `
 query {
@@ -187,40 +189,40 @@ export const bulletpoints = {
       top: -12,
       background: "linear-gradient(180deg, #55EBC7 -10%, #47ACEB 100%)",
     },
-  ]
+  ],
 };
 
 export const tooltipItems = {
-  tvl: ["Total Value Deposited"],
-  coin: ["DAI", "wFTM", "sOHM"],
-  rfv: ["DAI"],
-  holder: ["Exodians"],
-  apy: ["APY"],
-  runway: ["Current", "7.5K APY", "5K APY", "2.5K APY"],
-  pol: ["spLP Treasury", "Market spLP"],
-  dilution: ["Dilution Percentage", "wsEXOD Price"],
-  minted: ["EXOD minted"],
-  mcs: ["EXOD Minted/Total Supply"],
-  debtratio: ["DAI Debt Ratio", "ETH Debt Ratio", "OHM-DAI spLP Debt Ratio"]
+  tvl: [t`Total Value Deposited`],
+  coin: [t`DAI`, t`wFTM`, t`sOHM`],
+  rfv: [t`DAI`],
+  holder: [t`Exodians`],
+  apy: [t`APY`],
+  runway: [t`Current`, t`7.5K APY`, t`5K APY`, t`2.5K APY`],
+  pol: [t`spLP Treasury`, t`Market spLP`],
+  dilution: [t`Dilution Percentage`, t`wsEXOD Price`],
+  minted: [t`EXOD minted`],
+  mcs: [t`EXOD Minted/Total Supply`],
+  debtratio: [t`DAI Debt Ratio`, t`wFTM Debt Ratio`, t`EXOD-DAI spLP Debt Ratio`],
 };
 
 export const tooltipInfoMessages = {
-  tvl: "Total Value Deposited, is the dollar amount of all EXOD staked in the protocol. This metric is often used as growth or health indicator in DeFi projects.",
-  mvt: "Market Value of Treasury Assets, is the sum of the value (in dollars) of all assets held by the treasury.",
-  rfv: "Risk Free Value, is the amount of funds the treasury guarantees to use for backing EXOD.",
-  pol: "Protocol Owned Liquidity, is the amount of LP the treasury owns and controls. The more POL the better for the protocol and its users.",
-  holder: "Holders, represents the total number of Exodians (sEXOD holders)",
-  staked: "EXOD Staked, is the ratio of sEXOD to EXOD (staked vs unstaked)",
-  apy: "Annual Percentage Yield, is the normalized representation of an interest rate, based on a compounding period over one year. Note that APYs provided are rather ballpark level indicators and not so much precise future results.",
-  runway: "Runway, is the number of days sEXOD emissions can be sustained at a given rate. Lower APY = longer runway",
-  dilution: "Dilution, is the ratio between index growth and total supply growth. It indicates how much stakers have been diluted. Slower decline is better.",
-  minted: "EXOD Minted, is the number of EXOD minted each day from bonds",
-  mcs: "EXOD minted/Total Supply, is the number of EXOD minted from bonds over total supply of EXOD.",
-  debtratio: "Debt ratio, is a metric that tells you how much EXOD is currently vesting in relation to the total EXOD supply. The numbers dont reflect the actual values, but, it can be used to form an impression of how much EXOD is being minted from bonding in relation to the total supply.",
+  tvl: t`Total Value Deposited, is the dollar amount of all EXOD staked in the protocol. This metric is often used as growth or health indicator in DeFi projects.`,
+  mvt: t`Market Value of Treasury Assets, is the sum of the value (in dollars) of all assets held by the treasury.`,
+  rfv: t`Risk Free Value, is the amount of funds the treasury guarantees to use for backing EXOD.`,
+  pol: t`Protocol Owned Liquidity, is the amount of LP the treasury owns and controls. The more POL the better for the protocol and its users.`,
+  holder: t`Holders, represents the total number of Exodians (sEXOD holders)`,
+  staked: t`EXOD Staked, is the ratio of sEXOD to EXOD (staked vs unstaked)`,
+  apy: t`Annual Percentage Yield, is the normalized representation of an interest rate, based on a compounding period over one year. Note that APYs provided are rather ballpark level indicators and not so much precise future results.`,
+  runway: t`Runway, is the number of days sEXOD emissions can be sustained at a given rate. Lower APY = longer runway`,
+  dilution: t`Dilution, is the ratio between index growth and total supply growth. It indicates how much stakers have been diluted. Slower decline is better.`,
+  minted: t`EXOD Minted, is the number of EXOD minted each day from bonds`,
+  mcs: t`EXOD minted/Total Supply, is the number of EXOD minted from bonds over total supply of EXOD.`,
+  debtratio: t`Debt ratio, is a metric that tells you how much EXOD is currently vesting in relation to the total EXOD supply. The numbers dont reflect the actual values, but, it can be used to form an impression of how much EXOD is being minted from bonding in relation to the total supply.`,
 };
 
 export const itemType = {
   dollar: "$",
   percentage: "%",
-  OHM: "EXOD"
+  OHM: "EXOD",
 };

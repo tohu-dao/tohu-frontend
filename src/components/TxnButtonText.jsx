@@ -1,17 +1,18 @@
 import styled from "styled-components";
+import { Trans } from "@lingui/macro";
 import { IPendingTx, isPendingTxn } from "../slices/PendingTxnsSlice";
 
 type TxnButtonTextProps = {
   pendingTransactions: IPendingTxn[],
   type: string,
-  defaultText: string,
+  defaultText: any,
   size?: string,
 };
 
 const TxnButtonText = ({ pendingTransactions, type, defaultText, size = "small" }: TxnButtonTextProps) => {
   return isPendingTxn(pendingTransactions, type) ? (
     <TextContainer>
-      Pending...
+      <Trans>Pending...</Trans>
       <LoadingSpinner size="small" />
     </TextContainer>
   ) : (
@@ -29,7 +30,7 @@ export const TxnButtonTextGeneralPending = ({
 }: TxnButtonTextProps) => {
   return pendingTransactions.length >= 1 ? (
     <TextContainer>
-      Pending...
+      <Trans>Pending...</Trans>
       <LoadingSpinner size={size} />
     </TextContainer>
   ) : (
