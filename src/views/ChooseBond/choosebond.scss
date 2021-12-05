@@ -11,6 +11,22 @@
       margin: auto;
     }
   }
+  .ohm-card-graph {
+    max-width: unset !important;
+    width: 100%;
+    margin: auto;
+    max-height: 355px;
+    .card-header {
+      margin-bottom: 1rem;
+    }
+    &.ohm-chart-card {
+      .chart-card-header {
+        padding: 0px 20px !important;
+        min-width: 300px;
+      }
+      height: 355px;
+    }
+  }
 
   .claim-bonds-card {
     .global-claim-buttons {
@@ -130,6 +146,7 @@
 }
 
 .tablet #choose-bond-view {
+  gap: 1rem;
   .claim-bond-card-buttons {
     button {
       width: 40%;

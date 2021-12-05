@@ -3,9 +3,11 @@ import { useTheme } from "@material-ui/core/styles";
 import { trim, formatCurrency } from "../../../../helpers";
 import { useTreasuryMetrics } from "../../hooks/useTreasuryMetrics";
 import { useTreasuryRebases } from "../../hooks/useTreasuryRebases";
+import { useDebtMetrics } from "../../hooks/useDebtMetrics";
 import { bulletpoints, tooltipItems, tooltipInfoMessages, itemType } from "../../treasuryData";
 import { OHM_TICKER } from "../../../../constants";
 import { useTreasuryOhm } from "../../hooks/useTreasuryOhm";
+import { parse } from "date-fns";
 
 export const Graph = ({ children }) => <>{children}</>;
 
@@ -39,7 +41,7 @@ export const MarketValueGraph = () => {
   const ethDatalength = ethData && ethData.length;
 
   for (let i = 0; i < datalength - ethDatalength; i++) {
-    ethData && ethData.push({sOHMBalanceUSD: 0})
+    ethData && ethData.push({ sOHMBalanceUSD: 0 })
   }
   console.log(ethData);
   console.log(data)
@@ -157,15 +159,14 @@ export const APYOverTimeGraph = () => {
   const theme = useTheme();
   const { data } = useTreasuryRebases({ refetchOnMount: false });
 
-  let apy =
+  const apy =
     data &&
     data
       .map(entry => ({
         timestamp: entry.timestamp,
-        apy: Math.pow(parseFloat(entry.percentage) + 1, 365 * 3) * 100,
+        apy: (Math.pow(parseFloat(entry.percentage) + 1, 365 * 3) * 100),
       }))
-      .filter(pm => pm.apy < 300000);
-
+  
   return (
     <Chart
       type="line"
@@ -180,7 +181,7 @@ export const APYOverTimeGraph = () => {
       bulletpointColors={bulletpoints.apy}
       stroke={[theme.palette.text.primary]}
       infoTooltipMessage={tooltipInfoMessages.apy}
-      headerSubText={`${data && trim(apy[0].apy, 2)}%`}
+      headerSubText={`${apy && (apy[0].apy).toLocaleString("en-us")}%`}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
     />
   );
@@ -214,3 +215,143 @@ export const RunwayAvailableGraph = () => {
     />
   );
 };
+
+export const DilutionGraph = () => {
+  const theme = useTheme();
+  const { data } = useTreasuryMetrics({ refetchOnMount: false });
+
+  const dilution =
+    data &&
+    data
+      .map(entry => ({
+        timestamp: entry.timestamp,
+        percentage: (entry.index / (entry.ohmCirculatingSupply / 2000)) * 100, //initial total supply of 2000
+        wsExodPrice: entry.index  * entry.ohmPrice,
+      }))
+
+  return (
+    <Chart
+      type="composed"
+      data={dilution}
+      dataKey={["percentage", "wsExodPrice"]}
+      stopColor={[["#F5AC37", "#EA9276"]]}
+      stroke={"#38caff"}
+      headerText="Dilution Over Time"
+      headerSubText={`${dilution && trim(dilution[0].percentage, 2)}%`}
+      bulletpointColors={bulletpoints.dilution}
+      itemNames={tooltipItems.dilution}
+      itemType={[itemType.percentage, itemType.dollar]}
+      infoTooltipMessage={tooltipInfoMessages.dilution}
+      expandedGraphStrokeColor={theme.palette.graphStrokeColor}
+    />
+  );
+}
+
+export const OhmMintedGraph = () => {
+  const theme = useTheme();
+  const { data } = useTreasuryMetrics({ refetchOnMount: false });
+
+  const minted =
+    data &&
+    data
+      .map(entry => ({
+        timestamp: entry.timestamp,
+        ohmMinted: entry.ohmMinted,
+      }))
+      .slice(0, data.length-1)
+
+  const fiveDaySlice = minted && minted.slice(0, 5);
+  //react-query is so weird why won't it let me use .reduce() T_T
+  let fiveDayTotal = 0;
+  for (let i = 0; i < 5; i++) {
+    fiveDayTotal += fiveDaySlice && fiveDaySlice[i].ohmMinted
+  }
+  return (
+    <Chart
+      type="area"
+      dataFormat="OHM"
+      data={minted}
+      dataKey={["ohmMinted"]}
+      itemNames={tooltipItems.minted}
+      itemType={itemType.OHM}
+      headerText={`${OHM_TICKER} minted`}
+      stopColor={[["#55EBC7", "#47ACEB"]]}
+      bulletpointColors={bulletpoints.staked}
+      infoTooltipMessage={tooltipInfoMessages.minted}
+      expandedGraphStrokeColor={theme.palette.graphStrokeColor}
+      headerSubText={`${(fiveDayTotal && fiveDayTotal / 5).toFixed(2)} EXOD`}
+    />
+  );
+}
+
+export const OhmMintedPerTotalSupplyGraph = () => {
+  const theme = useTheme();
+  const { data } = useTreasuryMetrics({ refetchOnMount: false });
+
+  const minted =
+    data &&
+    data
+      .map(entry => ({
+        timestamp: entry.timestamp,
+        percentage: (entry.ohmMinted / entry.totalSupply) * 100,
+      }))
+      .slice(0, data.length - 1);
+  const fiveDaySlice = minted && minted.slice(0, 5);
+  let fiveDayTotal = 0;
+  for (let i = 0; i < 5; i++) {
+    fiveDayTotal += fiveDaySlice && fiveDaySlice[i].percentage;
+  }
+  return (
+    <Chart
+      type="area"
+      dataFormat="percent"
+      data={minted}
+      dataKey={["percentage"]}
+      itemNames={tooltipItems.mcs}
+      itemType={itemType.percentage}
+      headerText={`${OHM_TICKER} Minted/Total Supply`}
+      stopColor={[["#768299", "#98B3E9"]]}
+      bulletpointColors={bulletpoints.tvl}
+      infoTooltipMessage={tooltipInfoMessages.mcs}
+      expandedGraphStrokeColor={theme.palette.graphStrokeColor}
+      headerSubText={`${(fiveDayTotal && fiveDayTotal / 5).toFixed(2)}%`}
+    />
+  );
+}
+
+export const DebtRatioGraph = () => {
+  const theme = useTheme();
+  const { data } = useDebtMetrics({ refetchOnMount: false });
+
+  const debtRatios =
+    data &&
+    data
+      .map(entry => ({
+        timestamp: entry.timestamp,
+        daiDebtRatio: entry.dai_debt_ratio / 1e10,
+        ethDebtRatio: entry.eth_debt_ratio / 1e10,
+        ohmDaiDebtRatio: entry.ohmdai_debt_ratio / 1e19,
+      }))
+  const [current, ...others] = bulletpoints.runway;
+  const runwayBulletpoints = [{ ...current, background: theme.palette.text.primary }, ...others];
+  const colors = runwayBulletpoints.map(b => b.background);
+
+  return (
+    <Chart
+      type="multi"
+      data={debtRatios}
+      dataKey={["daiDebtRatio", "ethDebtRatio", "ohmDaiDebtRatio"]}
+      color={theme.palette.text.primary}
+      stroke={colors}
+      headerText="Debt Ratios"
+      headerSubText={`Total ${debtRatios && trim(debtRatios[0].daiDebtRatio + debtRatios[0].ethDebtRatio + debtRatios[0].ohmDaiDebtRatio, 2)}%`}
+      dataFormat="percent"
+      bulletpointColors={runwayBulletpoints}
+      itemNames={tooltipItems.debtratio}
+      itemType={itemType.percentage}
+      infoTooltipMessage={tooltipInfoMessages.debtratio}
+      expandedGraphStrokeColor={theme.palette.graphStrokeColor}
+      isDebt={true}
+    />
+  );
+}

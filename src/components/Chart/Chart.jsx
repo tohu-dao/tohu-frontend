@@ -15,12 +15,14 @@ import {
   Area,
   CartesianGrid,
   Tooltip,
+  ComposedChart,
 } from "recharts";
 import { Typography, Box, SvgIcon, CircularProgress } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import { trim } from "../../helpers";
 import { format } from "date-fns";
 import "./chart.scss";
+import { tooltipItems } from "src/views/TreasuryDashboard/treasuryData";
 
 const formatCurrency = c => {
   return new Intl.NumberFormat("en-US", {
@@ -73,12 +75,14 @@ const renderAreaChart = (
       tickCount={isExpanded ? expandedTickCount : tickCount}
       axisLine={false}
       tickLine={false}
-      width={dataFormat === "percent" ? 33 : 55}
+      width={dataFormat === "percent" || dataFormat == "OHM" ? 33 : 55}
       tickFormatter={number =>
         number !== 0
-          ? dataFormat !== "percent"
-            ? `${formatCurrency(parseFloat(number) / 1000000)}M`
-            : `${trim(parseFloat(number), 2)}%`
+          ? dataFormat === "percent"
+            ? `${trim(parseFloat(number), 2)}%`
+            : dataFormat === "OHM"
+              ? number
+              : `${formatCurrency(parseFloat(number) / 1000000)}M`
           : ""
       }
       domain={[0, "auto"]}
@@ -97,7 +101,7 @@ const renderAreaChart = (
         />
       }
     />
-    <Area dataKey={dataKey[0]} stroke="none" fill={`url(#color-${dataKey[0]})`} fillOpacity={1} />
+    <Area type="basis" dataKey={dataKey[0]} stroke="none" fill={`url(#color-${dataKey[0]})`} fillOpacity={1} />
     {renderExpandedChartStroke(isExpanded, expandedGraphStrokeColor)}
   </AreaChart>
 );
@@ -170,6 +174,7 @@ const renderStackedAreaChart = (
       content={<CustomTooltip bulletpointColors={bulletpointColors} itemNames={itemNames} itemType={itemType} />}
     />
     <Area
+      type="basis"
       dataKey={dataKey[0]}
       stroke={stroke ? stroke[0] : "none"}
       fill={`url(#color-${dataKey[0]})`}
@@ -177,6 +182,7 @@ const renderStackedAreaChart = (
       stackId="1"
     />
     <Area
+      type="basis"
       dataKey={dataKey[1]}
       stroke={stroke ? stroke[1] : "none"}
       fill={`url(#color-${dataKey[1]})`}
@@ -184,6 +190,7 @@ const renderStackedAreaChart = (
       stackId="1"
     />
     <Area
+      type="basis"
       dataKey={dataKey[2]}
       stroke={stroke ? stroke[2] : "none"}
       fill={`url(#color-${dataKey[2]})`}
@@ -191,6 +198,7 @@ const renderStackedAreaChart = (
       stackId="1"
     />
     <Area
+      type="basis"
       dataKey={dataKey[3]}
       stroke={stroke ? stroke[3] : "none"}
       fill={`url(#color-${dataKey[3]})`}
@@ -198,6 +206,7 @@ const renderStackedAreaChart = (
       stackId="1"
     />
     <Area
+      type="basis"
       dataKey={dataKey[4]}
       stroke={stroke ? stroke[4] : "none"}
       fill={`url(#color-${dataKey[4]})`}
@@ -265,11 +274,12 @@ const renderMultiLineChart = (
   itemType,
   isExpanded,
   expandedGraphStrokeColor,
+  isDebt,
 ) => (
   <LineChart data={data}>
     <XAxis
       dataKey="timestamp"
-      interval={30}
+      interval={isDebt ? 300 : 30}
       axisLine={false}
       tickCount={3}
       tickLine={false}
@@ -283,7 +293,7 @@ const renderMultiLineChart = (
       axisLine={false}
       tickLine={false}
       width={25}
-      tickFormatter={number => (number !== 0 ? `${trim(parseFloat(number), 2)}` : "")}
+      tickFormatter={number => (number !== 0 ? dataFormat !== "percent" ? `${trim(parseFloat(number), 2)}` : `${number}%` : "")}
       domain={[0, "auto"]}
       connectNulls={true}
       allowDataOverflow={false}
@@ -339,6 +349,73 @@ const renderBarChart = (
   </BarChart>
 );
 
+const renderComposedChart = (
+  data,
+  dataKey,
+  stroke,
+  stopColor,
+  dataFormat,
+  bulletpointColors,
+  itemNames,
+  itemType,
+  isExpanded,
+  expandedGraphStrokeColor,
+) => (
+  <ComposedChart data={data}>
+    <defs>
+      <linearGradient id={`color-${dataKey[0]}`} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor={stopColor[0][0]} stopOpacity={1} />
+        <stop offset="90%" stopColor={stopColor[0][1]} stopOpacity={0.9} />
+      </linearGradient>
+    </defs>
+    <XAxis
+      dataKey="timestamp"
+      interval={30}
+      axisLine={false}
+      tickCount={tickCount}
+      tickLine={false}
+      reversed={true}
+      tickFormatter={str => format(new Date(str * 1000), "MMM dd")}
+      padding={{ right: 20 }}
+    />
+    <YAxis
+      yAxisId="left"
+      axisLine={false}
+      tickLine={false}
+      tickCount={isExpanded ? expandedTickCount : tickCount}
+      width={33}
+      domain={[0, "auto"]}
+      allowDataOverflow={false}
+      tickFormatter={number => (number !== 0 ? `${trim(parseFloat(number), 2)}%` : "")}
+    />
+    <YAxis
+      yAxisId="right"
+      orientation="right"
+      axisLine={false}
+      tickLine={false}
+      tickCount={isExpanded ? expandedTickCount : tickCount}
+      width={33}
+      domain={[0, "auto"]}
+      allowDataOverflow={false}
+      tickFormatter={number => (number !== 0 ? `$${number}` : "")}
+    />
+    <Tooltip
+      // formatter={value => trim(parseFloat(value), 2)}
+      content={<CustomTooltip itemNames={itemNames} itemType={itemType} bulletpointColors={bulletpointColors} isDilution />}
+    />
+    <Area yAxisId="left" dataKey={dataKey[0]} stroke="none" fill={`url(#color-${dataKey[0]})`} fillOpacity={1} />
+    <Line
+      yAxisId="right"
+      type="basis"
+      dataKey={dataKey[1]}
+      stroke={stroke}
+      strokeWidth={3}
+      dot={false}
+    />;
+    {renderExpandedChartStroke(isExpanded, expandedGraphStrokeColor)}
+  </ComposedChart>
+);
+
 function Chart({
   type,
   data,
@@ -357,6 +434,7 @@ function Chart({
   infoTooltipMessage,
   expandedGraphStrokeColor,
   isPOL,
+  isDebt,
 }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -370,6 +448,19 @@ function Chart({
   };
 
   const renderChart = (type, isExpanded) => {
+    if (type === "composed")
+      return renderComposedChart(
+        data,
+        dataKey,
+        stroke,
+        stopColor,
+        dataFormat,
+        bulletpointColors,
+        itemNames,
+        itemType,
+        isExpanded,
+        expandedGraphStrokeColor,
+      );
     if (type === "line")
       return renderLineChart(
         data,
@@ -424,6 +515,7 @@ function Chart({
         itemType,
         isExpanded,
         expandedGraphStrokeColor,
+        isDebt,
       );
 
     if (type === "bar")
@@ -497,7 +589,7 @@ function Chart({
               {headerSubText}
             </Typography>
             <Typography variant="h4" color="textSecondary" style={{ fontWeight: 400 }}>
-              {type !== "multi" && "Today"}
+              {itemNames === tooltipItems.mcs || itemNames === tooltipItems.minted ? "5-day Average" : "Today"}
             </Typography>
           </Box>
         )}
