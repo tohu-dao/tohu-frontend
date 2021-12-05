@@ -327,7 +327,7 @@ function Stake() {
                               <TxnButtonText
                                 pendingTransactions={pendingTransactions}
                                 type="staking"
-                                defaultText={`Stake ${OHM_TICKER}`}
+                                defaultText={<Trans>Stake {OHM_TICKER}</Trans>}
                               />
                             </Button>
                           </Box>
@@ -345,7 +345,7 @@ function Stake() {
                               <TxnButtonText
                                 pendingTransactions={pendingTransactions}
                                 type="approve_staking"
-                                defaultText="Approve"
+                                defaultText={<Trans>Approve</Trans>}
                               />
                             </Button>
                           </Box>
@@ -368,7 +368,7 @@ function Stake() {
                               <TxnButtonText
                                 pendingTransactions={pendingTransactions}
                                 type="unstaking"
-                                defaultText={`Unstake ${OHM_TICKER}`}
+                                defaultText={<Trans>Unstake {OHM_TICKER}</Trans>}
                               />
                             </Button>
                           </Box>
@@ -386,7 +386,7 @@ function Stake() {
                               <TxnButtonText
                                 pendingTransactions={pendingTransactions}
                                 type="approve_unstaking"
-                                defaultText="Approve"
+                                defaultText={<Trans>Approve</Trans>}
                               />
                             </Button>
                           </Box>

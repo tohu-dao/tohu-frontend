@@ -163,7 +163,7 @@ export const PoolDeposit = props => {
                 <TxnButtonText
                   pendingTransactions={pendingTransactions}
                   type="pool_deposit"
-                  defaultText={"Deposit sOHM"}
+                  defaultText={<Trans>Deposit sOHM</Trans>}
                 />
               </Button>
             ) : (
@@ -177,7 +177,7 @@ export const PoolDeposit = props => {
                 <TxnButtonText
                   pendingTransactions={pendingTransactions}
                   type="approve_pool_together"
-                  defaultText="Approve"
+                  defaultText={<Trans>Approve</Trans>}
                 />
               </Button>
             )}

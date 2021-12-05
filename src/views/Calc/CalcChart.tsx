@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { useTheme } from "@material-ui/core/styles";
 import Chart from "src/components/Chart/Chart";
+import { trim, formatCurrency } from "src/helpers";
 import { darkTheme } from "src/themes/dark.js";
-import { calcYieldPercent, calcTotalReturns, calcTotalExod } from "./formulas";
+import { Trans } from "@lingui/macro";
+import { calcYieldPercent, calcTotalExod } from "./formulas";
 import styled from "styled-components";
 
 type CalcChartProps = {
@@ -13,11 +15,18 @@ type CalcChartProps = {
   exodPriceInput: number;
 };
 
-const infoTooltipMessage =
-  "Your projected staked EXOD balance over time. You can use this to estimate the growth of your sEXOD balance.";
+const infoTooltipMessage = (
+  <Trans>
+    Your projected staked EXOD balance over time. You can use this to estimate the growth of your sEXOD balance.
+  </Trans>
+);
 
-const usdTooltip =
-  "Your projected USD balance over time. Price increases/decreases by the same percentage each day to finally reach the target price.";
+const usdTooltip = (
+  <Trans>
+    Your projected USD balance over time. Price increases/decreases by the same percentage each day to finally reach the
+    target price.
+  </Trans>
+);
 
 const CalcChart = ({
   calcDays,
@@ -37,13 +46,34 @@ const CalcChart = ({
     setMode(mode === "sEXOD" ? "USD" : "sEXOD");
   };
 
+  const profits =
+    mode === "sEXOD"
+      ? `${trim(data[0][mode], 2)} sEXOD`
+      : new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+          maximumFractionDigits: 2,
+          minimumFractionDigits: 2,
+        }).format(data[0][mode]);
+
   return (
     <Chart
       type="line"
+      domain={["dataMin", "auto"]}
       data={data}
       dataKey={[mode]}
-      headerText={[`${mode} over time`]}
-      headerSubText={<SwitchToUSD onClick={switchMode}>Switch to {mode === "sEXOD" ? "USD" : "sEXOD"}</SwitchToUSD>}
+      headerText={[
+        <HeaderContainer>
+          <SwitchToUSD onClick={switchMode}>
+            <Trans>Switch to</Trans> {mode === "sEXOD" ? "USD" : "sEXOD"}
+          </SwitchToUSD>
+        </HeaderContainer>,
+      ]}
+      headerSubText={
+        <Trans>
+          {profits} after {calcDays} days
+        </Trans>
+      }
       itemNames={[mode]}
       todayMessage=""
       itemType=""
@@ -68,7 +98,7 @@ export default CalcChart;
 const calcSExodChart = (calcDays: number, exodAmountInput: number, rebaseRateInput: number) => {
   const data = [];
 
-  for (let day = 0; day < calcDays; day++) {
+  for (let day = 0; day <= calcDays; day++) {
     const yeildPercent = calcYieldPercent(rebaseRateInput, day);
     const sEXOD = calcTotalExod(exodAmountInput, yeildPercent);
     data.unshift({ sEXOD, timestamp: nowPlusDays(day) });
@@ -89,7 +119,7 @@ const calcUsdChart = (
   const changePerDay = Math.pow(finalExodPriceInput / exodPriceInput, 1 / calcDays) - 1;
   let price = exodPriceInput;
 
-  for (let day = 0; day < calcDays; day++) {
+  for (let day = 0; day <= calcDays; day++) {
     const yeildPercent = calcYieldPercent(rebaseRateInput, day);
     const sEXOD = calcTotalExod(exodAmountInput, yeildPercent);
     const USD = sEXOD * price;
@@ -103,6 +133,10 @@ const calcUsdChart = (
 const nowPlusDays = (days: number) => {
   return Date.now() / 1000 + 86400 * days;
 };
+
+const HeaderContainer = styled.div`
+  display: flex;
+`;
 
 const SwitchToUSD = styled.div`
   cursor: pointer;

@@ -12,7 +12,7 @@ import {
   Slider,
 } from "@material-ui/core";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { Trans } from "@lingui/macro";
+import { Trans, t } from "@lingui/macro";
 import { useAppSelector } from "src/hooks";
 import styled from "styled-components";
 import CalcHeader from "./CalcHeader";
@@ -171,7 +171,9 @@ function Calc() {
                 totalReturns={totalReturns}
               />
               <YugiQuote>
-                <Typography variant="subtitle2">My grandpa's deck has no pathetic cards, Kaiba 🃏</Typography>
+                <Typography variant="subtitle2">
+                  <Trans>My grandpa's deck has no pathetic cards, Kaiba</Trans> 🃏
+                </Typography>
               </YugiQuote>
             </Grid>
           </Paper>
@@ -255,7 +257,7 @@ const SliderHeader = ({
       </Typography>
       <Typography variant="h6" color="textSecondary">
         <Trans>Current runway:</Trans>{" "}
-        {currentRunway ? `${currentRunway?.toFixed(2)} ${(<Trans>Days</Trans>)}` : <Trans>Loading...</Trans>}
+        {currentRunway ? `${currentRunway?.toFixed(2)} ${t`Days`}` : <Trans>Loading...</Trans>}
       </Typography>
     </SliderHeaderContainer>
   );

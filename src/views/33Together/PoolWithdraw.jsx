@@ -154,13 +154,13 @@ export const PoolWithdraw = props => {
                 <TxnButtonText
                   pendingTransactions={pendingTransactions}
                   type="pool_withdraw"
-                  defaultText={"Withdraw Early & pa" + exitFee + " sOHM"}
+                  defaultText={<Trans>Withdraw Early & pay {exitFee} sEXOD</Trans>}
                 />
               ) : (
                 <TxnButtonText
                   pendingTransactions={pendingTransactions}
                   type="pool_withdraw"
-                  defaultText={"Withdraw sOHM"}
+                  defaultText={<Trans>Withdraw sEXOD</Trans>}
                 />
               )}
               {/* Withdraw sOHM */}

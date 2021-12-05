@@ -230,6 +230,7 @@ const renderLineChart = (
   expandedGraphStrokeColor,
   scale,
   xInterval = 100,
+  domain,
 ) => (
   <LineChart data={data}>
     <XAxis
@@ -252,7 +253,7 @@ const renderLineChart = (
       tickFormatter={number =>
         number !== 0 ? (dataFormat !== "percent" ? `${number}` : `${parseFloat(number) / 1000}k`) : ""
       }
-      domain={[scale == "log" ? "dataMin" : 0, "auto"]}
+      domain={domain || [scale == "log" ? "dataMin" : 0, "auto"]}
       connectNulls={true}
       allowDataOverflow={false}
     />
@@ -435,6 +436,7 @@ function Chart({
   isDebt,
   todayMessage = "Today",
   xInterval,
+  domain,
 }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -475,6 +477,7 @@ function Chart({
         expandedGraphStrokeColor,
         scale,
         xInterval,
+        domain,
       );
     if (type === "area")
       return renderAreaChart(
@@ -580,6 +583,7 @@ function Chart({
             infoTooltipMessage={infoTooltipMessage}
             headerText={headerText}
             headerSubText={headerSubText}
+            todayMessage={todayMessage}
           />
         </Box>
         {loading ? (

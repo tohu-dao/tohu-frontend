@@ -6,7 +6,9 @@ import { Trans } from "@lingui/macro";
 const CalcHeader = () => {
   return (
     <Grid item>
-      <Heading variant="h5">OBLITERATOR (🧪 + 🧪 = ❔)</Heading>
+      <Heading variant="h5">
+        <Trans>OBLITERATOR</Trans> (🧪 + 🧪 = ❔)
+      </Heading>
       <Typography variant="body1">
         <Trans>Estimate your returns</Trans>
       </Typography>
