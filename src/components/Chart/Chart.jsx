@@ -397,11 +397,11 @@ const renderComposedChart = (
       orientation="right"
       axisLine={false}
       tickLine={false}
-      tickCount={isExpanded ? expandedTickCount : tickCount}
+      tickCount={3}
       width={33}
-      domain={[0, "auto"]}
+      domain={["dataMin", "dataMax"]}
       allowDataOverflow={false}
-      tickFormatter={number => (number !== 0 ? `$${number}` : "")}
+      tickFormatter={number => (number !== 0 ? `${number}` : "")}
     />
     <Tooltip
       // formatter={value => trim(parseFloat(value), 2)}

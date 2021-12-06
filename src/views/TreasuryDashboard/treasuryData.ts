@@ -202,7 +202,7 @@ export const tooltipItems = {
   apy: [t`APY`],
   runway: [t`Current`, t`7.5K APY`, t`5K APY`, t`2.5K APY`],
   pol: [t`spLP Treasury`, t`Market spLP`],
-  dilution: [t`Dilution Percentage`, t`wsEXOD Price`],
+  dilution: [t`Dilution Percentage`, t`Current Index`],
   minted: [t`EXOD minted`],
   mcs: [t`EXOD Minted/Total Supply`],
   debtratio: [t`DAI Debt Ratio`, t`wFTM Debt Ratio`, t`EXOD-DAI spLP Debt Ratio`],

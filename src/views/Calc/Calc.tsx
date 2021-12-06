@@ -31,6 +31,7 @@ import {
   calcTotalExod,
 } from "./formulas";
 import { useTreasuryMetrics } from "../TreasuryDashboard/hooks/useTreasuryMetrics";
+import { BLOCK_RATE_SECONDS, EPOCH_INTERVAL } from "src/constants";
 
 function Calc() {
   const [exodAmountInput, setExodAmountInput] = useState(1);
@@ -56,7 +57,7 @@ function Calc() {
   const { data } = useTreasuryMetrics({ refetchOnMount: false });
 
   const runway = data && data.filter((metric: any) => metric.runway10k > 5);
-  const currentRunway = runway && runway[0].runwayCurrent;
+  const currentRunway = runway && (runway[0].runwayCurrent * 3 * EPOCH_INTERVAL * BLOCK_RATE_SECONDS) / 86400 ;
 
   const trimmedBalance = Number(
     [sohmBalance, wsohmAsSohm]
