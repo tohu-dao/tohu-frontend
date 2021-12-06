@@ -43,16 +43,20 @@ export const MarketValueGraph = () => {
   for (let i = 0; i < datalength - ethDatalength; i++) {
     ethData && ethData.push({ sOHMBalanceUSD: 0 });
   }
-  console.log(ethData);
-  console.log(data);
+
   const stats =
     ethData &&
     data &&
-    data.map((e, i) => ({
+    data.map((e, i) => {
+    const gOhmPrice = ethData[i].gOhmPrice ? ethData[i].gOhmPrice : 0;
+    const gOhmBalance = e.treasuryGOhmBalance ? e.treasuryGOhmBalance : 0;
+    const sOHMBalanceUSD = ethData[i].sOHMBalanceUSD + (gOhmBalance * gOhmPrice)
+    return {
       timestamp: e.id,
       ...e,
-      sOHMBalanceUSD: ethData[i].sOHMBalanceUSD,
-    }));
+      sOHMBalanceUSD,
+    }
+  })
 
   return (
     <Chart
@@ -346,9 +350,8 @@ export const DebtRatioGraph = () => {
       color={theme.palette.text.primary}
       stroke={colors}
       headerText="Debt Ratios"
-      headerSubText={`Total ${
-        debtRatios && trim(debtRatios[0].daiDebtRatio + debtRatios[0].ethDebtRatio + debtRatios[0].ohmDaiDebtRatio, 2)
-      }%`}
+      headerSubText={`Total ${debtRatios && trim(debtRatios[0].daiDebtRatio + debtRatios[0].ethDebtRatio + debtRatios[0].ohmDaiDebtRatio, 2)
+        }%`}
       dataFormat="percent"
       bulletpointColors={runwayBulletpoints}
       itemNames={tooltipItems.debtratio}

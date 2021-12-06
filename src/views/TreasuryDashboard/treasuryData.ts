@@ -19,6 +19,7 @@ query {
     treasuryDaiRiskFreeValue
     treasuryDaiMarketValue
     treasuryWETHMarketValue
+    treasuryGOhmBalance
     currentAPY
     runway10k
     runway20k
@@ -48,6 +49,7 @@ export const treasuryOhmQuery = `
 query {
   balances(first: 100, orderBy: timestamp, orderDirection: desc) {
     sOHMBalanceUSD
+    gOhmPrice
   }
 }
 `;
