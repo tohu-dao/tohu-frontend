@@ -350,7 +350,8 @@ export const DebtRatioGraph = () => {
       color={theme.palette.text.primary}
       stroke={colors}
       headerText="Debt Ratios"
-      headerSubText={`Total ${debtRatios && trim(debtRatios[0].daiDebtRatio + debtRatios[0].ethDebtRatio + debtRatios[0].ohmDaiDebtRatio, 2)
+      headerSubText={`Total ${
+          debtRatios && trim(debtRatios[0].daiDebtRatio + debtRatios[0].ethDebtRatio + debtRatios[0].ohmDaiDebtRatio, 2)
         }%`}
       dataFormat="percent"
       bulletpointColors={runwayBulletpoints}
