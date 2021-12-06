@@ -231,7 +231,7 @@ export const DilutionGraph = () => {
     data.map(entry => ({
       timestamp: entry.timestamp,
       percentage: (entry.index / (entry.ohmCirculatingSupply / 2000)) * 100, //initial total supply of 2000
-      wsExodPrice: entry.index * entry.ohmPrice,
+      wsExodPrice: entry.index
     }));
 
   return (
