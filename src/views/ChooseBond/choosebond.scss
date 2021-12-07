@@ -6,26 +6,18 @@
   overflow: hidden;
   .ohm-card .bond-hero h4 {
     font-weight: 600 !important;
-
+    
     .MuiSkeleton-root {
       margin: auto;
     }
   }
-  .ohm-card-graph {
-    max-width: unset !important;
+
+  .ohm-card{
+    margin-bottom: 0px;
+  }
+
+  .full-width {
     width: 100%;
-    margin: auto;
-    max-height: 355px;
-    .card-header {
-      margin-bottom: 1rem;
-    }
-    &.ohm-chart-card {
-      .chart-card-header {
-        padding: 0px 20px !important;
-        min-width: 300px;
-      }
-      height: 355px;
-    }
   }
 
   .claim-bonds-card {

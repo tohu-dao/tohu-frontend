@@ -19,6 +19,7 @@ query {
     treasuryDaiRiskFreeValue
     treasuryDaiMarketValue
     treasuryWETHMarketValue
+    treasuryGOhmBalance
     currentAPY
     runway10k
     runway20k
@@ -48,6 +49,7 @@ export const treasuryOhmQuery = `
 query {
   balances(first: 100, orderBy: timestamp, orderDirection: desc) {
     sOHMBalanceUSD
+    gOhmPrice
   }
 }
 `;
@@ -194,13 +196,13 @@ export const bulletpoints = {
 
 export const tooltipItems = {
   tvl: [t`Total Value Deposited`],
-  coin: [t`DAI`, t`wFTM`, t`sOHM`],
+  coin: [t`DAI`, t`wFTM`, t`gOHM`],
   rfv: [t`DAI`],
   holder: [t`Exodians`],
   apy: [t`APY`],
   runway: [t`Current`, t`7.5K APY`, t`5K APY`, t`2.5K APY`],
   pol: [t`spLP Treasury`, t`Market spLP`],
-  dilution: [t`Dilution Percentage`, t`wsEXOD Price`],
+  dilution: [t`Dilution Percentage`, t`Current Index`],
   minted: [t`EXOD minted`],
   mcs: [t`EXOD Minted/Total Supply`],
   debtratio: [t`DAI Debt Ratio`, t`wFTM Debt Ratio`, t`EXOD-DAI spLP Debt Ratio`],
