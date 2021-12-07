@@ -119,7 +119,7 @@ function ClaimBonds({ activeBonds }) {
                       <TxnButtonTextGeneralPending
                         pendingTransactions={pendingTransactions}
                         type="redeem_all_bonds"
-                        defaultText="Claim all"
+                        defaultText={<Trans>Claim all</Trans>}
                       />
                     </Button>
 
@@ -137,7 +137,7 @@ function ClaimBonds({ activeBonds }) {
                       <TxnButtonTextGeneralPending
                         pendingTransactions={pendingTransactions}
                         type="redeem_all_bonds_autostake"
-                        defaultText="Claim all and Stake"
+                        defaultText={<Trans>Claim all and Stake</Trans>}
                       />
                     </Button>
                   </>

@@ -26,7 +26,7 @@ const EstimatedValues = ({
     <>
       <EstimationColumn>
         <FieldValue
-          fieldName="Initial investment"
+          field={<Trans>Initial investment</Trans>}
           value={new Intl.NumberFormat("en-US", {
             style: "currency",
             currency: "USD",
@@ -35,10 +35,10 @@ const EstimatedValues = ({
           }).format(initialInvestment)}
         />
         <div />
-        <FieldValue fieldName="Estimated ROI" value={`${estimatedROI ? estimatedROI.toFixed(2) : 0}x`} />
-        <FieldValue fieldName="Total sEXOD" value={`${totalSExod.toFixed(2)}`} />
+        <FieldValue field={<Trans>Estimated ROI</Trans>} value={`${estimatedROI ? estimatedROI.toFixed(2) : 0}x`} />
+        <FieldValue field={<Trans>Total sEXOD</Trans>} value={`${totalSExod.toFixed(2)}`} />
         <FieldValue
-          fieldName="Estimated profits"
+          field={<Trans>Estimated profits</Trans>}
           value={new Intl.NumberFormat("en-US", {
             style: "currency",
             currency: "USD",
@@ -47,7 +47,7 @@ const EstimatedValues = ({
           }).format(estimatedProfits)}
         />
         <FieldValue
-          fieldName="Total returns"
+          field={<Trans>Total returns</Trans>}
           value={new Intl.NumberFormat("en-US", {
             style: "currency",
             currency: "USD",
@@ -58,7 +58,7 @@ const EstimatedValues = ({
       </EstimationColumn>
       <EstimationColumn>
         <FieldValue
-          fieldName="Break even price"
+          field={<Trans>Break even price</Trans>}
           value={new Intl.NumberFormat("en-US", {
             style: "currency",
             currency: "USD",
@@ -66,7 +66,7 @@ const EstimatedValues = ({
             minimumFractionDigits: 2,
           }).format(minimumPrice || 0)}
         />
-        <FieldValue fieldName="Days to break even" value={`${breakEvenDays}`} />
+        <FieldValue field={<Trans>Days to break even</Trans>} value={`${breakEvenDays}`} />
       </EstimationColumn>
     </>
   );
@@ -74,11 +74,11 @@ const EstimatedValues = ({
 
 export default EstimatedValues;
 
-const FieldValue = ({ fieldName, value }: { fieldName: string; value: string }) => {
+const FieldValue = ({ field, value }: { field: any; value: string }) => {
   return (
     <EstimationRow>
       <Typography variant="h6" color="textSecondary">
-        {fieldName}
+        {field}
       </Typography>
       <Typography variant="h6" color="textPrimary">
         {value}

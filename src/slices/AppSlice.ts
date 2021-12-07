@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { addresses } from "../constants";
+import { addresses, BLOCK_RATE_SECONDS, EPOCH_INTERVAL } from "../constants";
 import { abi as OlympusStakingv2ABI } from "../abi/OlympusStakingv2.json";
 import { abi as sOHMv2 } from "../abi/sOhmv2.json";
 import { setAll, getTokenPrice, getMarketPrice } from "../helpers";
@@ -101,12 +101,14 @@ export const loadAppDetails = createAsyncThunk(
     ) as SOhmv2;
 
     // Calculating staking
+    const nRebasesFiveDays = 86400 * 5 / (BLOCK_RATE_SECONDS * EPOCH_INTERVAL);
+    const nRebasesYear = 86400 * 365 / (BLOCK_RATE_SECONDS * EPOCH_INTERVAL);
     const epoch = await stakingContract.epoch();
     const stakingReward = epoch.distribute;
     const circ = await sohmMainContract.circulatingSupply();
     const stakingRebase = Number(stakingReward.toString()) / Number(circ.toString());
-    const fiveDayRate = Math.pow(1 + stakingRebase, 5 * 3) - 1;
-    const stakingAPY = Math.pow(1 + stakingRebase, 365 * 3) - 1;
+    const fiveDayRate = Math.pow(1 + stakingRebase, nRebasesFiveDays) - 1;
+    const stakingAPY = Math.pow(1 + stakingRebase, nRebasesYear) - 1;
     const endBlock = epoch.endBlock;
 
     // Current index

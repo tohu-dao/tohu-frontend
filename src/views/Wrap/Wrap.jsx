@@ -287,7 +287,7 @@ function Wrap() {
                             <TxnButtonText
                               pendingTransactions={pendingTransactions}
                               type="wrapping"
-                              defaultText="Wrap sOHM"
+                              defaultText={<Trans>Wrap sOHM</Trans>}
                             />
                           </Button>
                         ) : (
@@ -303,7 +303,7 @@ function Wrap() {
                             <TxnButtonText
                               pendingTransactions={pendingTransactions}
                               type="approve_wrapping"
-                              defaultText="Approve"
+                              defaultText={<Trans>Approve</Trans>}
                             />
                           </Button>
                         )}
@@ -322,7 +322,7 @@ function Wrap() {
                           <TxnButtonText
                             pendingTransactions={pendingTransactions}
                             type="unwrapping"
-                            defaultText="Unwrap sOHM"
+                            defaultText={<Trans>Unwrap sOHM</Trans>}
                           />
                         </Button>
                       </TabPanel>

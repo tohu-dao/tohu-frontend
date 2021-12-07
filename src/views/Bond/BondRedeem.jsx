@@ -73,7 +73,7 @@ function BondRedeem({ bond }) {
               <TxnButtonText
                 pendingTransactions={pendingTransactions}
                 type={"redeem_bond_" + bond.name}
-                defaultText="Claim"
+                defaultText={<Trans>Claim</Trans>}
               />
             </Button>
             <Button
@@ -93,7 +93,7 @@ function BondRedeem({ bond }) {
               <TxnButtonText
                 pendingTransactions={pendingTransactions}
                 type={"redeem_bond_" + bond.name + "_autostake"}
-                defaultText="Claim and Autostake"
+                defaultText={<Trans>Claim and Autostake</Trans>}
               />
             </Button>
           </>
