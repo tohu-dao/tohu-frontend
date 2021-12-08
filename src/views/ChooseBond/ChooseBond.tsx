@@ -26,7 +26,11 @@ import isEmpty from "lodash/isEmpty";
 import { allBondsMap } from "src/helpers/AllBonds";
 import { useAppSelector } from "src/hooks";
 import { IUserBondDetails } from "src/slices/AccountSlice";
-import { DebtRatioGraph, OhmMintedGraph, OhmMintedPerTotalSupplyGraph } from "../TreasuryDashboard/components/Graph/Graph";
+import {
+  DebtRatioGraph,
+  OhmMintedGraph,
+  OhmMintedPerTotalSupplyGraph,
+} from "../TreasuryDashboard/components/Graph/Graph";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { useTreasuryOhm } from "../TreasuryDashboard/hooks/useTreasuryOhm";
 import styled from "styled-components";
@@ -188,9 +192,8 @@ function ChooseBond() {
 const BondContainer = styled.div`
   max-width: 833px;
   width: 100%;
-  padding: 1rem;
+  padding: 24px 0px;
 `;
-
 
 const queryClient = new QueryClient();
 

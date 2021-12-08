@@ -103,7 +103,7 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
     setQuantity(maxQ);
   };
 
-  const bondDetailsDebounce = useDebounce(quantity, 1000);
+  const bondDetailsDebounce = useDebounce(quantity, 500);
 
   useEffect(() => {
     dispatch(calcBondDetails({ bond, value: quantity, provider, networkID: chainID }));
