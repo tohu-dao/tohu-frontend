@@ -161,7 +161,7 @@ export const calcBondDetails = createAsyncThunk(
       dispatch(error(errorString));
     }
 
-    console.log(bond.name, debtRatio);
+    // console.log(bond.name, debtRatio);
     return {
       bond: bond.name,
       bondDiscount,

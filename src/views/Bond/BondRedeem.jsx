@@ -31,18 +31,21 @@ function BondRedeem({ bond }) {
   const bondDetails = useSelector(state => {
     return state.account.bonds && state.account.bonds[bond.name];
   });
+  const blockRateSeconds = useSelector(state => {
+    return state.app.blockRateSeconds;
+  });
 
   async function onRedeem({ autostake }) {
     await dispatch(redeemBond({ address, bond, networkID: chainID, provider, autostake }));
   }
 
   const vestingTime = () => {
-    return prettyVestingPeriod(currentBlock, bond.bondMaturationBlock);
+    return prettyVestingPeriod(currentBlock, bond.bondMaturationBlock, blockRateSeconds);
   };
 
   const vestingPeriod = () => {
     const vestingBlock = parseInt(currentBlock) + parseInt(bondingState.vestingTerm);
-    const seconds = secondsUntilBlock(currentBlock, vestingBlock);
+    const seconds = secondsUntilBlock(currentBlock, vestingBlock, blockRateSeconds);
     return prettifySeconds(seconds, "day");
   };
 

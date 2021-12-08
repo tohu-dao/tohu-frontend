@@ -25,9 +25,13 @@ function RebaseTimer() {
     return state.app.endBlock;
   });
 
+  const blockRateSeconds = useSelector(state => {
+    return state.app.blockRateSeconds;
+  });
+
   function initializeTimer() {
     const rebaseBlock = endBlock;
-    const seconds = secondsUntilBlock(currentBlock, rebaseBlock);
+    const seconds = secondsUntilBlock(currentBlock, rebaseBlock, blockRateSeconds);
     setSecondsToRebase(seconds);
     const prettified = prettifySeconds(seconds);
     setRebaseString(prettified !== "" ? prettified : <Trans>Less than a minute</Trans>);

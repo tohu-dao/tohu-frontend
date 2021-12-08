@@ -27,12 +27,16 @@ export function ClaimBondTableData({ userBond }) {
     return state.app.currentBlock;
   });
 
+  const blockRateSeconds = useSelector(state => {
+    return state.app.blockRateSeconds;
+  });
+
   const pendingTransactions = useSelector(state => {
     return state.pendingTransactions;
   });
 
   const vestingPeriod = () => {
-    return prettyVestingPeriod(currentBlock, bond.bondMaturationBlock);
+    return prettyVestingPeriod(currentBlock, bond.bondMaturationBlock, blockRateSeconds);
   };
 
   async function onRedeem({ autostake }) {
@@ -90,12 +94,16 @@ export function ClaimBondCardData({ userBond }) {
     return state.app.currentBlock;
   });
 
+  const blockRateSeconds = useSelector(state => {
+    return state.app.blockRateSeconds;
+  });
+
   const pendingTransactions = useSelector(state => {
     return state.pendingTransactions;
   });
 
   const vestingPeriod = () => {
-    return prettyVestingPeriod(currentBlock, bond.bondMaturationBlock);
+    return prettyVestingPeriod(currentBlock, bond.bondMaturationBlock, blockRateSeconds);
   };
 
   async function onRedeem({ autostake }) {

@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { addresses, BLOCK_RATE_SECONDS, EPOCH_INTERVAL } from "../constants";
+import { addresses, EPOCH_INTERVAL } from "../constants";
 import { abi as OlympusStakingv2ABI } from "../abi/OlympusStakingv2.json";
 import { abi as sOHMv2 } from "../abi/sOhmv2.json";
 import { setAll, getTokenPrice, getMarketPrice } from "../helpers";
@@ -49,24 +49,24 @@ export const loadAppDetails = createAsyncThunk(
       stakingContract.index(),
     ]);
 
-    const blockFifteenEpochsAgo = await provider.getBlock(currentBlock - EPOCH_INTERVAL * 15);
-    const avgBlockTime =
-      (Date.now() / 1000 - blockFifteenEpochsAgo.timestamp) / (currentBlock - blockFifteenEpochsAgo.number);
-
     const currentBlock = result[0];
     const epoch = result[1];
     const circ = result[2];
     const currentIndex = result[3];
 
+    const blockFifteenEpochsAgo = await provider.getBlock(currentBlock - EPOCH_INTERVAL * 15);
+    const blockRateSeconds =
+      (Date.now() / 1000 - blockFifteenEpochsAgo.timestamp) / (currentBlock - blockFifteenEpochsAgo.number);
+
     // Calculating staking
-    const nRebasesFiveDays = (86400 * 5) / (BLOCK_RATE_SECONDS * EPOCH_INTERVAL);
-    const nRebasesYear = (86400 * 365) / (BLOCK_RATE_SECONDS * EPOCH_INTERVAL);
+    const nRebasesFiveDays = (86400 * 5) / (blockRateSeconds * EPOCH_INTERVAL);
+    const nRebasesYear = (86400 * 365) / (blockRateSeconds * EPOCH_INTERVAL);
     const stakingReward = epoch.distribute;
     const stakingRebase = Number(stakingReward.toString()) / Number(circ.toString());
     const fiveDayRate = Math.pow(1 + stakingRebase, nRebasesFiveDays) - 1;
     const stakingAPY = Math.pow(1 + stakingRebase, nRebasesYear) - 1;
     const endBlock = epoch.endBlock;
-
+    console.log(blockRateSeconds);
     return {
       currentIndex: ethers.utils.formatUnits(currentIndex, "gwei"),
       currentBlock,
@@ -74,6 +74,7 @@ export const loadAppDetails = createAsyncThunk(
       stakingAPY,
       stakingRebase,
       endBlock,
+      blockRateSeconds,
     } as IAppData;
   },
 );
@@ -200,6 +201,7 @@ interface IAppData {
   readonly treasuryBalance?: number;
   readonly treasuryMarketValue?: number;
   readonly endBlock?: number;
+  readonly blockRateSeconds?: number;
 }
 
 const initialState: IAppData = {

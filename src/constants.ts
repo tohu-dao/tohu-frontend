@@ -2,7 +2,7 @@ export const THE_GRAPH_URL = "https://api.thegraph.com/subgraphs/name/exodiafina
 export const THE_GRAPH_URL_ETH = "https://api.thegraph.com/subgraphs/name/exodiafinance/exodia-eth-treasury";
 export const EPOCH_INTERVAL = 28800;
 
-// NOTE could get this from an outside source since it changes slightly over time
+// NOT USED ANY MORE: Fetched from the blockchain `useAppSelector(state => state.app.blockRateSeconds)`
 export const BLOCK_RATE_SECONDS = 0.9;
 
 export const TOKEN_DECIMALS = 9;

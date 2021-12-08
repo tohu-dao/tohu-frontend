@@ -31,7 +31,7 @@ import {
   calcTotalExod,
 } from "./formulas";
 import { useTreasuryMetrics } from "../TreasuryDashboard/hooks/useTreasuryMetrics";
-import { BLOCK_RATE_SECONDS, EPOCH_INTERVAL } from "src/constants";
+import { EPOCH_INTERVAL } from "src/constants";
 
 function Calc() {
   const [exodAmountInput, setExodAmountInput] = useState(1);
@@ -47,6 +47,7 @@ function Calc() {
 
   const isAppLoading = useAppSelector(state => state.app.loading);
   const marketPrice = useAppSelector(state => state.app.marketPrice || 0);
+  const blockRateSeconds = useAppSelector(state => state.app.blockRateSeconds || 0);
   const stakingRebase = useAppSelector(state => state.app.stakingRebase || 0);
   const sohmBalance = useAppSelector(state => {
     return state.account.balances && state.account.balances.sohm;
@@ -57,7 +58,7 @@ function Calc() {
   const { data } = useTreasuryMetrics({ refetchOnMount: false });
 
   const runway = data && data.filter((metric: any) => metric.runway10k > 5);
-  const currentRunway = runway && (runway[0].runwayCurrent * 3 * EPOCH_INTERVAL * BLOCK_RATE_SECONDS) / 86400 ;
+  const currentRunway = runway && (runway[0].runwayCurrent * 3 * EPOCH_INTERVAL * blockRateSeconds) / 86400;
 
   const trimmedBalance = Number(
     [sohmBalance, wsohmAsSohm]
@@ -83,7 +84,7 @@ function Calc() {
   }, [marketPrice]);
 
   useEffect(() => {
-    setYieldPercent(calcYieldPercent(rebaseRateInput, calcDays));
+    setYieldPercent(calcYieldPercent(rebaseRateInput, calcDays, blockRateSeconds));
   }, [rebaseRateInput, calcDays]);
 
   useEffect(() => {
@@ -95,11 +96,13 @@ function Calc() {
   }, [exodAmountInput, finalExodPriceInput, yieldPercent]);
 
   useEffect(() => {
-    setMinimumDays(calcMinimumDays(initialInvestment, exodAmountInput, finalExodPriceInput, rebaseRateInput));
+    setMinimumDays(
+      calcMinimumDays(initialInvestment, exodAmountInput, finalExodPriceInput, rebaseRateInput, blockRateSeconds),
+    );
   }, [initialInvestment, exodAmountInput, finalExodPriceInput, rebaseRateInput]);
 
   useEffect(() => {
-    setMinimumPrice(calcMinimumPrice(initialInvestment, rebaseRateInput, calcDays, exodAmountInput));
+    setMinimumPrice(calcMinimumPrice(initialInvestment, rebaseRateInput, calcDays, exodAmountInput, blockRateSeconds));
   }, [initialInvestment, rebaseRateInput, calcDays, exodAmountInput]);
 
   return (
