@@ -66,7 +66,8 @@ export const loadAppDetails = createAsyncThunk(
     const fiveDayRate = Math.pow(1 + stakingRebase, nRebasesFiveDays) - 1;
     const stakingAPY = Math.pow(1 + stakingRebase, nRebasesYear) - 1;
     const endBlock = epoch.endBlock;
-    console.log(blockRateSeconds);
+
+    // console.log(blockRateSeconds);
     return {
       currentIndex: ethers.utils.formatUnits(currentIndex, "gwei"),
       currentBlock,

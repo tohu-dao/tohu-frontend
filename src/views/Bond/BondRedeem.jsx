@@ -68,7 +68,11 @@ function BondRedeem({ bond }) {
               id="bond-claim-btn"
               className="transaction-button"
               fullWidth
-              disabled={isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name) || bond.pendingPayout == 0.0}
+              disabled={
+                isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name) ||
+                isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name + "_autostake") ||
+                bond.pendingPayout == 0.0
+              }
               onClick={() => {
                 onRedeem({ autostake: false });
               }}
@@ -87,6 +91,7 @@ function BondRedeem({ bond }) {
               fullWidth
               disabled={
                 isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name + "_autostake") ||
+                isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name) ||
                 bond.pendingPayout == 0.0
               }
               onClick={() => {

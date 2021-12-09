@@ -39,7 +39,9 @@ function ClaimBonds({ activeBonds }) {
   const pendingClaim = () => {
     if (
       isPendingTxn(pendingTransactions, "redeem_all_bonds") ||
-      isPendingTxn(pendingTransactions, "redeem_all_bonds_autostake")
+      isPendingTxn(pendingTransactions, "redeem_all_bonds_autostake") ||
+      bonds.some(bond => isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name)) ||
+      bonds.some(bond => isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name + "_autostake"))
     ) {
       return true;
     }

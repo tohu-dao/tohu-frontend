@@ -250,7 +250,7 @@ export const redeemBond = createAsyncThunk(
     };
     try {
       redeemTx = await bondContract.redeem(address, autostake === true);
-      const pendingTxnType = "redeem_bond_" + bond + (autostake === true ? "_autostake" : "");
+      const pendingTxnType = "redeem_bond_" + bond.name + (autostake === true ? "_autostake" : "");
       uaData.txHash = redeemTx.hash;
       dispatch(
         fetchPendingTxns({ txnHash: redeemTx.hash, text: "Redeeming " + bond.displayName, type: pendingTxnType }),

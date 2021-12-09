@@ -150,7 +150,12 @@ export function ClaimBondCardData({ userBond }) {
             />
           </Typography>
         </Button>
-        <Button variant="outlined" color="primary" onClick={() => onRedeem({ autostake: true })}>
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={() => onRedeem({ autostake: true })}
+          disabled={isPendingTxn(pendingTransactions, "redeem_bond_" + bondName + "_autostake")}
+        >
           <Typography variant="h5">
             <TxnButtonTextGeneralPending
               pendingTransactions={pendingTransactions}
