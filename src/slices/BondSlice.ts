@@ -91,7 +91,7 @@ export const calcBondDetails = createAsyncThunk(
     let debtRatio: BigNumberish;
     let marketPrice: number = 0;
 
-    const result = await Promise.all([
+    const results = await Promise.all([
       bondContract.terms(),
       bondContract.maxPayout(),
       // Could move purchased out into its own action to improve performance
@@ -100,15 +100,15 @@ export const calcBondDetails = createAsyncThunk(
       bondContract.bondPriceInUSD(),
       dispatch(findOrLoadMarketPrice({ networkID, provider })).unwrap(),
     ]);
-    const terms = result[0];
-    const maxBondPrice = result[1] || 0;
-    const purchased = result[2] || 0;
-    debtRatio = result[3] || BigNumber.from(0);
-    bondPrice = result[4] || BigNumber.from(0);
-    marketPrice = result[5]?.marketPrice;
+    const terms = results[0];
+    const maxBondPrice = results[1] || 0;
+    const purchased = results[2] || 0;
+    debtRatio = results[3] || BigNumber.from(0);
+    bondPrice = results[4] || BigNumber.from(0);
+    marketPrice = results[5]?.marketPrice;
 
     if (isNaN(Number(bondPrice))) {
-      console.log("error getting bondPriceInUSD", bond.name, result[3]);
+      console.log("error getting bondPriceInUSD", bond.name, results[3]);
     }
     if (!marketPrice) {
       console.error("Returned a null response from dispatch(findOrLoadMarketPrice)");
@@ -161,7 +161,7 @@ export const calcBondDetails = createAsyncThunk(
       dispatch(error(errorString));
     }
 
-    // console.log(bond.name, debtRatio);
+    console.log(bond.name, debtRatio);
     return {
       bond: bond.name,
       bondDiscount,
@@ -210,6 +210,8 @@ export const bondAsset = createAsyncThunk(
       uaData.txHash = bondTx.hash;
       await bondTx.wait();
       // UX preference (show pending after txn complete or after balance updated)
+
+      dispatch(calculateUserBondDetails({ address, bond, networkID, provider }));
     } catch (e: unknown) {
       const rpcError = e as IJsonRPCError;
       if (rpcError.code === -32603 && rpcError.message.indexOf("ds-math-sub-underflow") >= 0) {
@@ -223,8 +225,6 @@ export const bondAsset = createAsyncThunk(
         dispatch(clearPendingTxn(bondTx.hash));
       }
     }
-
-    dispatch(calculateUserBondDetails({ address, bond, networkID, provider }));
   },
 );
 
@@ -270,7 +270,7 @@ export const redeemBond = createAsyncThunk(
     try {
       await dispatch(calculateUserBondDetails({ address, bond, networkID, provider }));
     } catch (e) {
-      dispatch(error((e as IJsonRPCError).message));
+      console.error((e as IJsonRPCError).message);
     }
 
     dispatch(getBalances({ address, networkID, provider }));
@@ -313,7 +313,7 @@ export const redeemAllBonds = createAsyncThunk(
         try {
           dispatch(calculateUserBondDetails({ address, bond, networkID, provider }));
         } catch (e) {
-          dispatch(error((e as IJsonRPCError).message));
+          console.error((e as IJsonRPCError).message);
         }
       });
 
