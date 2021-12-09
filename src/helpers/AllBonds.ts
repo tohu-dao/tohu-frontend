@@ -26,8 +26,8 @@ export const dai = new StableBond({
       reserveAddress: "0x8D11eC38a3EB5E956B052f67Da8Bdc9bef8Abf3E",
     },
     [NetworkID.Testnet]: {
-      bondAddress: "0xDea5668E815dAF058e3ecB30F645b04ad26374Cf",
-      reserveAddress: "0xB2180448f8945C8Cc8AE9809E67D6bd27d8B2f2C",
+      bondAddress: "0x1B6F86BC319e3B363aC5299c045Ae29D95d7A623",
+      reserveAddress: "0xEF6834b5a29D75a883406B19f3eEefbF87b5031A",
     },
   },
 });
@@ -48,8 +48,8 @@ export const eth = new CustomBond({
       reserveAddress: "0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83",
     },
     [NetworkID.Testnet]: {
-      bondAddress: "0xd7cbA20A464C10FB03Bbc265D962ADa8e29af118",
-      reserveAddress: "0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83",
+      bondAddress: "",
+      reserveAddress: "",
     },
   },
   customTreasuryBalanceFunc: async function (this: CustomBond, networkID, provider) {
@@ -77,8 +77,8 @@ export const ohm_dai = new LPBond({
       reserveAddress: "0xc0c1dff0fe24108586e11ec9e20a7cbb405cb769",
     },
     [NetworkID.Testnet]: {
-      bondAddress: "0xcF449dA417cC36009a1C6FbA78918c31594B9377",
-      reserveAddress: "0x8D5a22Fb6A1840da602E56D1a260E56770e0bCE2",
+      bondAddress: "",
+      reserveAddress: "",
     },
   },
   lpUrl:
