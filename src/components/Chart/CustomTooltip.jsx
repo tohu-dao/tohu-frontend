@@ -1,4 +1,5 @@
 import { Paper, Box, Typography } from "@material-ui/core";
+import { bulletpoints } from "src/views/TreasuryDashboard/treasuryData";
 import "./customtooltip.scss";
 
 const renderDate = (index, payload, item) => {
@@ -17,12 +18,14 @@ const renderDate = (index, payload, item) => {
 const renderItem = (type, item) => {
   return type === "$" ? (
     <Typography variant="body2">{`${type}${Math.round(item).toLocaleString("en-US")}`}</Typography>
+  ) : type ==="%" ? (
+    <Typography variant="body2">{`${item.toLocaleString("en-us")}${type}`}</Typography>
   ) : (
-    <Typography variant="body2">{`${Math.round(item).toLocaleString("en-US")}${type}`}</Typography>
+    <Typography variant="body2">{`${item.toFixed(2)} ${type}`}</Typography>
   );
 };
 
-const renderTooltipItems = (payload, bulletpointColors, itemNames, itemType, isStaked = false, isPOL = false) => {
+const renderTooltipItems = (payload, bulletpointColors, itemNames, itemType, isStaked = false, isPOL = false, isDilution = false) => {
   return isStaked ? (
     <Box>
       <Box className="item" display="flex" justifyContent="space-between">
@@ -69,7 +72,7 @@ const renderTooltipItems = (payload, bulletpointColors, itemNames, itemType, isS
               {`${itemNames[index]}`}
             </Typography>
           </Box>
-          {renderItem(itemType, item.value)}
+          {renderItem(isDilution ? itemType[index] : itemType, item.value)}
         </Box>
         <Box>{renderDate(index, payload, item)}</Box>
       </Box>
@@ -77,11 +80,11 @@ const renderTooltipItems = (payload, bulletpointColors, itemNames, itemType, isS
   );
 };
 
-function CustomTooltip({ active, payload, bulletpointColors, itemNames, itemType, isStaked, isPOL }) {
+function CustomTooltip({ active, payload, bulletpointColors, itemNames, itemType, isStaked, isPOL, isDilution }) {
   if (active && payload && payload.length) {
     return (
       <Paper className={`ohm-card tooltip-container`}>
-        {renderTooltipItems(payload, bulletpointColors, itemNames, itemType, isStaked, isPOL)}
+        {renderTooltipItems(payload, bulletpointColors, itemNames, itemType, isStaked, isPOL, isDilution)}
       </Paper>
     );
   }

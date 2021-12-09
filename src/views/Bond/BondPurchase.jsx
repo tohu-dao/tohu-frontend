@@ -190,13 +190,13 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
                     color="primary"
                     id="bond-btn"
                     className="transaction-button"
-                    disabled={isPendingTxn(pendingTransactions, "bond_" + bond.name)}
+                    disabled={isPendingTxn(pendingTransactions, "bond_" + bond.name) || bond.purchaseDisabled}
                     onClick={onBond}
                   >
                     <TxnButtonText
                       pendingTransactions={pendingTransactions}
                       type={"bond_" + bond.name}
-                      defaultText="Bond"
+                      defaultText={<Trans>Bond</Trans>}
                     />
                   </Button>
                 ) : (
@@ -211,7 +211,7 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
                     <TxnButtonText
                       pendingTransactions={pendingTransactions}
                       type={"approve_" + bond.name}
-                      defaultText="Approve"
+                      defaultText={<Trans>Approve</Trans>}
                     />
                   </Button>
                 )}

@@ -7,7 +7,7 @@ import navBg from "../assets/images/exod-sidebar.jpg";
 // then set the values in darkTheme using the global color variables
 //green rgb(70,171,21)
 //dark green rgb(91,196,34)
-const darkTheme = {
+export const darkTheme = {
   color: "#FCFCFC",
   gold: "#46ab15", // Light green
   goldDimmed: "#376e1d",
@@ -106,6 +106,11 @@ export const dark = responsiveFontSizes(
               color: darkTheme.color,
               backdropFilter: "blur(15px)",
             },
+          },
+        },
+        MuiTooltip: {
+          tooltip: {
+            fontSize: "1.1em",
           },
         },
         MuiBackdrop: {

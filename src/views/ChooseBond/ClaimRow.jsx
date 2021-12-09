@@ -69,7 +69,7 @@ export function ClaimBondTableData({ userBond }) {
             <TxnButtonTextGeneralPending
               pendingTransactions={pendingTransactions}
               type={"redeem_bond_" + bondName}
-              defaultText="Claim"
+              defaultText={<Trans>Claim</Trans>}
             />
           </Typography>
         </Button>
@@ -138,7 +138,7 @@ export function ClaimBondCardData({ userBond }) {
             <TxnButtonTextGeneralPending
               pendingTransactions={pendingTransactions}
               type={"redeem_bond_" + bondName}
-              defaultText="Claim"
+              defaultText={<Trans>Claim</Trans>}
             />
           </Typography>
         </Button>
@@ -147,7 +147,7 @@ export function ClaimBondCardData({ userBond }) {
             <TxnButtonTextGeneralPending
               pendingTransactions={pendingTransactions}
               type={"redeem_bond_" + bondName + "_autostake"}
-              defaultText="Claim and Stake"
+              defaultText={<Trans>Claim and Stake</Trans>}
             />
           </Typography>
         </Button>

@@ -6,10 +6,18 @@
   overflow: hidden;
   .ohm-card .bond-hero h4 {
     font-weight: 600 !important;
-
+    
     .MuiSkeleton-root {
       margin: auto;
     }
+  }
+
+  .ohm-card{
+    margin-bottom: 0px;
+  }
+
+  .full-width {
+    width: 100%;
   }
 
   .claim-bonds-card {
@@ -130,6 +138,7 @@
 }
 
 .tablet #choose-bond-view {
+  gap: 1rem;
   .claim-bond-card-buttons {
     button {
       width: 40%;

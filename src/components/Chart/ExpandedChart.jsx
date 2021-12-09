@@ -13,6 +13,7 @@ function ExpandedChart({
   headerText,
   headerSubText,
   runwayExtraInfo,
+  todayMessage,
 }) {
   const verySmallScreen = useMediaQuery("(max-width: 379px)");
 
@@ -49,9 +50,11 @@ function ExpandedChart({
                   {headerSubText}
                 </Typography>
                 {runwayExtraInfo}
-                <Typography variant="h4" color="textSecondary" style={{ fontWeight: 400 }}>
-                  Today
-                </Typography>
+                {todayMessage && (
+                  <Typography variant="h4" color="textSecondary" style={{ fontWeight: 400 }}>
+                    {todayMessage}
+                  </Typography>
+                )}
               </Box>
             </div>
 

@@ -71,6 +71,7 @@ export interface IBondDetails {
   maxBondPrice: number;
   bondPrice: number;
   marketPrice: number;
+  purchaseDisabled: boolean;
 }
 export const calcBondDetails = createAsyncThunk(
   "bonding/calcBondDetails",
@@ -79,6 +80,7 @@ export const calcBondDetails = createAsyncThunk(
       value = "0";
     }
     const amountInWei = ethers.utils.parseEther(value);
+    let purchaseDisabled = false;
 
     let bondPrice = BigNumber.from(0),
       bondDiscount = 0,
@@ -116,14 +118,17 @@ export const calcBondDetails = createAsyncThunk(
     if (Number(value) === 0) {
       // if inputValue is 0 avoid the bondQuote calls
       bondQuote = BigNumber.from(0);
+      purchaseDisabled = true;
     } else if (bond.isLP) {
       valuation = Number(
         (await bondCalcContract.valuation(bond.getAddressForReserve(networkID), amountInWei)).toString(),
       );
       bondQuote = await bondContract.payoutFor(valuation);
-      if (!amountInWei.isZero() && Number(bondQuote.toString()) < 100000) {
+
+      if (!amountInWei.isZero() && Number(bondQuote.toString()) < 10000000) {
         bondQuote = BigNumber.from(0);
         const errorString = "Amount is too small!";
+        purchaseDisabled = true;
         dispatch(error(errorString));
       } else {
         bondQuote = Number(bondQuote.toString()) / Math.pow(10, 9);
@@ -132,9 +137,10 @@ export const calcBondDetails = createAsyncThunk(
       // RFV = DAI
       bondQuote = await bondContract.payoutFor(amountInWei);
 
-      if (!amountInWei.isZero() && Number(bondQuote.toString()) < 100000000000000) {
+      if (!amountInWei.isZero() && Number(bondQuote.toString()) < 10000000000000000) {
         bondQuote = BigNumber.from(0);
         const errorString = "Amount is too small!";
+        purchaseDisabled = true;
         dispatch(error(errorString));
       } else {
         bondQuote = Number(bondQuote.toString()) / Math.pow(10, 18);
@@ -149,6 +155,7 @@ export const calcBondDetails = createAsyncThunk(
         " " +
         OHM_TICKER +
         ".";
+      purchaseDisabled = true;
       dispatch(error(errorString));
     }
 
@@ -165,6 +172,7 @@ export const calcBondDetails = createAsyncThunk(
       maxBondPrice: Number(maxBondPrice.toString()) / Math.pow(10, 9),
       bondPrice: Number(bondPrice.toString()) / Math.pow(10, 18),
       marketPrice: marketPrice,
+      purchaseDisabled,
     };
   },
 );

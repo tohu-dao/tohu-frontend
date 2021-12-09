@@ -1,5 +1,5 @@
 # [Exodia Frontend](https://app.exodia.fi/)
-This is the front-end repo for Olympus that allows users be part of the future of Greece. 
+This is the front-end repo for Exodia that allows users be part of the future of Greece. 
 
 **_ Note We're currently in the process of switching to TypeScript. Please read  this  guide on how to use TypeScript for this repository. https://github.com/OlympusDAO/olympus-frontend/wiki/TypeScript-Refactor-General-Guidelines _**
 
@@ -12,7 +12,7 @@ Required:
 
 
 ```bash
-$ git clone https://github.com/OlympusDAO/olympusdao.git
+$ git clone --recurse-submodules https://github.com/ExodiaFinance/exodia-frontend
 $ cd olympusdao
 
 # set up your environment variables
@@ -59,6 +59,13 @@ The files/folder structure are a  **WIP** and may contain some unused files. The
 Olympus uses [linguijs](https://github.com/lingui/js-lingui) to manage translation.
 
 The language files are located in a submodule deployed in `src/locales/translations`. This submodule points to the [olympus translation repository](https://github.com/OlympusDAO/olympus-translations)
+
+For the translations to run locally, you must pull the submodlue and compile the translations:
+```
+git submodule update --init --recursive
+yarn lingui:extract
+yarn lingui:compile
+```
 
 In order to mark text for translation you can use:
 - The <Trans> component in jsx templates eg. `<Trans>Translate me!</Trans>`
