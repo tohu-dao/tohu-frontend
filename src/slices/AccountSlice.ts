@@ -41,11 +41,11 @@ export const getBalances = createAsyncThunk(
     ) as IERC20;
     const poolBalance = await poolTokenContract.balanceOf(address);
     */
-    const results = await Promise.all([ohmContract.balanceOf(address), sohmContract.balanceOf(address)]);
+    const [ohm, sohm] = await Promise.all([ohmContract.balanceOf(address), sohmContract.balanceOf(address)]);
     return {
       balances: {
-        ohm: ethers.utils.formatUnits(results[0], "gwei"),
-        sohm: ethers.utils.formatUnits(results[1], "gwei"),
+        ohm: ethers.utils.formatUnits(ohm, "gwei"),
+        sohm: ethers.utils.formatUnits(sohm, "gwei"),
         wsohm: 0, //ethers.utils.formatEther(wsohmBalance),
         wsohmAsSohm: 0, //ethers.utils.formatUnits(wsohmAsSohm, "gwei"),
         pool: 0, //ethers.utils.formatUnits(poolBalance, "gwei"),
@@ -76,7 +76,7 @@ export const loadAccountDetails = createAsyncThunk(
     //const wsohmContract = new ethers.Contract(addresses[networkID].WSOHM_ADDRESS as string, wsOHM, provider) as WsOHM;
     //const unwrapAllowance = await wsohmContract.allowance(address, addresses[networkID].WSOHM_ADDRESS);
 
-    const results = await Promise.all([
+    const [ohmStake, ohmUnstake] = await Promise.all([
       ohmContract.allowance(address, addresses[networkID].STAKING_HELPER_ADDRESS),
       sohmContract.allowance(address, addresses[networkID].STAKING_ADDRESS),
     ]);
@@ -84,8 +84,8 @@ export const loadAccountDetails = createAsyncThunk(
 
     return {
       staking: {
-        ohmStake: +results[0],
-        ohmUnstake: +results[1],
+        ohmStake: +ohmStake,
+        ohmUnstake: +ohmUnstake,
       },
       wrapping: {
         ohmWrap: +0,
@@ -126,21 +126,16 @@ export const calculateUserBondDetails = createAsyncThunk(
     const bondContract = bond.getContractForBond(networkID, provider);
     const reserveContract = bond.getContractForReserve(networkID, provider);
 
-    let pendingPayout, bondMaturationBlock;
+    let pendingPayout, bondMaturationBlock, bondDetails;
     let allowance,
       balance = BigNumber.from(0);
 
-    const results = await Promise.all([
+    [bondDetails, pendingPayout, allowance, balance] = await Promise.all([
       bondContract.bondInfo(address),
       bondContract.pendingPayoutFor(address),
       reserveContract.allowance(address, bond.getAddressForBond(networkID)),
       reserveContract.balanceOf(address),
     ]);
-
-    const bondDetails = results[0];
-    pendingPayout = results[1];
-    allowance = results[2];
-    balance = results[3];
 
     let interestDue: BigNumberish = Number(bondDetails.payout.toString()) / Math.pow(10, 9);
     bondMaturationBlock = +bondDetails.vesting + +bondDetails.lastBlock;

@@ -137,15 +137,14 @@ export class LPBond extends Bond {
     const tokenAddress = this.getAddressForReserve(networkID);
     const bondCalculator = getBondCalculator(networkID, provider);
 
-    const results = await Promise.all([
+    const [valuation, markdown] = await Promise.all([
       token
         .balanceOf(addresses[networkID].TREASURY_ADDRESS)
         .then(async tokenAmount => await bondCalculator.valuation(tokenAddress, tokenAmount)),
       bondCalculator.markdown(tokenAddress),
     ]);
 
-    let tokenUSD =
-      (Number(results[0].toString()) / Math.pow(10, 9)) * (Number(results[1].toString()) / Math.pow(10, 18));
+    let tokenUSD = (Number(valuation.toString()) / Math.pow(10, 9)) * (Number(markdown.toString()) / Math.pow(10, 18));
     return Number(tokenUSD.toString());
   }
 }

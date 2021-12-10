@@ -56,13 +56,11 @@ export const eth = new CustomBond({
     const ethBondContract = this.getContractForBond(networkID, provider);
     const token = this.getContractForReserve(networkID, provider);
 
-    const results = await Promise.all([
+    let [ethPrice, ethAmount]: [BigNumberish, BigNumberish] = await Promise.all([
       ethBondContract.assetPrice(),
       token.balanceOf(addresses[networkID].TREASURY_ADDRESS),
     ]);
 
-    let ethPrice: BigNumberish = results[0];
-    let ethAmount: BigNumberish = results[1];
     ethPrice = Number(ethPrice.toString()) / Math.pow(10, 8);
     ethAmount = Number(ethAmount.toString()) / Math.pow(10, 18);
     return ethAmount * ethPrice;

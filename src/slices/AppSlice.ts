@@ -42,17 +42,12 @@ export const loadAppDetails = createAsyncThunk(
       provider,
     ) as SOhmv2;
 
-    const results = await Promise.all([
+    const [currentBlock, epoch, circ, currentIndex] = await Promise.all([
       provider.getBlockNumber(),
       stakingContract.epoch(),
       sohmMainContract.circulatingSupply(),
       stakingContract.index(),
     ]);
-
-    const currentBlock = results[0];
-    const epoch = results[1];
-    const circ = results[2];
-    const currentIndex = results[3];
 
     const blockFifteenEpochsAgo = await provider.getBlock(currentBlock - EPOCH_INTERVAL * 15);
     const blockRateSeconds =
