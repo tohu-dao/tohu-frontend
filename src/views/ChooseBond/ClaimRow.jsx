@@ -27,12 +27,16 @@ export function ClaimBondTableData({ userBond }) {
     return state.app.currentBlock;
   });
 
+  const blockRateSeconds = useSelector(state => {
+    return state.app.blockRateSeconds;
+  });
+
   const pendingTransactions = useSelector(state => {
     return state.pendingTransactions;
   });
 
   const vestingPeriod = () => {
-    return prettyVestingPeriod(currentBlock, bond.bondMaturationBlock);
+    return prettyVestingPeriod(currentBlock, bond.bondMaturationBlock, blockRateSeconds);
   };
 
   async function onRedeem({ autostake }) {
@@ -90,12 +94,16 @@ export function ClaimBondCardData({ userBond }) {
     return state.app.currentBlock;
   });
 
+  const blockRateSeconds = useSelector(state => {
+    return state.app.blockRateSeconds;
+  });
+
   const pendingTransactions = useSelector(state => {
     return state.pendingTransactions;
   });
 
   const vestingPeriod = () => {
-    return prettyVestingPeriod(currentBlock, bond.bondMaturationBlock);
+    return prettyVestingPeriod(currentBlock, bond.bondMaturationBlock, blockRateSeconds);
   };
 
   async function onRedeem({ autostake }) {
@@ -142,7 +150,12 @@ export function ClaimBondCardData({ userBond }) {
             />
           </Typography>
         </Button>
-        <Button variant="outlined" color="primary" onClick={() => onRedeem({ autostake: true })}>
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={() => onRedeem({ autostake: true })}
+          disabled={isPendingTxn(pendingTransactions, "redeem_bond_" + bondName + "_autostake")}
+        >
           <Typography variant="h5">
             <TxnButtonTextGeneralPending
               pendingTransactions={pendingTransactions}

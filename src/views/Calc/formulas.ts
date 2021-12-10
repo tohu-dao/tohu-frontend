@@ -1,7 +1,7 @@
-import { BLOCK_RATE_SECONDS, EPOCH_INTERVAL } from "src/constants";
+import { EPOCH_INTERVAL } from "src/constants";
 
-export const calcYieldPercent = (rebaseRate: number, days: number) => {
-  const nRebases = 86400 * days / (BLOCK_RATE_SECONDS * EPOCH_INTERVAL)
+export const calcYieldPercent = (rebaseRate: number, days: number, blockRateSeconds: number) => {
+  const nRebases = (86400 * days) / (blockRateSeconds * EPOCH_INTERVAL);
   return Math.pow(1 + rebaseRate / 100, nRebases);
 };
 
@@ -18,9 +18,10 @@ export const calcMinimumDays = (
   exodAmount: number,
   finalExodPrice: number,
   rebaseRate: number,
+  blockRateSeconds: number,
 ): number => {
   const minRebases = Math.log(initialInvestment / (exodAmount * finalExodPrice)) / Math.log(1 + rebaseRate / 100);
-  const minDays = Math.ceil((minRebases * EPOCH_INTERVAL * BLOCK_RATE_SECONDS) / 86400);
+  const minDays = Math.ceil((minRebases * EPOCH_INTERVAL * blockRateSeconds) / 86400);
   return minDays > 0 ? minDays : 0;
 };
 
@@ -29,8 +30,9 @@ export const calcMinimumPrice = (
   rebaseRate: number,
   calcDays: number,
   exodAmount: number,
+  blockRateSeconds: number,
 ): number => {
-  const nRebases = 86400 * calcDays / (BLOCK_RATE_SECONDS * EPOCH_INTERVAL);
+  const nRebases = (86400 * calcDays) / (blockRateSeconds * EPOCH_INTERVAL);
   return initialInvestment / (Math.pow(1 + rebaseRate / 100, nRebases) * exodAmount);
 };
 

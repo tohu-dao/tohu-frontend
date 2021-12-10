@@ -1,4 +1,4 @@
-import { EPOCH_INTERVAL, BLOCK_RATE_SECONDS, addresses } from "../constants";
+import { EPOCH_INTERVAL, addresses } from "../constants";
 import { BigNumber, ethers } from "ethers";
 import axios from "axios";
 import { abi as PairContractABI } from "../abi/PairContract.json";
@@ -69,19 +69,19 @@ export function getRebaseBlock(currentBlock: number) {
   return currentBlock + EPOCH_INTERVAL - (currentBlock % EPOCH_INTERVAL);
 }
 
-export function secondsUntilBlock(startBlock: number, endBlock: number) {
+export function secondsUntilBlock(startBlock: number, endBlock: number, blockRateSeconds: number) {
   const blocksAway = endBlock - startBlock;
-  const secondsAway = blocksAway * BLOCK_RATE_SECONDS;
+  const secondsAway = blocksAway * blockRateSeconds;
 
   return secondsAway;
 }
 
-export function prettyVestingPeriod(currentBlock: number, vestingBlock: number) {
+export function prettyVestingPeriod(currentBlock: number, vestingBlock: number, blockRateSeconds: number) {
   if (vestingBlock === 0) {
     return "";
   }
 
-  const seconds = secondsUntilBlock(currentBlock, vestingBlock);
+  const seconds = secondsUntilBlock(currentBlock, vestingBlock, blockRateSeconds);
   if (seconds < 0) {
     return "Fully Vested";
   }

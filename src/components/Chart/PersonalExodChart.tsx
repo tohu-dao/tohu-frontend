@@ -6,6 +6,7 @@ import { darkTheme } from "src/themes/dark.js";
 import { Trans, t } from "@lingui/macro";
 import { calcYieldPercent, calcTotalExod } from "../../views/Calc/formulas";
 import styled from "styled-components";
+import { useAppSelector } from "src/hooks";
 
 type PersonalExodChartProps = {
   calcDays: number;
@@ -39,11 +40,13 @@ const PersonalExodChart = ({
 }: PersonalExodChartProps) => {
   const theme = useTheme();
   const [mode, setMode] = useState(stakingView ? "USD" : "sEXOD");
+  const blockRateSeconds = useAppSelector(state => state.app.blockRateSeconds);
+
   const defaultExod = stakingView ? 1 : 0;
   const data =
     mode === "sEXOD"
-      ? calcSExodChart(calcDays, exodAmount || defaultExod, rebaseRate)
-      : calcUsdChart(calcDays, exodAmount || defaultExod, rebaseRate, finalExodPrice, exodPrice);
+      ? calcSExodChart(calcDays, exodAmount || defaultExod, rebaseRate, blockRateSeconds)
+      : calcUsdChart(calcDays, exodAmount || defaultExod, rebaseRate, finalExodPrice, exodPrice, blockRateSeconds);
 
   const switchMode = () => {
     setMode(mode === "sEXOD" ? "USD" : "sEXOD");
@@ -58,7 +61,7 @@ const PersonalExodChart = ({
           maximumFractionDigits: 2,
           minimumFractionDigits: 2,
         }).format(data[0][mode]);
-  console.log(exodAmount);
+
   return (
     <Chart
       type="line"
@@ -90,11 +93,11 @@ const PersonalExodChart = ({
 
 export default PersonalExodChart;
 
-const calcSExodChart = (calcDays: number, exodAmount: number, rebaseRate: number) => {
+const calcSExodChart = (calcDays: number, exodAmount: number, rebaseRate: number, blockRateSeconds: number) => {
   const data = [];
 
   for (let day = 0; day <= calcDays; day++) {
-    const yeildPercent = calcYieldPercent(rebaseRate, day);
+    const yeildPercent = calcYieldPercent(rebaseRate, day, blockRateSeconds);
     const sEXOD = calcTotalExod(exodAmount, yeildPercent);
     data.unshift({ sEXOD, timestamp: nowPlusDays(day) });
   }
@@ -107,6 +110,7 @@ const calcUsdChart = (
   rebaseRate: number,
   finalExodPrice: number,
   exodPrice: number,
+  blockRateSeconds: number,
 ) => {
   const data = [];
 
@@ -115,7 +119,7 @@ const calcUsdChart = (
   let price = exodPrice;
 
   for (let day = 0; day <= calcDays; day++) {
-    const yeildPercent = calcYieldPercent(rebaseRate, day);
+    const yeildPercent = calcYieldPercent(rebaseRate, day, blockRateSeconds);
     const sEXOD = calcTotalExod(exodAmount, yeildPercent);
     const USD = sEXOD * price;
     price = price + price * changePerDay;

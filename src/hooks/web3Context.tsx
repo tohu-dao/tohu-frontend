@@ -159,9 +159,13 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
     // new _initListeners implementation matches Web3Modal Docs
     // ... see here: https://github.com/Web3Modal/web3modal/blob/2ff929d0e99df5edf6bb9e88cff338ba6d8a3991/example/src/App.tsx#L185
     _initListeners(rawProvider);
+
     const connectedProvider = new Web3Provider(rawProvider, "any");
-    const chainId = await connectedProvider.getNetwork().then(network => network.chainId);
-    const connectedAddress = await connectedProvider.getSigner().getAddress();
+    const [{ chainId }, connectedAddress] = await Promise.all([
+      connectedProvider.getNetwork(),
+      connectedProvider.getSigner().getAddress(),
+    ]);
+
     const validNetwork = _checkNetwork(chainId);
     if (!validNetwork) {
       console.error("Wrong network, please switch to mainnet");

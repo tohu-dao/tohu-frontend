@@ -31,18 +31,21 @@ function BondRedeem({ bond }) {
   const bondDetails = useSelector(state => {
     return state.account.bonds && state.account.bonds[bond.name];
   });
+  const blockRateSeconds = useSelector(state => {
+    return state.app.blockRateSeconds;
+  });
 
   async function onRedeem({ autostake }) {
     await dispatch(redeemBond({ address, bond, networkID: chainID, provider, autostake }));
   }
 
   const vestingTime = () => {
-    return prettyVestingPeriod(currentBlock, bond.bondMaturationBlock);
+    return prettyVestingPeriod(currentBlock, bond.bondMaturationBlock, blockRateSeconds);
   };
 
   const vestingPeriod = () => {
     const vestingBlock = parseInt(currentBlock) + parseInt(bondingState.vestingTerm);
-    const seconds = secondsUntilBlock(currentBlock, vestingBlock);
+    const seconds = secondsUntilBlock(currentBlock, vestingBlock, blockRateSeconds);
     return prettifySeconds(seconds, "day");
   };
 
@@ -65,7 +68,11 @@ function BondRedeem({ bond }) {
               id="bond-claim-btn"
               className="transaction-button"
               fullWidth
-              disabled={isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name) || bond.pendingPayout == 0.0}
+              disabled={
+                isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name) ||
+                isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name + "_autostake") ||
+                bond.pendingPayout == 0.0
+              }
               onClick={() => {
                 onRedeem({ autostake: false });
               }}
@@ -84,6 +91,7 @@ function BondRedeem({ bond }) {
               fullWidth
               disabled={
                 isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name + "_autostake") ||
+                isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name) ||
                 bond.pendingPayout == 0.0
               }
               onClick={() => {

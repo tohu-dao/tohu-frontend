@@ -13,7 +13,7 @@ import { segmentUA } from "./helpers/userAnalyticHelpers";
 import { shouldTriggerSafetyCheck } from "./helpers";
 
 import { calcBondDetails } from "./slices/BondSlice";
-import { loadAppDetails } from "./slices/AppSlice";
+import { loadAppDetails, loadGraphData } from "./slices/AppSlice";
 import { loadAccountDetails, calculateUserBondDetails } from "./slices/AccountSlice";
 import { info } from "./slices/MessagesSlice";
 
@@ -127,10 +127,10 @@ function App() {
     loadProvider => {
       dispatch(loadAccountDetails({ networkID: chainID, address, provider: loadProvider }));
       bonds.map(bond => {
-        dispatch(calculateUserBondDetails({ address, bond, provider, networkID: chainID }));
+        dispatch(calculateUserBondDetails({ address, bond, provider: loadProvider, networkID: chainID }));
       });
       expiredBonds.map(bond => {
-        dispatch(calculateUserBondDetails({ address, bond, provider, networkID: chainID }));
+        dispatch(calculateUserBondDetails({ address, bond, provider: loadProvider, networkID: chainID }));
       });
     },
     [connected],
@@ -143,6 +143,7 @@ function App() {
   // ... if we don't wait we'll ALWAYS fire API calls via JsonRpc because provider has not
   // ... been reloaded within App.
   useEffect(() => {
+    dispatch(loadGraphData());
     if (hasCachedProvider()) {
       // then user DOES have a wallet
       connect().then(() => {

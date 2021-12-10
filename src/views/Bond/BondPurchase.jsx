@@ -42,9 +42,13 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
     return state.pendingTransactions;
   });
 
+  const blockRateSeconds = useSelector(state => {
+    return state.app.blockRateSeconds;
+  });
+
   const vestingPeriod = () => {
     const vestingBlock = parseInt(currentBlock) + parseInt(bond.vestingTerm);
-    const seconds = secondsUntilBlock(currentBlock, vestingBlock);
+    const seconds = secondsUntilBlock(currentBlock, vestingBlock, blockRateSeconds);
     return prettifySeconds(seconds, "day");
   };
 
@@ -103,7 +107,7 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
     setQuantity(maxQ);
   };
 
-  const bondDetailsDebounce = useDebounce(quantity, 1000);
+  const bondDetailsDebounce = useDebounce(quantity, 500);
 
   useEffect(() => {
     dispatch(calcBondDetails({ bond, value: quantity, provider, networkID: chainID }));
