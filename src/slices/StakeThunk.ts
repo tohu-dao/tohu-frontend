@@ -10,6 +10,7 @@ import { error, info } from "../slices/MessagesSlice";
 import { IActionValueAsyncThunk, IChangeApprovalAsyncThunk, IJsonRPCError } from "./interfaces";
 import { segmentUA } from "../helpers/userAnalyticHelpers";
 import { IERC20, OlympusStakingv2, StakingHelper } from "src/typechain";
+import { pollUpdateState } from "./PollStateUpdateSlice";
 
 interface IUAData {
   address: string;
@@ -48,7 +49,7 @@ export const changeApproval = createAsyncThunk(
     const signer = provider.getSigner();
     const ohmContract = new ethers.Contract(addresses[networkID].OHM_ADDRESS as string, ierc20ABI, signer) as IERC20;
     const sohmContract = new ethers.Contract(addresses[networkID].SOHM_ADDRESS as string, ierc20ABI, signer) as IERC20;
-    let approveTx;
+    let approveTx: any;
     let stakeAllowance = await ohmContract.allowance(address, addresses[networkID].STAKING_HELPER_ADDRESS);
     let unstakeAllowance = await sohmContract.allowance(address, addresses[networkID].STAKING_ADDRESS);
 
@@ -91,22 +92,31 @@ export const changeApproval = createAsyncThunk(
       return;
     } finally {
       if (approveTx) {
+        const fetchFreshBalances = async () => {
+          stakeAllowance = await ohmContract.allowance(address, addresses[networkID].STAKING_HELPER_ADDRESS);
+          unstakeAllowance = await sohmContract.allowance(address, addresses[networkID].STAKING_ADDRESS);
+
+          return dispatch(
+            fetchAccountSuccess({
+              staking: {
+                ohmStake: +stakeAllowance,
+                ohmUnstake: +unstakeAllowance,
+              },
+            }),
+          );
+        };
+        dispatch(
+          pollUpdateState({
+            field: `staking.${token === "sohm" ? "ohmUnstake" : "ohmStake"}`,
+            stateAccessor: `account.staking.${token === "sohm" ? "ohmUnstake" : "ohmStake"}`,
+            thunkToCall: () => fetchFreshBalances(),
+          }),
+        );
         dispatch(clearPendingTxn(approveTx.hash));
       }
     }
 
     // go get fresh allowances
-    stakeAllowance = await ohmContract.allowance(address, addresses[networkID].STAKING_HELPER_ADDRESS);
-    unstakeAllowance = await sohmContract.allowance(address, addresses[networkID].STAKING_ADDRESS);
-
-    return dispatch(
-      fetchAccountSuccess({
-        staking: {
-          ohmStake: +stakeAllowance,
-          ohmUnstake: +unstakeAllowance,
-        },
-      }),
-    );
   },
 );
 
@@ -167,6 +177,12 @@ export const changeStake = createAsyncThunk(
         dispatch(clearPendingTxn(stakeTx.hash));
       }
     }
-    dispatch(getBalances({ address, networkID, provider }));
+    dispatch(
+      pollUpdateState({
+        field: `balances.${action === "stake" ? "sohm" : "ohm"}`,
+        stateAccessor: `account.balances.${action === "stake" ? "sohm" : "ohm"}`,
+        thunkToCall: () => dispatch(getBalances({ address, networkID, provider })),
+      }),
+    );
   },
 );

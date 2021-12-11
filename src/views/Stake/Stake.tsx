@@ -122,6 +122,7 @@ function Stake() {
     }
 
     await dispatch(changeStake({ address, action, value: quantity.toString(), provider, networkID: chainID }));
+    setQuantity(0);
   };
 
   const hasAllowance = useCallback(
