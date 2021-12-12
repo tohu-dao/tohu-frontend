@@ -60,7 +60,6 @@ export const changeApproval = createAsyncThunk(
             field: "allowance",
             stateAccessor: `account.bonds[${bond.name}].allowance`,
             thunkToCall: () => dispatch(calculateUserBondDetails({ address, bond, networkID, provider })),
-            clearPendingTxs: () => dispatch(clearPendingTxn(approveTx.hash)),
           }),
         );
       }
