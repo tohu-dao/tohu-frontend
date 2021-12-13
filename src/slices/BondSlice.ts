@@ -1,6 +1,7 @@
 import { ethers, BigNumber, BigNumberish } from "ethers";
 import { contractForRedeemHelper } from "../helpers";
 import { getBalances, calculateUserBondDetails } from "./AccountSlice";
+import { pollUpdateState, pollManyUpdateState, PollUpdateStateParams } from "./PollStateUpdateSlice";
 import { findOrLoadMarketPrice } from "./AppSlice";
 import { error, info } from "./MessagesSlice";
 import { clearPendingTxn, fetchPendingTxns } from "./PendingTxnsSlice";
@@ -30,7 +31,7 @@ export const changeApproval = createAsyncThunk(
     const reserveContract = bond.getContractForReserve(networkID, signer);
     const bondAddr = bond.getAddressForBond(networkID);
 
-    let approveTx;
+    let approveTx: any;
     let bondAllowance = await reserveContract.allowance(address, bondAddr);
 
     // return early if approval already exists
@@ -54,8 +55,13 @@ export const changeApproval = createAsyncThunk(
       dispatch(error((e as IJsonRPCError).message));
     } finally {
       if (approveTx) {
-        dispatch(clearPendingTxn(approveTx.hash));
-        dispatch(calculateUserBondDetails({ address, bond, networkID, provider }));
+        dispatch(
+          pollUpdateState({
+            field: "allowance",
+            stateAccessor: `account.bonds[${bond.name}].allowance`,
+            thunkToCall: () => dispatch(calculateUserBondDetails({ address, bond, networkID, provider })),
+          }),
+        );
       }
     }
   },
@@ -209,9 +215,14 @@ export const bondAsset = createAsyncThunk(
       );
       uaData.txHash = bondTx.hash;
       await bondTx.wait();
-      // UX preference (show pending after txn complete or after balance updated)
 
-      dispatch(calculateUserBondDetails({ address, bond, networkID, provider }));
+      dispatch(
+        pollUpdateState({
+          field: "interestDue",
+          stateAccessor: `account.bonds[${bond.name}].interestDue`,
+          thunkToCall: () => dispatch(calculateUserBondDetails({ address, bond, networkID, provider })),
+        }),
+      );
     } catch (e: unknown) {
       const rpcError = e as IJsonRPCError;
       if (rpcError.code === -32603 && rpcError.message.indexOf("ds-math-sub-underflow") >= 0) {
@@ -267,13 +278,21 @@ export const redeemBond = createAsyncThunk(
       }
     }
 
-    try {
-      await dispatch(calculateUserBondDetails({ address, bond, networkID, provider }));
-    } catch (e) {
-      console.error((e as IJsonRPCError).message);
-    }
+    const statesToPoll: Array<PollUpdateStateParams> = [];
 
-    dispatch(getBalances({ address, networkID, provider }));
+    statesToPoll.push({
+      field: "interestDue",
+      stateAccessor: `account.bonds[${bond.name}].interestDue`,
+      thunkToCall: () => dispatch(calculateUserBondDetails({ address, bond, networkID, provider })),
+    });
+
+    statesToPoll.push({
+      field: `balances.${autostake ? "sohm" : "ohm"}`,
+      stateAccessor: `account.balances.${autostake ? "sohm" : "ohm"}`,
+      thunkToCall: () => dispatch(getBalances({ address, networkID, provider })),
+    });
+
+    dispatch(pollManyUpdateState({ statesToPoll }));
   },
 );
 
@@ -308,16 +327,23 @@ export const redeemAllBonds = createAsyncThunk(
       }
     }
 
+    const statesToPoll: Array<PollUpdateStateParams> = [];
     bonds &&
       bonds.forEach(async bond => {
-        try {
-          dispatch(calculateUserBondDetails({ address, bond, networkID, provider }));
-        } catch (e) {
-          console.error((e as IJsonRPCError).message);
-        }
+        statesToPoll.push({
+          field: "interestDue",
+          stateAccessor: `account.bonds[${bond.name}].interestDue`,
+          thunkToCall: () => dispatch(calculateUserBondDetails({ address, bond, networkID, provider })),
+        });
       });
 
-    dispatch(getBalances({ address, networkID, provider }));
+    statesToPoll.push({
+      field: `balances.${autostake ? "sohm" : "ohm"}`,
+      stateAccessor: `account.balances.${autostake ? "sohm" : "ohm"}`,
+      thunkToCall: () => dispatch(getBalances({ address, networkID, provider })),
+    });
+
+    dispatch(pollManyUpdateState({ statesToPoll }));
   },
 );
 
