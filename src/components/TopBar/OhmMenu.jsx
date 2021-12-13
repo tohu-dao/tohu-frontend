@@ -62,7 +62,7 @@ const addTokenToWallet = (tokenSymbol, tokenAddress, address) => async () => {
       };
       segmentUA(uaData);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 };

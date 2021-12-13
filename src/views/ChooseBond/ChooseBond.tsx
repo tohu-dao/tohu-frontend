@@ -22,14 +22,17 @@ import { useWeb3Context } from "src/hooks/web3Context";
 import "./choosebond.scss";
 import { Skeleton } from "@material-ui/lab";
 import ClaimBonds from "./ClaimBonds";
-import isEmpty from "lodash/isEmpty";
 import { allBondsMap } from "src/helpers/AllBonds";
 import { useAppSelector } from "src/hooks";
-import { IUserBondDetails } from "src/slices/AccountSlice";
-import { DebtRatioGraph, OhmMintedGraph, OhmMintedPerTotalSupplyGraph } from "../TreasuryDashboard/components/Graph/Graph";
+import {
+  DebtRatioGraph,
+  OhmMintedGraph,
+  OhmMintedPerTotalSupplyGraph,
+} from "../TreasuryDashboard/components/Graph/Graph";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { useTreasuryOhm } from "../TreasuryDashboard/hooks/useTreasuryOhm";
 import styled from "styled-components";
+import _ from "lodash";
 
 function ChooseBond() {
   const { chainID } = useWeb3Context();
@@ -39,16 +42,6 @@ function ChooseBond() {
 
   const isAppLoading: boolean = useAppSelector(state => state.app.loading);
   const isAccountLoading: boolean = useAppSelector(state => state.account.loading);
-
-  const accountBonds: IUserBondDetails[] = useAppSelector(state => {
-    const withInterestDue = [];
-    for (const bond in state.account.bonds) {
-      if (state.account.bonds[bond].interestDue > 0) {
-        withInterestDue.push(state.account.bonds[bond]);
-      }
-    }
-    return withInterestDue;
-  });
 
   const marketPrice: number | undefined = useAppSelector(state => {
     return state.app.marketPrice;
@@ -71,7 +64,7 @@ function ChooseBond() {
 
   return (
     <div id="choose-bond-view">
-      {!isAccountLoading && !isEmpty(accountBonds) && <ClaimBonds activeBonds={accountBonds} />}
+      <ClaimBonds />
       <BondContainer>
         <Zoom in={true}>
           <Grid container spacing={3}>
@@ -188,9 +181,8 @@ function ChooseBond() {
 const BondContainer = styled.div`
   max-width: 833px;
   width: 100%;
-  padding: 1rem;
+  padding: 24px 0px;
 `;
-
 
 const queryClient = new QueryClient();
 

@@ -1,6 +1,7 @@
 import { ethers, BigNumber, BigNumberish } from "ethers";
 import { contractForRedeemHelper } from "../helpers";
 import { getBalances, calculateUserBondDetails } from "./AccountSlice";
+import { pollUpdateState, pollManyUpdateState, PollUpdateStateParams } from "./PollStateUpdateSlice";
 import { findOrLoadMarketPrice } from "./AppSlice";
 import { error, info } from "./MessagesSlice";
 import { clearPendingTxn, fetchPendingTxns } from "./PendingTxnsSlice";
@@ -30,7 +31,7 @@ export const changeApproval = createAsyncThunk(
     const reserveContract = bond.getContractForReserve(networkID, signer);
     const bondAddr = bond.getAddressForBond(networkID);
 
-    let approveTx;
+    let approveTx: any;
     let bondAllowance = await reserveContract.allowance(address, bondAddr);
 
     // return early if approval already exists
@@ -54,8 +55,13 @@ export const changeApproval = createAsyncThunk(
       dispatch(error((e as IJsonRPCError).message));
     } finally {
       if (approveTx) {
-        dispatch(clearPendingTxn(approveTx.hash));
-        dispatch(calculateUserBondDetails({ address, bond, networkID, provider }));
+        dispatch(
+          pollUpdateState({
+            field: "allowance",
+            stateAccessor: `account.bonds[${bond.name}].allowance`,
+            thunkToCall: () => dispatch(calculateUserBondDetails({ address, bond, networkID, provider })),
+          }),
+        );
       }
     }
   },
@@ -88,32 +94,34 @@ export const calcBondDetails = createAsyncThunk(
       bondQuote: BigNumberish = BigNumber.from(0);
     const bondContract = bond.getContractForBond(networkID, provider);
     const bondCalcContract = getBondCalculator(networkID, provider);
-
-    const terms = await bondContract.terms();
-    const maxBondPrice = await bondContract.maxPayout();
     let debtRatio: BigNumberish;
-
-    debtRatio = await bondContract.standardizedDebtRatio();
-    console.log(bond.name, debtRatio.toString());
-    debtRatio = Number(debtRatio.toString()) / Math.pow(10, 9);
-
     let marketPrice: number = 0;
-    try {
-      const originalPromiseResult = await dispatch(
-        findOrLoadMarketPrice({ networkID: networkID, provider: provider }),
-      ).unwrap();
-      marketPrice = originalPromiseResult?.marketPrice;
-    } catch (rejectedValueOrSerializedError) {
-      // handle error here
-      console.error("Returned a null response from dispatch(loadMarketPrice)");
+
+    const results = await Promise.all([
+      bondContract.terms(),
+      bondContract.maxPayout(),
+      // Could move purchased out into its own action to improve performance
+      bond.getTreasuryBalance(networkID, provider),
+      bondContract.standardizedDebtRatio(),
+      bondContract.bondPriceInUSD(),
+      dispatch(findOrLoadMarketPrice({ networkID, provider })).unwrap(),
+    ]);
+    const terms = results[0];
+    const maxBondPrice = results[1] || 0;
+    const purchased = results[2] || 0;
+    debtRatio = results[3] || BigNumber.from(0);
+    bondPrice = results[4] || BigNumber.from(0);
+    marketPrice = results[5]?.marketPrice;
+
+    if (isNaN(Number(bondPrice))) {
+      console.log("error getting bondPriceInUSD", bond.name, results[3]);
+    }
+    if (!marketPrice) {
+      console.error("Returned a null response from dispatch(findOrLoadMarketPrice)");
     }
 
-    try {
-      bondPrice = await bondContract.bondPriceInUSD();
-      bondDiscount = (marketPrice * Math.pow(10, 18) - Number(bondPrice.toString())) / Number(bondPrice.toString()); // 1 - bondPrice / (bondPrice * Math.pow(10, 9));
-    } catch (e) {
-      console.log("error getting bondPriceInUSD", bond.name, e);
-    }
+    bondDiscount = (marketPrice * Math.pow(10, 18) - Number(bondPrice.toString())) / Number(bondPrice.toString()); // 1 - bondPrice / (bondPrice * Math.pow(10, 9));
+    debtRatio = Number(debtRatio.toString()) / Math.pow(10, 9);
 
     if (Number(value) === 0) {
       // if inputValue is 0 avoid the bondQuote calls
@@ -159,8 +167,6 @@ export const calcBondDetails = createAsyncThunk(
       dispatch(error(errorString));
     }
 
-    // Calculate bonds purchased
-    let purchased = await bond.getTreasuryBalance(networkID, provider);
     console.log(bond.name, debtRatio);
     return {
       bond: bond.name,
@@ -168,7 +174,7 @@ export const calcBondDetails = createAsyncThunk(
       debtRatio: Number(debtRatio.toString()),
       bondQuote: Number(bondQuote.toString()),
       purchased,
-      vestingTerm: Number(terms.vestingTerm.toString()),
+      vestingTerm: Number(terms?.vestingTerm?.toString()),
       maxBondPrice: Number(maxBondPrice.toString()) / Math.pow(10, 9),
       bondPrice: Number(bondPrice.toString()) / Math.pow(10, 18),
       marketPrice: marketPrice,
@@ -209,10 +215,14 @@ export const bondAsset = createAsyncThunk(
       );
       uaData.txHash = bondTx.hash;
       await bondTx.wait();
-      // TODO: it may make more sense to only have it in the finally.
-      // UX preference (show pending after txn complete or after balance updated)
 
-      dispatch(calculateUserBondDetails({ address, bond, networkID, provider }));
+      dispatch(
+        pollUpdateState({
+          field: "interestDue",
+          stateAccessor: `account.bonds[${bond.name}].interestDue`,
+          thunkToCall: () => dispatch(calculateUserBondDetails({ address, bond, networkID, provider })),
+        }),
+      );
     } catch (e: unknown) {
       const rpcError = e as IJsonRPCError;
       if (rpcError.code === -32603 && rpcError.message.indexOf("ds-math-sub-underflow") >= 0) {
@@ -251,16 +261,13 @@ export const redeemBond = createAsyncThunk(
     };
     try {
       redeemTx = await bondContract.redeem(address, autostake === true);
-      const pendingTxnType = "redeem_bond_" + bond + (autostake === true ? "_autostake" : "");
+      const pendingTxnType = "redeem_bond_" + bond.name + (autostake === true ? "_autostake" : "");
       uaData.txHash = redeemTx.hash;
       dispatch(
         fetchPendingTxns({ txnHash: redeemTx.hash, text: "Redeeming " + bond.displayName, type: pendingTxnType }),
       );
 
       await redeemTx.wait();
-      await dispatch(calculateUserBondDetails({ address, bond, networkID, provider }));
-
-      dispatch(getBalances({ address, networkID, provider }));
     } catch (e: unknown) {
       uaData.approved = false;
       dispatch(error((e as IJsonRPCError).message));
@@ -270,6 +277,22 @@ export const redeemBond = createAsyncThunk(
         dispatch(clearPendingTxn(redeemTx.hash));
       }
     }
+
+    const statesToPoll: Array<PollUpdateStateParams> = [];
+
+    statesToPoll.push({
+      field: "interestDue",
+      stateAccessor: `account.bonds[${bond.name}].interestDue`,
+      thunkToCall: () => dispatch(calculateUserBondDetails({ address, bond, networkID, provider })),
+    });
+
+    statesToPoll.push({
+      field: `balances.${autostake ? "sohm" : "ohm"}`,
+      stateAccessor: `account.balances.${autostake ? "sohm" : "ohm"}`,
+      thunkToCall: () => dispatch(getBalances({ address, networkID, provider })),
+    });
+
+    dispatch(pollManyUpdateState({ statesToPoll }));
   },
 );
 
@@ -295,20 +318,32 @@ export const redeemAllBonds = createAsyncThunk(
       );
 
       await redeemAllTx.wait();
-
-      bonds &&
-        bonds.forEach(async bond => {
-          dispatch(calculateUserBondDetails({ address, bond, networkID, provider }));
-        });
-
-      dispatch(getBalances({ address, networkID, provider }));
     } catch (e: unknown) {
       dispatch(error((e as IJsonRPCError).message));
+      return;
     } finally {
       if (redeemAllTx) {
         dispatch(clearPendingTxn(redeemAllTx.hash));
       }
     }
+
+    const statesToPoll: Array<PollUpdateStateParams> = [];
+    bonds &&
+      bonds.forEach(async bond => {
+        statesToPoll.push({
+          field: "interestDue",
+          stateAccessor: `account.bonds[${bond.name}].interestDue`,
+          thunkToCall: () => dispatch(calculateUserBondDetails({ address, bond, networkID, provider })),
+        });
+      });
+
+    statesToPoll.push({
+      field: `balances.${autostake ? "sohm" : "ohm"}`,
+      stateAccessor: `account.balances.${autostake ? "sohm" : "ohm"}`,
+      thunkToCall: () => dispatch(getBalances({ address, networkID, provider })),
+    });
+
+    dispatch(pollManyUpdateState({ statesToPoll }));
   },
 );
 

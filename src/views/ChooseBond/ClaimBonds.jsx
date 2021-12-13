@@ -7,7 +7,9 @@ import { redeemAllBonds, redeemBond } from "src/slices/BondSlice";
 import { calculateUserBondDetails } from "src/slices/AccountSlice";
 import CardHeader from "../../components/CardHeader/CardHeader";
 import { useWeb3Context } from "src/hooks/web3Context";
+import { useAppSelector } from "src/hooks";
 import useBonds from "src/hooks/Bonds";
+import { IUserBondDetails } from "src/slices/AccountSlice";
 import {
   Button,
   Box,
@@ -24,7 +26,7 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import "./choosebond.scss";
 import { useSelector, useDispatch } from "react-redux";
 
-function ClaimBonds({ activeBonds }) {
+function ClaimBonds() {
   const dispatch = useDispatch();
   const { provider, address, chainID } = useWeb3Context();
   const { bonds } = useBonds(chainID);
@@ -36,10 +38,22 @@ function ClaimBonds({ activeBonds }) {
     return state.pendingTransactions;
   });
 
+  const activeBonds: IUserBondDetails[] = useAppSelector(state => {
+    const withInterestDue = [];
+    for (const bond in state.account.bonds) {
+      if (state.account.bonds[bond].interestDue > 0) {
+        withInterestDue.push(state.account.bonds[bond]);
+      }
+    }
+    return withInterestDue;
+  }, _.isEqual);
+
   const pendingClaim = () => {
     if (
       isPendingTxn(pendingTransactions, "redeem_all_bonds") ||
-      isPendingTxn(pendingTransactions, "redeem_all_bonds_autostake")
+      isPendingTxn(pendingTransactions, "redeem_all_bonds_autostake") ||
+      bonds.some(bond => isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name)) ||
+      bonds.some(bond => isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name + "_autostake"))
     ) {
       return true;
     }
@@ -50,14 +64,15 @@ function ClaimBonds({ activeBonds }) {
   const onRedeemAll = async ({ autostake }) => {
     console.log("redeeming all bonds");
 
-    await dispatch(redeemAllBonds({ address, bonds, networkID: chainID, provider, autostake }));
+    const bondsToRedeem = bonds.filter(bond => activeBonds.some(activeBond => activeBond.bond === bond.name));
+    await dispatch(redeemAllBonds({ address, bonds: bondsToRedeem, networkID: chainID, provider, autostake }));
 
     console.log("redeem all complete");
   };
 
   useEffect(() => {
-    let bondCount = Object.keys(activeBonds).length;
-    setNumberOfBonds(bondCount);
+    let bondCount = Object.keys(activeBonds || {}).length;
+    if (bondCount !== numberOfBonds) setNumberOfBonds(bondCount);
   }, [activeBonds]);
 
   return (
