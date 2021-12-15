@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { addresses, OHM_TICKER, sOHM_TICKER, TOKEN_DECIMALS } from "../../constants";
+import { addresses, OHM_TICKER, sOHM_TICKER, TOKEN_DECIMALS, wsOHM_TICKER } from "../../constants";
 import { NavLink } from "react-router-dom";
 import { Link, SvgIcon, Popper, Button, Paper, Typography, Divider, Box, Fade, Slide } from "@material-ui/core";
 import { ReactComponent as InfoIcon } from "../../assets/icons/info-fill.svg";
@@ -173,6 +173,20 @@ function OhmMenu() {
                             style={{ height: "25px", width: "25px" }}
                           />
                           <Typography variant="body1">{sOHM_TICKER}</Typography>
+                        </Button>
+                      )}
+                      {WSOHM_ADDRESS && (
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          onClick={addTokenToWallet(wsOHM_TICKER, WSOHM_ADDRESS, address)}
+                        >
+                          <SvgIcon
+                            component={wsOhmTokenImg}
+                            viewBox="0 0 32 32"
+                            style={{ height: "27px", width: "27px" }}
+                          />
+                          <Typography variant="body1">{wsOHM_TICKER}</Typography>
                         </Button>
                       )}
                     </Box>

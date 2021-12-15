@@ -13,8 +13,9 @@ const useStyles = makeStyles(theme => ({
     },
   },
   drawerPaper: {
-    "& .MuiPaper-root": {
+    "& .MuiPaper-root:before": {
       backgroundImage: `linear-gradient(0deg, rgba(31,31,31,1) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 100%), url(${navBg})`,
+      opacity: 0.8,
     },
     width: drawerWidth,
     borderRight: 0,

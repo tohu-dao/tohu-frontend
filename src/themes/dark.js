@@ -91,7 +91,7 @@ export const dark = responsiveFontSizes(
           root: {
             backgroundColor: darkTheme.paperBg,
             "&.ohm-card": {
-              backgroundColor: darkTheme.paperBg,
+              backgroundColor: `${darkTheme.paperBg}AA`,
               border: "1px solid " + darkTheme.paperBorder,
             },
             "&.ohm-modal": {
@@ -144,6 +144,7 @@ export const dark = responsiveFontSizes(
             // color: darkTheme.gold,
           },
         },
+
         MuiOutlinedInput: {
           root: {
             "&:hover $notchedOutline": {
@@ -294,6 +295,11 @@ export const dark = responsiveFontSizes(
             "&:hover": {
               color: darkTheme.gold,
             },
+          },
+        },
+        MuiSelect: {
+          selectMenu: {
+            color: darkTheme.gold,
           },
         },
         MuiSlider: {

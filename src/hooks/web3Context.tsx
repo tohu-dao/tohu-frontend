@@ -11,7 +11,7 @@ import { NodeHelper } from "src/helpers/NodeHelper";
  * @returns string
  */
 function getTestnetURI() {
-  return EnvHelper.alchemyTestnetURI;
+  return "https://rpc.testnet.fantom.network";
 }
 
 /**
@@ -91,7 +91,7 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
           options: {
             rpc: {
               250: getMainnetURI(),
-              4004: getTestnetURI(),
+              4002: getTestnetURI(),
             },
           },
         },
