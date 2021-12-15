@@ -22,18 +22,19 @@ import token33tImg from "src/assets/tokens/token_33T.svg";
 import { segmentUA } from "../../helpers/userAnalyticHelpers";
 
 const addTokenToWallet = (tokenSymbol, tokenAddress, address) => async () => {
+  debugger;
   if (window.ethereum) {
     const host = window.location.origin;
     let tokenPath;
     let tokenDecimals = TOKEN_DECIMALS;
     switch (tokenSymbol) {
-      case "OHM":
+      case "EXOD":
         tokenPath = OhmImg;
         break;
       case "33T":
         tokenPath = token33tImg;
         break;
-      case "wsOHM":
+      case "wsEXOD":
         tokenPath = WsOhmImg;
         tokenDecimals = 18;
         break;
