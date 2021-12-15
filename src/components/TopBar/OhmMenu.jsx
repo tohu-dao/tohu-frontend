@@ -185,7 +185,7 @@ function OhmMenu() {
                           <SvgIcon
                             component={wsOhmTokenImg}
                             viewBox="0 0 32 32"
-                            style={{ height: "27px", width: "27px" }}
+                            style={{ height: "25px", width: "25px" }}
                           />
                           <Typography variant="body1">{wsOHM_TICKER}</Typography>
                         </Button>
