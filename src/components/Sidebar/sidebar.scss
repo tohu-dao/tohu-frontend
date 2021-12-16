@@ -174,8 +174,9 @@
   justify-content: space-evenly;
   padding: 1.3rem;
   a {
+    transition: transform 0.3s;
     &:hover {
-      transform: scale(1.1);
+      transform: scale(1.2);
     }
     img {
       height: 20px;
