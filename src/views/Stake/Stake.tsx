@@ -166,6 +166,18 @@ function Stake() {
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,
   }).format(marketPrice * trimmedBalance);
+  const sohmValue = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
+  }).format(marketPrice * sohmBalance);
+  const wsohmValue = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
+  }).format(marketPrice * wsohmAsSohm);
 
   const trimmedStakingAPY = trim(stakingAPY * 100, 1);
   const stakingRebasePercentage = trim(stakingRebase * 100, 4);
@@ -466,9 +478,27 @@ function Stake() {
                         /> */}
                       </AccordionDetails>
                     </Accordion>
+                    <Accordion className="stake-accordion staked-value" square>
+                      <AccordionSummary expandIcon={<ExpandMore className="stake-expand" />}>
+                        <StakeRow title={t`Staked Balance Value ($)`} balance={stakedValue} {...{ isAppLoading }} />
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <StakeRow
+                          title={t`Single Staking Value ($)`}
+                          balance={sohmValue}
+                          indented
+                          {...{ isAppLoading }}
+                        />
+                        <StakeRow
+                          title={t`Wrapped Balance Value ($)`}
+                          balance={wsohmValue}
+                          indented
+                          {...{ isAppLoading }}
+                        />
+                      </AccordionDetails>
+                    </Accordion>
                     <Divider color="secondary" />
 
-                    <StakeRow title={t`Staked Balance Value ($)`} balance={stakedValue} {...{ isAppLoading }} />
                     <StakeRow
                       title={t`Next Reward Amount`}
                       balance={`${nextRewardValue} sEXOD`}
