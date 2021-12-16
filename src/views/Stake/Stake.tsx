@@ -171,13 +171,13 @@ function Stake() {
     currency: "USD",
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,
-  }).format(marketPrice * sohmBalance);
+  }).format(marketPrice * Number(sohmBalance));
   const wsohmValue = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,
-  }).format(marketPrice * wsohmAsSohm);
+  }).format(marketPrice * Number(wsohmAsSohm));
 
   const trimmedStakingAPY = trim(stakingAPY * 100, 1);
   const stakingRebasePercentage = trim(stakingRebase * 100, 4);
