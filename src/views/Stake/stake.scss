@@ -41,6 +41,75 @@
     text-align: center;
     font-style: italic;
   }
+
+  .select-wrap-asset {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-left: 10px;
+
+    .MuiSelect-selectMenu {
+      padding-top: 8px;
+    }
+  }
+
+  .stake-accordion {
+    backdrop-filter: none;
+    background-color: inherit;
+    margin: 12px 0;
+
+    &:before {
+      display: none;
+    }
+
+    .MuiAccordionSummary-root {
+      padding: 0;
+      justify-content: space-between;
+      min-height: auto;
+    }
+
+    .MuiAccordionSummary-content {
+      display: block;
+      margin: 0;
+
+      .data-row {
+        margin: 0;
+      }
+    }
+
+    .MuiAccordionSummary-expandIcon {
+      color: inherit;
+      height: inherit;
+      padding-top: 0;
+      padding-bottom: 0;
+      position: absolute;
+      left: 90px;
+      top: -5px;
+      transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, top 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+        transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+      &.Mui-expanded {
+        left: 94px;
+        top: -2px;
+      }
+    }
+
+    .MuiAccordionDetails-root {
+      padding: 0;
+      display: block;
+    }
+  }
+}
+.staked-value {
+  .MuiAccordionSummary-expandIcon {
+    left: 160px !important;
+    top: -5px !important;
+    transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, top 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+      transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    &.Mui-expanded {
+      left: 164px !important;
+      top: -2px !important;
+    }
+  }
 }
 
 .migrate-sohm-button {
@@ -199,6 +268,13 @@
   justify-content: center;
   margin: auto;
   padding: 0 5px;
+}
+
+.wrap-user-data {
+  justify-content: center;
+  margin: auto;
+  padding-left: 10px;
+  padding-right: 24px;
 }
 
 .tablet .stake-pool,

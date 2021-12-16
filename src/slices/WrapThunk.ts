@@ -9,6 +9,7 @@ import { error, info } from "../slices/MessagesSlice";
 import { IActionValueAsyncThunk, IChangeApprovalAsyncThunk, IJsonRPCError } from "./interfaces";
 import { segmentUA } from "../helpers/userAnalyticHelpers";
 import { IERC20, WsOHM } from "src/typechain";
+import { pollUpdateState, pollManyUpdateState, PollUpdateStateParams } from "./PollStateUpdateSlice";
 
 interface IUAData {
   address: string;
@@ -18,16 +19,16 @@ interface IUAData {
   type: string | null;
 }
 
-function alreadyApprovedToken(token: string, wrapAllowance: BigNumber, unwrapAllowance: BigNumber) {
+function alreadyApprovedToken(token: string, ohmWrap: BigNumber, sohmWrap: BigNumber) {
   // set defaults
   let bigZero = BigNumber.from("0");
   let applicableAllowance = bigZero;
 
   // determine which allowance to check
-  if (token === "sohm") {
-    applicableAllowance = wrapAllowance;
-  } else if (token === "wsohm") {
-    applicableAllowance = unwrapAllowance;
+  if (token === "sEXOD") {
+    applicableAllowance = sohmWrap;
+  } else if (token === "EXOD") {
+    applicableAllowance = ohmWrap;
   }
 
   // check if allowance exists
@@ -45,45 +46,42 @@ export const changeApproval = createAsyncThunk(
     }
 
     const signer = provider.getSigner();
+    const ohmContract = new ethers.Contract(addresses[networkID].OHM_ADDRESS as string, ierc20ABI, signer) as IERC20;
     const sohmContract = new ethers.Contract(addresses[networkID].SOHM_ADDRESS as string, ierc20ABI, signer) as IERC20;
-    const wsohmContract = new ethers.Contract(
-      addresses[networkID].WSOHM_ADDRESS as string,
-      ierc20ABI,
-      signer,
-    ) as IERC20;
     let approveTx;
-    let wrapAllowance = await sohmContract.allowance(address, addresses[networkID].WSOHM_ADDRESS);
-    let unwrapAllowance = await wsohmContract.allowance(address, addresses[networkID].WSOHM_ADDRESS);
+    let ohmWrap = await ohmContract.allowance(address, addresses[networkID].WSOHM_ADDRESS);
+    let sohmWrap = await sohmContract.allowance(address, addresses[networkID].WSOHM_ADDRESS);
 
     // return early if approval has already happened
-    if (alreadyApprovedToken(token, wrapAllowance, unwrapAllowance)) {
+    if (alreadyApprovedToken(token, ohmWrap, sohmWrap)) {
       dispatch(info("Approval completed."));
       return dispatch(
         fetchAccountSuccess({
           wrapping: {
-            ohmWrap: +wrapAllowance,
-            ohmUnwrap: +unwrapAllowance,
+            ohmWrap: +ohmWrap,
+            sohmWrap: +sohmWrap,
           },
         }),
       );
     }
 
     try {
-      if (token === "sohm") {
+      if (token === "sEXOD") {
         // won't run if wrapAllowance > 0
         approveTx = await sohmContract.approve(
           addresses[networkID].WSOHM_ADDRESS,
           ethers.utils.parseUnits("1000000000", "gwei").toString(),
         );
-      } else if (token === "wsohm") {
-        approveTx = await wsohmContract.approve(
+      } else if (token === "EXOD") {
+        // won't run if wrapAllowance > 0
+        approveTx = await ohmContract.approve(
           addresses[networkID].WSOHM_ADDRESS,
           ethers.utils.parseUnits("1000000000", "gwei").toString(),
         );
       }
 
-      const text = "Approve " + (token === "sohm" ? "Wrapping" : "Unwrapping");
-      const pendingTxnType = token === "sohm" ? "approve_wrapping" : "approve_unwrapping";
+      const text = "Approve " + (["EXOD", "sEXOD"].includes(token) ? "Wrapping" : "Unwrapping");
+      const pendingTxnType = ["EXOD", "sEXOD"].includes(token) ? "approve_wrapping" : "approve_unwrapping";
       if (approveTx) {
         dispatch(fetchPendingTxns({ txnHash: approveTx.hash, text, type: pendingTxnType }));
 
@@ -99,15 +97,26 @@ export const changeApproval = createAsyncThunk(
     }
 
     // go get fresh allowances
-    wrapAllowance = await sohmContract.allowance(address, addresses[networkID].WSOHM_ADDRESS);
-    unwrapAllowance = await wsohmContract.allowance(address, addresses[networkID].WSOHM_ADDRESS);
 
-    return dispatch(
-      fetchAccountSuccess({
-        wrapping: {
-          ohmWrap: +wrapAllowance,
-          ohmUnwrap: +unwrapAllowance,
-        },
+    const fetchFreshAllowances = async () => {
+      let ohmWrapAllowance = await ohmContract.allowance(address, addresses[networkID].WSOHM_ADDRESS);
+      let sohmWrapAllowance = await sohmContract.allowance(address, addresses[networkID].WSOHM_ADDRESS);
+
+      return dispatch(
+        fetchAccountSuccess({
+          wrapping: {
+            ohmWrap: +ohmWrapAllowance,
+            sohmWrap: +sohmWrapAllowance,
+          },
+        }),
+      );
+    };
+
+    dispatch(
+      pollUpdateState({
+        field: `wrapping.${token === "EXOD" ? "ohmWrap" : "sohmWrap"}`,
+        stateAccessor: `account.wrapping.${token === "EXOD" ? "ohmWrap" : "sohmWrap"}`,
+        thunkToCall: () => fetchFreshAllowances(),
       }),
     );
   },
@@ -133,14 +142,20 @@ export const changeWrap = createAsyncThunk(
       type: null,
     };
     try {
-      if (action === "wrap") {
+      if (action === "wrapFromsOHM") {
         uaData.type = "wrap";
-        wrapTx = await wsohmContract.wrap(ethers.utils.parseUnits(value, "gwei"));
+        wrapTx = await wsohmContract.wrapFromsOHM(ethers.utils.parseUnits(value, "gwei"));
+      } else if (action === "wrapFromOHM") {
+        uaData.type = "wrap";
+        wrapTx = await wsohmContract.wrapFromOHM(ethers.utils.parseUnits(value, "gwei"));
+      } else if (action === "unwrapToOHM") {
+        uaData.type = "unwrap";
+        wrapTx = await wsohmContract.unwrapToOHM(ethers.utils.parseUnits(value));
       } else {
         uaData.type = "unwrap";
-        wrapTx = await wsohmContract.unwrap(ethers.utils.parseUnits(value));
+        wrapTx = await wsohmContract.unwrapTosOHM(ethers.utils.parseUnits(value));
       }
-      const pendingTxnType = action === "wrap" ? "wrapping" : "unwrapping";
+      const pendingTxnType = ["wrapFromsOHM", "wrapFromOHM"].includes(action) ? "wrapping" : "unwrapping";
       uaData.txHash = wrapTx.hash;
       dispatch(fetchPendingTxns({ txnHash: wrapTx.hash, text: getWrappingTypeText(action), type: pendingTxnType }));
       await wrapTx.wait();
@@ -162,6 +177,15 @@ export const changeWrap = createAsyncThunk(
         dispatch(clearPendingTxn(wrapTx.hash));
       }
     }
-    dispatch(getBalances({ address, networkID, provider }));
+    const unwrapTo = action === "unwrapToOHM" ? "ohm" : "sohm";
+    const field = ["wrapFromsOHM", "wrapFromOHM"].includes(action) ? "wsohm" : unwrapTo;
+
+    dispatch(
+      pollUpdateState({
+        field: `balances.${field}`,
+        stateAccessor: `account.balances.${field}`,
+        thunkToCall: () => dispatch(getBalances({ address, networkID, provider })),
+      }),
+    );
   },
 );
