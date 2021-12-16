@@ -160,6 +160,13 @@ function Stake() {
       .reduce((a, b) => a + b, 0)
       .toFixed(4),
   );
+  const stakedValue = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
+  }).format(marketPrice * trimmedBalance);
+
   const trimmedStakingAPY = trim(stakingAPY * 100, 1);
   const stakingRebasePercentage = trim(stakingRebase * 100, 4);
   const nextRewardValue = trim((Number(stakingRebasePercentage) / 100) * trimmedBalance, 4);
@@ -460,6 +467,8 @@ function Stake() {
                       </AccordionDetails>
                     </Accordion>
                     <Divider color="secondary" />
+
+                    <StakeRow title={t`Staked Balance Value ($)`} balance={stakedValue} {...{ isAppLoading }} />
                     <StakeRow
                       title={t`Next Reward Amount`}
                       balance={`${nextRewardValue} sEXOD`}
