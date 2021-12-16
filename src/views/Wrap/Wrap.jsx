@@ -321,7 +321,6 @@ function Wrap() {
                             </Box>
                           ) : (
                             <FormControl className="ohm-input" variant="outlined" color="primary">
-                              <InputLabel htmlFor="amount-input"></InputLabel>
                               <OutlinedInput
                                 id="amount-input"
                                 type="number"
@@ -330,6 +329,7 @@ function Wrap() {
                                 value={quantity}
                                 onChange={e => setQuantity(e.target.value)}
                                 labelWidth={0}
+                                autoFocus
                                 endAdornment={
                                   <InputAdornment position="end">
                                     <Button variant="text" onClick={setMax} color="inherit">
@@ -350,7 +350,7 @@ function Wrap() {
                               className="stake-button"
                               variant="contained"
                               color="primary"
-                              disabled={isPendingTxn(pendingTransactions, "wrapping")}
+                              disabled={isPendingTxn(pendingTransactions, "wrapping") || !quantity}
                               onClick={() => {
                                 onChangeWrap("wrap");
                               }}
@@ -385,7 +385,7 @@ function Wrap() {
                             className="stake-button"
                             variant="contained"
                             color="primary"
-                            disabled={isPendingTxn(pendingTransactions, "unwrapping")}
+                            disabled={isPendingTxn(pendingTransactions, "unwrapping") || !quantity}
                             onClick={() => {
                               onChangeWrap("unwrap");
                             }}
