@@ -350,7 +350,7 @@ function Wrap() {
                               className="stake-button"
                               variant="contained"
                               color="primary"
-                              disabled={isPendingTxn(pendingTransactions, "wrapping") || !quantity}
+                              disabled={isPendingTxn(pendingTransactions, "wrapping") || !Number(quantity)}
                               onClick={() => {
                                 onChangeWrap("wrap");
                               }}
@@ -385,7 +385,7 @@ function Wrap() {
                             className="stake-button"
                             variant="contained"
                             color="primary"
-                            disabled={isPendingTxn(pendingTransactions, "unwrapping") || !quantity}
+                            disabled={isPendingTxn(pendingTransactions, "unwrapping") || !Number(quantity)}
                             onClick={() => {
                               onChangeWrap("unwrap");
                             }}
