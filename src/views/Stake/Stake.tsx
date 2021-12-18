@@ -55,7 +55,7 @@ function Stake() {
 
   const [zoomed, setZoomed] = useState(false);
   const [view, setView] = useState(0);
-  const [quantity, setQuantity] = useState(0);
+  const [quantity, setQuantity] = useState("");
 
   const isAppLoading = useAppSelector(state => state.app.loading);
   const marketPrice = useAppSelector(state => state.app.marketPrice || 0);
@@ -315,15 +315,15 @@ function Stake() {
                           </Box>
                         ) : (
                           <FormControl className="ohm-input" variant="outlined" color="primary">
-                            <InputLabel htmlFor="amount-input"></InputLabel>
                             <OutlinedInput
                               id="amount-input"
                               type="number"
                               placeholder="Enter an amount"
                               className="stake-input"
                               value={quantity}
-                              onChange={e => setQuantity(Number(e.target.value))}
+                              onChange={e => setQuantity(e.target.value === "" ? "" : Number(e.target.value))}
                               labelWidth={0}
+                              autoFocus
                               endAdornment={
                                 <InputAdornment position="end">
                                   <Button variant="text" onClick={setMax} color="inherit">
@@ -347,7 +347,7 @@ function Stake() {
                               className="stake-button"
                               variant="contained"
                               color="primary"
-                              disabled={isPendingTxn(pendingTransactions, "staking")}
+                              disabled={isPendingTxn(pendingTransactions, "staking") || !quantity}
                               onClick={() => {
                                 onChangeStake("stake");
                               }}
@@ -388,7 +388,7 @@ function Stake() {
                               className="stake-button"
                               variant="contained"
                               color="primary"
-                              disabled={isPendingTxn(pendingTransactions, "unstaking")}
+                              disabled={isPendingTxn(pendingTransactions, "unstaking") || !quantity}
                               onClick={() => {
                                 onChangeStake("unstake");
                               }}
@@ -526,7 +526,7 @@ function Stake() {
           <Paper className="ohm-card">
             <PersonalExodChart
               calcDays={90}
-              exodAmount={(trimmedBalance || 0) + (quantity || Number(ohmBalance) || 0)}
+              exodAmount={(trimmedBalance || 0) + view === 0 ? quantity || Number(ohmBalance) || 0 : 0}
               rebaseRate={stakingRebase * 100}
               finalExodPrice={marketPrice}
               exodPrice={marketPrice}
