@@ -230,10 +230,11 @@ function App() {
               <Route path="/obliterator">
                 <Calc />
               </Route>
+
+              <Route path="/wrap">
+                <Wrap />
+              </Route>
               {/*
-                <Route path="/wrap">
-                  <Wrap />
-                </Route>
 
                 <Route path="/33-together">
                   <PoolTogether />

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { t, Trans } from "@lingui/macro";
+import styled from "styled-components";
 import { ClaimBondTableData, ClaimBondCardData } from "./ClaimRow";
 import { isPendingTxn } from "src/slices/PendingTxnsSlice";
 import { TxnButtonTextGeneralPending } from "src/components/TxnButtonText";
@@ -20,6 +21,7 @@ import {
   TableRow,
   TableCell,
   Table,
+  Typography,
   Zoom,
 } from "@material-ui/core";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
@@ -29,7 +31,7 @@ import { useSelector, useDispatch } from "react-redux";
 function ClaimBonds() {
   const dispatch = useDispatch();
   const { provider, address, chainID } = useWeb3Context();
-  const { bonds } = useBonds(chainID);
+  const { bonds, expiredBonds } = useBonds(chainID);
 
   const [numberOfBonds, setNumberOfBonds] = useState(0);
   const isSmallScreen = useMediaQuery("(max-width: 733px)"); // change to breakpoint query
@@ -70,6 +72,11 @@ function ClaimBonds() {
     console.log("redeem all complete");
   };
 
+  async function onAutoStakeSingle() {
+    let currentBond = [...bonds, ...expiredBonds].find(bnd => bnd.name === activeBonds[0].bond);
+    await dispatch(redeemBond({ address, bond: currentBond, networkID: chainID, provider, autostake: true }));
+  }
+
   useEffect(() => {
     let bondCount = Object.keys(activeBonds || {}).length;
     if (bondCount !== numberOfBonds) setNumberOfBonds(bondCount);
@@ -108,6 +115,27 @@ function ClaimBonds() {
                       ))}
                     </TableBody>
                   </Table>
+                  {numberOfBonds === 1 && Object.keys(activeBonds).length && (
+                    <SingleAutoStake>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        disabled={isPendingTxn(
+                          pendingTransactions,
+                          "redeem_bond_" + Object.values(activeBonds)[0].bond + "_autostake",
+                        )}
+                        onClick={onAutoStakeSingle}
+                      >
+                        <Typography variant="h6">
+                          <TxnButtonTextGeneralPending
+                            pendingTransactions={pendingTransactions}
+                            type={"redeem_bond_" + Object.values(activeBonds)[0].bond + "_autostake"}
+                            defaultText={<Trans>Claim and Stake</Trans>}
+                          />
+                        </Typography>
+                      </Button>
+                    </SingleAutoStake>
+                  )}
                 </TableContainer>
               )}
 
@@ -167,3 +195,9 @@ function ClaimBonds() {
 }
 
 export default ClaimBonds;
+
+const SingleAutoStake = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+`;

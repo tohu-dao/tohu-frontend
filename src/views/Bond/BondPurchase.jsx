@@ -8,6 +8,7 @@ import {
   InputAdornment,
   InputLabel,
   OutlinedInput,
+  FormHelperText,
   Slide,
   Typography,
 } from "@material-ui/core";
@@ -168,6 +169,8 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
                       onChange={e => setQuantity(e.target.value)}
                       // startAdornment={<InputAdornment position="start">$</InputAdornment>}
                       labelWidth={55}
+                      error={Number(bond.balance) < Number(quantity)}
+                      autoFocus
                       endAdornment={
                         <InputAdornment position="end">
                           <Button variant="text" onClick={setMax}>
@@ -176,6 +179,11 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
                         </InputAdornment>
                       }
                     />
+                    {Number(bond.balance) < Number(quantity) && (
+                      <FormHelperText id="component-helper-text" error>
+                        Can't bond more than your balance
+                      </FormHelperText>
+                    )}
                   </FormControl>
                 )}
                 {!bond.isAvailable[chainID] ? (
@@ -194,7 +202,12 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
                     color="primary"
                     id="bond-btn"
                     className="transaction-button"
-                    disabled={isPendingTxn(pendingTransactions, "bond_" + bond.name) || bond.purchaseDisabled}
+                    disabled={
+                      isPendingTxn(pendingTransactions, "bond_" + bond.name) ||
+                      bond.purchaseDisabled ||
+                      Number(bond.balance) < Number(quantity) ||
+                      !quantity
+                    }
                     onClick={onBond}
                   >
                     <TxnButtonText

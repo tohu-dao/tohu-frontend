@@ -5,6 +5,7 @@ import externalUrls from "./externalUrls";
 import { ReactComponent as StakeIcon } from "../../assets/icons/stake.svg";
 import { ReactComponent as BondIcon } from "../../assets/icons/bond.svg";
 import { ReactComponent as DashboardIcon } from "../../assets/icons/dashboard.svg";
+import { ReactComponent as WrapIcon } from "../../assets/icons/wrap.svg";
 import { ReactComponent as OlympusIcon } from "../../assets/icons/olympus-nav-header.svg";
 import ExodiaLogo from "../../assets/images/logo-wide.png";
 import { ReactComponent as PoolTogetherIcon } from "../../assets/icons/33-together.svg";
@@ -31,6 +32,12 @@ function NavContent() {
       return true;
     }
     if (currentPath.indexOf("stake") >= 0 && page === "stake") {
+      return true;
+    }
+    if (currentPath.indexOf("wrap") >= 0 && page === "wrap") {
+      return true;
+    }
+    if (currentPath.indexOf("obliterator") >= 0 && page === "obliterator") {
       return true;
     }
     if ((currentPath.indexOf("bonds") >= 0 || currentPath.indexOf("choose_bond") >= 0) && page === "bonds") {
@@ -97,6 +104,21 @@ function NavContent() {
 
               <Link
                 component={NavLink}
+                id="wrap-nav"
+                to="/wrap"
+                isActive={(match, location) => {
+                  return checkPage(match, location, "wrap");
+                }}
+                className={`button-dapp-menu ${isActive ? "active" : ""}`}
+              >
+                <Typography variant="h6">
+                  <SvgIcon color="primary" component={WrapIcon} />
+                  <Trans>Wrap</Trans>
+                </Typography>
+              </Link>
+
+              <Link
+                component={NavLink}
                 id="bond-nav"
                 to="/bonds"
                 isActive={(match, location) => {
@@ -140,7 +162,7 @@ function NavContent() {
                 id="calc-nav"
                 to="/obliterator"
                 isActive={(match, location) => {
-                  return checkPage(match, location, "cakc");
+                  return checkPage(match, location, "obliterator");
                 }}
                 className={`button-dapp-menu ${isActive ? "active" : ""} obliterator`}
               >

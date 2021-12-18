@@ -95,7 +95,7 @@
     },
     {
       "inputs": [{ "internalType": "uint256", "name": "_amount", "type": "uint256" }],
-      "name": "sOHMTowOHM",
+      "name": "sOHMValue",
       "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
       "stateMutability": "view",
       "type": "function"
@@ -137,21 +137,35 @@
     },
     {
       "inputs": [{ "internalType": "uint256", "name": "_amount", "type": "uint256" }],
-      "name": "unwrap",
+      "name": "unwrapTosOHM",
       "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
       "stateMutability": "nonpayable",
       "type": "function"
     },
     {
       "inputs": [{ "internalType": "uint256", "name": "_amount", "type": "uint256" }],
-      "name": "wOHMTosOHM",
+      "name": "unwrapToOHM",
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [{ "internalType": "uint256", "name": "_amount", "type": "uint256" }],
+      "name": "wOHMValue",
       "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
       "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [{ "internalType": "uint256", "name": "_amount", "type": "uint256" }],
-      "name": "wrap",
+      "name": "wrapFromsOHM",
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [{ "internalType": "uint256", "name": "_amount", "type": "uint256" }],
+      "name": "wrapFromOHM",
       "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
       "stateMutability": "nonpayable",
       "type": "function"

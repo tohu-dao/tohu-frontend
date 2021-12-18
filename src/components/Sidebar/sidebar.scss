@@ -1,8 +1,28 @@
 .sidebar {
   min-width: 280px;
   border-radius: 0 !important;
+
   .MuiPaper-root {
     z-index: 20;
+    opacity: 1;
+    background-color: initial;
+    backdrop-filter: none !important;
+  }
+  .dapp-sidebar {
+    backdrop-filter: none;
+  }
+  .MuiDrawer-paper::before {
+    background-image: linear-gradient(0deg, rgba(31, 31, 31, 1) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0) 100%),
+      url("../../assets/images/exod-sidebar.jpg");
+    background-repeat: no-repeat;
+    background-color: #131313;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    opacity: 0.75;
+    content: "";
   }
 }
 
@@ -14,8 +34,29 @@
   height: 100%;
   overflow: hidden;
   border-radius: 0 !important;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  background-color: initial !important;
+  z-index: 20;
+}
+
+.MuiPaper-root {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.MuiDrawer-paper::before {
+  background-image: linear-gradient(0deg, rgba(31, 31, 31, 1) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0) 100%),
+    url("../../assets/images/exod-sidebar.jpg");
+  background-repeat: no-repeat;
+  background-color: #131313;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  opacity: 0.75;
+  content: "";
 }
 
 .dapp-sidebar-inner {
@@ -133,8 +174,9 @@
   justify-content: space-evenly;
   padding: 1.3rem;
   a {
+    transition: transform 0.3s;
     &:hover {
-      transform: scale(1.1);
+      transform: scale(1.2);
     }
     img {
       height: 20px;
