@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { useMediaQuery } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import styled from "styled-components";
 import useTheme from "./hooks/useTheme";
 import useBonds, { IAllBondData } from "./hooks/Bonds";
 import { useAddress, useWeb3Context } from "./hooks/web3Context";
@@ -13,11 +14,11 @@ import { segmentUA } from "./helpers/userAnalyticHelpers";
 import { shouldTriggerSafetyCheck } from "./helpers";
 
 import { calcBondDetails } from "./slices/BondSlice";
-import { loadAppDetails, loadGraphData } from "./slices/AppSlice";
+import { loadAppDetails, loadGraphData, refreshRebaseTimer } from "./slices/AppSlice";
 import { loadAccountDetails, calculateUserBondDetails } from "./slices/AccountSlice";
 import { info } from "./slices/MessagesSlice";
 
-import { Stake, ChooseBond, Bond, Wrap, TreasuryDashboard, PoolTogether, Calc } from "./views";
+import { Stake, ChooseBond, Bond, Wrap, TreasuryDashboard, PoolTogether, Calc, Dashboard } from "./views";
 import Sidebar from "./components/Sidebar/Sidebar.jsx";
 import TopBar from "./components/TopBar/TopBar.jsx";
 import NavDrawer from "./components/Sidebar/NavDrawer.jsx";
@@ -197,12 +198,25 @@ function App() {
     if (isSidebarExpanded) handleSidebarClose();
   }, [location]);
 
+  useEffect(() => {
+    let interval: any = null;
+    dispatch(refreshRebaseTimer({ networkID: chainID, provider }));
+    interval = setInterval(() => {
+      dispatch(refreshRebaseTimer({ networkID: chainID, provider }));
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, [chainID, provider]);
+
   return (
     <ThemeProvider theme={themeMode}>
       <Router>
         <CssBaseline />
         {/* {isAppLoading && <LoadingSplash />} */}
-        <div className={`app ${isSmallerScreen && "tablet"} ${isSmallScreen && "mobile"} ${theme}`}>
+        <AppContainer
+          className={`app ${isSmallerScreen && "tablet"} ${isSmallScreen && "mobile"} ${theme}`}
+          backgroundColor={themeMode.palette.background.mainBackground}
+        >
           <Messages />
           <TopBar theme={theme} toggleTheme={toggleTheme} handleDrawerToggle={handleDrawerToggle} />
           <nav className={classes.drawer}>
@@ -215,12 +229,16 @@ function App() {
 
           <div className={`${classes.content} ${isSmallerScreen && classes.contentShift}`}>
             <Switch>
-              <Route exact path="/dashboard">
-                <TreasuryDashboard />
+              <Route exact path="/">
+                <Redirect to="/dashboard" />
               </Route>
 
-              <Route exact path="/">
-                <Redirect to="/stake" />
+              <Route exact path="/dashboard">
+                <Dashboard />
+              </Route>
+
+              <Route exact path="/analytics">
+                <TreasuryDashboard />
               </Route>
 
               <Route path="/stake">
@@ -254,10 +272,24 @@ function App() {
               <Route component={NotFound} />
             </Switch>
           </div>
-        </div>
+        </AppContainer>
       </Router>
     </ThemeProvider>
   );
 }
 
 export default App;
+
+const AppContainer = styled.div<{ backgroundColor: string }>`
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-flow: column;
+  flex-direction: column;
+  z-index: 1;
+  background-size: cover;
+  font-family: "Square";
+  overflow: hidden;
+  transition: all ease 0.33ms;
+  background: ${({ backgroundColor }) => backgroundColor};
+`;

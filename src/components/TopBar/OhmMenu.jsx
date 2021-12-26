@@ -1,7 +1,19 @@
 import { useState, useEffect } from "react";
 import { addresses, OHM_TICKER, sOHM_TICKER, TOKEN_DECIMALS, wsOHM_TICKER } from "../../constants";
 import { NavLink } from "react-router-dom";
-import { Link, SvgIcon, Popper, Button, Paper, Typography, Divider, Box, Fade, Slide } from "@material-ui/core";
+import {
+  Link,
+  SvgIcon,
+  Popper,
+  Button,
+  Paper,
+  Typography,
+  Divider,
+  Box,
+  Fade,
+  Slide,
+  useTheme,
+} from "@material-ui/core";
 import { ReactComponent as InfoIcon } from "../../assets/icons/info-fill.svg";
 import { ReactComponent as ArrowUpIcon } from "../../assets/icons/arrow-up.svg";
 import { ReactComponent as sOhmTokenImg } from "../../assets/tokens/token_sOHM.svg";
@@ -69,6 +81,7 @@ const addTokenToWallet = (tokenSymbol, tokenAddress, address) => async () => {
 };
 
 function OhmMenu() {
+  const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState(null);
   const isEthereumAPIAvailable = window.ethereum;
   const { chainID, address } = useWeb3Context();
@@ -76,13 +89,14 @@ function OhmMenu() {
 
   if (chainID !== 250)
     return (
-      <Box component="div" id="ohm-menu-button-hover" className="wrong-network">
+      <Box component="div" id="ohm-menu-button-hover">
         <Button
           id="ohm-menu-button"
           size="large"
           variant="contained"
           color="primary"
           title="EXOD"
+          style={{ color: `${theme.palette.primaryColor} !important` }}
           aria-describedby={id}
           disabled
         >

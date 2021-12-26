@@ -5,3 +5,4 @@ export { default as PoolTogether } from "./33Together/33together";
 export { default as Wrap } from "./Wrap/Wrap";
 export { default as TreasuryDashboard } from "./TreasuryDashboard/TreasuryDashboard";
 export { default as Calc } from "./Calc/Calc";
+export { default as Dashboard } from "./Dashboard/Dashboard";
