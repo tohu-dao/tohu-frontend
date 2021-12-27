@@ -1,9 +1,12 @@
-import { Paper, Box, Typography } from "@material-ui/core";
+import { Paper, Box, Typography, useTheme } from "@material-ui/core";
 import { bulletpoints } from "src/views/TreasuryDashboard/treasuryData";
+import _ from "lodash";
 import "./customtooltip.scss";
 
 const renderDate = (index, payload, item) => {
-  return index === payload.length - 1 && item.payload.timestamp ? (
+  const filteredPayloads = _.uniqBy(payload, "name");
+
+  return index === filteredPayloads.length - 1 && item.payload.timestamp ? (
     <div className="tooltip-date">
       {new Date(item.payload.timestamp * 1000).toLocaleString("default", { month: "long" }).charAt(0).toUpperCase()}
       {new Date(item.payload.timestamp * 1000).toLocaleString("default", { month: "long" }).slice(1)}
@@ -36,7 +39,10 @@ const renderTooltipItems = (
   isPie = false,
   colors,
   dataKey,
+  showTotal,
 ) => {
+  const theme = useTheme();
+
   return isStaked ? (
     <Box>
       <Box className="item" display="flex" justifyContent="space-between">
@@ -110,10 +116,28 @@ const renderTooltipItems = (
               </Box>
               {renderItem(isDilution ? itemType[itemIndex] : itemType, item.value)}
             </Box>
-            <Box>{renderDate(itemIndex, payload, item)}</Box>
+            <Box>{!showTotal && renderDate(itemIndex, payload, item)}</Box>
           </Box>
         );
       })}
+      {showTotal && <br />}
+      {showTotal && (
+        <Box key={payload.length}>
+          <Box className="item" display="flex">
+            <Box display="flex" justifyContent="space-between">
+              <Typography variant="body2" className="field-name">
+                <span className="tooltip-bulletpoint" style={{ backgroundColor: theme.palette.text.secondary }}></span>
+                Total
+              </Typography>
+            </Box>
+            {renderItem(
+              itemType,
+              payload.reduce((total, item) => total + item.value, 0),
+            )}
+          </Box>
+          <Box>{renderDate(payload.length - 1, payload, payload[0])}</Box>
+        </Box>
+      )}
     </>
   );
 };
@@ -130,6 +154,7 @@ function CustomTooltip({
   isDilution,
   isPie,
   colors,
+  showTotal = false,
 }) {
   if (active && payload && payload.length) {
     return (
@@ -145,6 +170,7 @@ function CustomTooltip({
           isPie,
           colors,
           dataKey,
+          showTotal,
         )}
       </Paper>
     );
