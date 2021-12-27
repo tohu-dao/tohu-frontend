@@ -13,6 +13,12 @@
       padding: 9.5px !important;
     }
   }
+  .rebase-timer {
+    p {
+      font-size: 0.9rem;
+    }
+    margin-right: 12px;
+  }
 }
 .tablet .dapp-topbar {
   justify-content: space-between;
@@ -30,11 +36,6 @@
     a {
       padding-right: 20px !important;
     }
-  }
-}
-.wrong-network {
-  button {
-    color: #46ab15 !important;
   }
 }
 .caret-down {

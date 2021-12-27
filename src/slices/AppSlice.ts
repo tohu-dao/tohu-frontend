@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import { addresses, EPOCH_INTERVAL } from "../constants";
 import { abi as OlympusStakingv2ABI } from "../abi/OlympusStakingv2.json";
 import { abi as sOHMv2 } from "../abi/sOhmv2.json";
-import { setAll, getTokenPrice, getMarketPrice } from "../helpers";
+import { setAll, getTokenPrice, getMarketPrice, secondsUntilBlock, prettifySeconds } from "../helpers";
 import apollo from "../lib/apolloClient";
 import { createSlice, createSelector, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "src/store";
@@ -165,6 +165,32 @@ export const findOrLoadMarketPrice = createAsyncThunk(
   },
 );
 
+export const refreshRebaseTimer = createAsyncThunk(
+  "app/loadRebaseTimer",
+  async ({ networkID, provider }: IBaseAsyncThunk, { dispatch, getState }) => {
+    const state: any = getState();
+    let blockRateSeconds = state.app.blockRateSeconds;
+
+    const stakingContract = new ethers.Contract(
+      addresses[networkID].STAKING_ADDRESS as string,
+      OlympusStakingv2ABI,
+      provider,
+    ) as OlympusStakingv2;
+
+    const [currentBlock, epoch] = await Promise.all([provider.getBlockNumber(), stakingContract.epoch()]);
+
+    if (!blockRateSeconds) {
+      const blockFifteenEpochsAgo = await provider.getBlock(currentBlock - EPOCH_INTERVAL * 15);
+      blockRateSeconds =
+        (Date.now() / 1000 - blockFifteenEpochsAgo.timestamp) / (currentBlock - blockFifteenEpochsAgo.number);
+    }
+
+    const seconds = secondsUntilBlock(currentBlock, epoch.endBlock, blockRateSeconds);
+
+    return { secondsUntilRebase: seconds };
+  },
+);
+
 /**
  * - fetches the OHM price from CoinGecko (via getTokenPrice)
  * - falls back to fetch marketPrice from ohm-dai contract
@@ -198,6 +224,7 @@ interface IAppData {
   readonly treasuryMarketValue?: number;
   readonly endBlock?: number;
   readonly blockRateSeconds?: number;
+  readonly secondsUntilRebase?: number;
 }
 
 const initialState: IAppData = {
@@ -247,6 +274,9 @@ const appSlice = createSlice({
       .addCase(loadMarketPrice.rejected, (state, { error }) => {
         state.loadingMarketPrice = false;
         console.error(error.name, error.message, error.stack);
+      })
+      .addCase(refreshRebaseTimer.fulfilled, (state, action) => {
+        setAll(state, action.payload);
       });
   },
 });
