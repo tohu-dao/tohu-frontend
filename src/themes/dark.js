@@ -126,6 +126,9 @@ export const dark = responsiveFontSizes(
               color: darkTheme.color,
               backdropFilter: "blur(15px)",
             },
+            "&.tooltip-container": {
+              backgroundColor: `${darkTheme.paperBg}DD`,
+            },
           },
         },
         MuiTooltip: {

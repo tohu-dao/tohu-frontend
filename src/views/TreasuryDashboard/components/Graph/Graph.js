@@ -72,8 +72,6 @@ export const MarketValueGraph = ({ isDashboard = false }) => {
       };
     });
 
-  console.log(stats);
-
   const value =
     ethData && stats && stats[0].treasuryDaiMarketValue + stats[0].treasuryWETHMarketValue + stats[0].sOHMBalanceUSD;
   const lastValue =
@@ -101,6 +99,7 @@ export const MarketValueGraph = ({ isDashboard = false }) => {
       infoTooltipMessage={tooltipInfoMessages.mvt}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
       isDashboard={isDashboard}
+      showTotal
     />
   );
 };
@@ -393,6 +392,7 @@ export const DebtRatioGraph = () => {
       infoTooltipMessage={tooltipInfoMessages.debtratio}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
       isDebt={true}
+      showTotal
     />
   );
 };

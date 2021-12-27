@@ -193,6 +193,7 @@ export const ExodiaStackedLineChart = withChartCard(
     expandedGraphStrokeColor,
     strokeWidth = 1.6,
     glowDeviation = "6",
+    showTotal,
   }) => {
     const theme = useTheme();
     // Remove 0's
@@ -236,6 +237,7 @@ export const ExodiaStackedLineChart = withChartCard(
                 itemType={itemType}
                 colors={colors}
                 dataKey={dataKey}
+                showTotal={showTotal}
               />
             }
           />
@@ -268,6 +270,7 @@ export const ExodiaMultiLineChart = withChartCard(
     strokeWidth = 1.6,
     dataAxis = [],
     isDilution = false,
+    showTotal,
   }) => {
     const theme = useTheme();
     // Remove 0's
@@ -330,6 +333,7 @@ export const ExodiaMultiLineChart = withChartCard(
                 colors={colors}
                 dataKey={dataKey}
                 isDilution={isDilution}
+                showTotal={showTotal}
               />
             }
           />
