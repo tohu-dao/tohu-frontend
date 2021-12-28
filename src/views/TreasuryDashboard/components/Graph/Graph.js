@@ -10,7 +10,17 @@ import {
 } from "src/components/Chart/ExodiaChart.jsx";
 import { Trans } from "@lingui/macro";
 import { useSelector } from "react-redux";
-import { FormControl, Select, MenuItem, SvgIcon, Grid, Container, Typography, useMediaQuery } from "@material-ui/core";
+import {
+  FormControl,
+  Select,
+  MenuItem,
+  SvgIcon,
+  Grid,
+  Container,
+  Typography,
+  useMediaQuery,
+  Box,
+} from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
 import { trim, formatCurrency } from "../../../../helpers";
 import { useTreasuryMetrics } from "../../hooks/useTreasuryMetrics";
@@ -562,6 +572,7 @@ export const TreasuryBreakdownPie = () => {
 
   const totalValue = ethData && data && daiValue + ftmValue + gOhmValue;
   const lastValue = ethData && data && daiValuePrevious + ftmValuePrevious + gOhmValuePrevious;
+  const formattedValue = formatCurrency(totalValue);
 
   const pieData = totalValue && [
     { value: Number(trim((daiValue / totalValue) * 100, 2)), name: "DAI" },
@@ -571,24 +582,28 @@ export const TreasuryBreakdownPie = () => {
 
   return (
     <Grid container>
+      <Box display="flex" justifyContent="space-between" style={{ width: "100%" }}>
+        <Typography
+          variant="h6"
+          color="textPrimary"
+          style={{ marginBottom: "6px", display: "flex", alignItems: "flex-start" }}
+        >
+          <SvgIcon
+            color="textPrimary"
+            component={AccountBalance}
+            style={{ marginRight: "10px", overflow: "visible" }}
+          />
+          Treasury Breakdown
+        </Typography>
+        <Typography variant="h6" style={{ textAlign: "right" }}>
+          <Trend formattedValue={formattedValue} value={totalValue} lastValue={lastValue} />
+        </Typography>
+      </Box>
       <Grid xs={5} sm={5} md={5} lg={5} style={{ margin: "0" }}>
         <ExodiaPieChart
           data={pieData}
           colors={theme.palette.chartColors}
-          headerText={
-            <Typography
-              variant="h6"
-              color="textPrimary"
-              style={{ marginBottom: "6px", display: "flex", alignItems: "flex-start" }}
-            >
-              <SvgIcon
-                color="textPrimary"
-                component={AccountBalance}
-                style={{ marginRight: "10px", overflow: "visible" }}
-              />
-              Treasury Breakdown
-            </Typography>
-          }
+          headerText=""
           todayMessage=""
           dataFormat="$"
           bulletpoints={bulletpoints.coin}
@@ -614,15 +629,10 @@ export const TreasuryBreakdownPie = () => {
 };
 
 const TreasuryTable = ({ currentData, previousData, totalValue, lastValue, itemNames, colors }) => {
-  const formattedValue = formatCurrency(totalValue);
   const isSmallScreen = useMediaQuery("(max-width: 550px)");
 
   return (
     <div>
-      <Typography variant="h6" style={{ textAlign: "right" }}>
-        <Trend formattedValue={formattedValue} value={totalValue} lastValue={lastValue} />
-      </Typography>
-
       <TableGrid header isSmallScreen={isSmallScreen}>
         <Cell>
           <Typography variant="body1" color="textSecondary">
@@ -730,7 +740,9 @@ const TableGrid = styled.div`
   ${({ isSmallScreen }) => isSmallScreen && "grid-template-columns: 30% 25% 15% 35%;"}
   padding-left: 12px;
   grid-row-gap: 12px;
-  ${({ header }) => header && "padding-bottom: 12px; margin-top: 64px;"}
+
+  ${({ header }) => header && "padding-bottom: 12px;  margin-top: 86px;"}
+  ${({ header, isSmallScreen }) => header && isSmallScreen && "margin-top: 86px;"}
 `;
 
 const ColorMark = styled.div`

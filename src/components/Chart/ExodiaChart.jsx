@@ -94,45 +94,18 @@ const withChartCard = Component => {
             alignItems="center"
             style={{ width: "100%", overflow: "hidden" }}
           >
-            <Box display="flex" width="90%" alignItems="center">
-              <Typography
-                variant="h6"
-                color="textSecondary"
-                className="card-title-text"
-                style={{ fontWeight: 400, overflow: "hidden" }}
-              >
-                {headerText}
-              </Typography>
-              {!isDashboard && <InfoTooltip message={infoTooltipMessage} />}
-            </Box>
-            {SelectOptions && <SelectOptions />}
-            {timeSelection && (
-              <FormControl
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "flex-end",
-                  margin: "0",
-                  height: "33px",
-                  minWidth: "unset",
-                  paddingRight: "12px",
-                }}
-              >
-                <Select
-                  id="time-select"
-                  value={time}
-                  label="Timeframe"
-                  onChange={e => setTime(e.target.value)}
-                  disableUnderline
+            {headerText && (
+              <Box display="flex" width="90%" alignItems="center">
+                <Typography
+                  variant="h6"
+                  color="textSecondary"
+                  className="card-title-text"
+                  style={{ fontWeight: 400, overflow: "hidden" }}
                 >
-                  <MenuItem value={"week"}>1 Week</MenuItem>
-                  <MenuItem value={"2 week"}>2 Weeks</MenuItem>
-                  <MenuItem value={"month"}>1 Month</MenuItem>
-                  <MenuItem value={"3 month"}>3 Months</MenuItem>
-                  <MenuItem value={"all"}>All</MenuItem>
-                </Select>
-              </FormControl>
+                  {headerText}
+                </Typography>
+                {!isDashboard && <InfoTooltip message={infoTooltipMessage} />}
+              </Box>
             )}
             {!fullScreenDisabled && (
               <SvgIcon
@@ -154,16 +127,50 @@ const withChartCard = Component => {
               todayMessage={todayMessage}
             />
           </Box>
+
           {loading ? (
             <Skeleton variant="text" width={100} />
           ) : (
-            <Box display="flex">
-              <Typography variant="h4" style={{ fontWeight: 600, marginRight: 5 }}>
-                {headerSubText}
-              </Typography>
-              <Typography variant="h4" color="textSecondary" style={{ fontWeight: 400 }}>
-                {todayMessage}
-              </Typography>
+            <Box display="flex" justifyContent="space-between">
+              <Box display="flex">
+                <Typography variant="h4" style={{ fontWeight: 600, marginRight: 5 }}>
+                  {headerSubText}
+                </Typography>
+                <Typography variant="h4" color="textSecondary" style={{ fontWeight: 400 }}>
+                  {todayMessage}
+                </Typography>
+              </Box>
+              <Box display="flex">
+                {SelectOptions && <SelectOptions />}
+                {timeSelection && (
+                  <FormControl
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "flex-end",
+                      margin: "0",
+                      height: "33px",
+                      minWidth: "unset",
+                      paddingRight: "12px",
+                    }}
+                  >
+                    <Select
+                      id="time-select"
+                      value={time}
+                      label="Timeframe"
+                      onChange={e => setTime(e.target.value)}
+                      disableUnderline
+                    >
+                      <MenuItem value={"week"}>1 Week</MenuItem>
+                      <MenuItem value={"2 week"}>2 Weeks</MenuItem>
+                      <MenuItem value={"month"}>1 Month</MenuItem>
+                      <MenuItem value={"3 month"}>3 Months</MenuItem>
+                      <MenuItem value={"all"}>All</MenuItem>
+                    </Select>
+                  </FormControl>
+                )}
+              </Box>
             </Box>
           )}
         </div>

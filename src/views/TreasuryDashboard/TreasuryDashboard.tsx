@@ -33,7 +33,7 @@ const TreasuryDashboard = memo(() => {
         }}
       >
         <Box className="hero-metrics">
-          <Paper className="ohm-card">
+          <Paper className="ohm-card" style={{ maxHeight: "auto" }}>
             <Box display="flex" flexWrap="wrap" justifyContent="space-between" alignItems="center">
               <MarketCap />
               <OHMPrice />

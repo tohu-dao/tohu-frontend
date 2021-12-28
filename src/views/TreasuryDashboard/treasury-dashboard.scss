@@ -73,6 +73,7 @@
     width: 97%;
   }
   .hero-metrics .ohm-card {
+    max-height: unset !important;
     > .MuiBox-root {
       flex-direction: column;
       align-items: flex-start;
