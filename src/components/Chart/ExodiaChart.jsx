@@ -47,7 +47,7 @@ const withChartCard = Component => {
     headerText,
     infoTooltipMessage,
     headerSubText,
-    todayMessage = "Today",
+    todayMessage = "Current",
     SelectOptions,
     isDashboard,
     data,
@@ -104,7 +104,14 @@ const withChartCard = Component => {
                 >
                   {headerText}
                 </Typography>
-                {!isDashboard && <InfoTooltip message={infoTooltipMessage} />}
+                <Typography
+                  variant="h6"
+                  color="textSecondary"
+                  className="card-title-text"
+                  style={{ marginLeft: "6px" }}
+                >
+                  {!isDashboard && <InfoTooltip message={infoTooltipMessage} />}
+                </Typography>
               </Box>
             )}
             {!fullScreenDisabled && (
@@ -132,11 +139,11 @@ const withChartCard = Component => {
             <Skeleton variant="text" width={100} />
           ) : (
             <Box display="flex" justifyContent="space-between">
-              <Box display="flex">
+              <Box display="flex" alignItems="center">
                 <Typography variant="h4" style={{ fontWeight: 600, marginRight: 5 }}>
                   {headerSubText}
                 </Typography>
-                <Typography variant="h4" color="textSecondary" style={{ fontWeight: 400 }}>
+                <Typography variant="h6" color="textSecondary" style={{ fontWeight: 400, paddingLeft: "12px" }}>
                   {todayMessage}
                 </Typography>
               </Box>
