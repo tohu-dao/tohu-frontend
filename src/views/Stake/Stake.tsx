@@ -526,7 +526,7 @@ function Stake() {
           <Paper className="ohm-card">
             <PersonalExodChart
               calcDays={90}
-              exodAmount={(trimmedBalance || 0) + view === 0 ? quantity || Number(ohmBalance) || 0 : 0}
+              exodAmount={(trimmedBalance || 0) + (view === 0 ? quantity || Number(ohmBalance) || 0 : 0)}
               rebaseRate={stakingRebase * 100}
               finalExodPrice={marketPrice}
               exodPrice={marketPrice}

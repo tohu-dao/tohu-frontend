@@ -6,6 +6,7 @@ import OhmMenu from "./OhmMenu.jsx";
 import ThemeSwitcher from "./ThemeSwitch.jsx";
 import LocaleSwitcher from "./LocaleSwitch.tsx";
 import ConnectMenu from "./ConnectMenu.jsx";
+import RebaseTimer from "../RebaseTimer/RebaseTimer";
 import "./topbar.scss";
 
 const useStyles = makeStyles(theme => ({
@@ -31,6 +32,7 @@ const useStyles = makeStyles(theme => ({
 function TopBar({ theme, toggleTheme, handleDrawerToggle }) {
   const classes = useStyles();
   const isVerySmallScreen = useMediaQuery("(max-width: 355px)");
+  const isSmallScreen = useMediaQuery("(max-width: 650px)");
 
   return (
     <AppBar position="sticky" className={classes.appBar} elevation={0}>
@@ -47,7 +49,7 @@ function TopBar({ theme, toggleTheme, handleDrawerToggle }) {
         >
           <SvgIcon component={MenuIcon} />
         </Button>
-
+        {!isSmallScreen && <RebaseTimer />}
         <Box display="flex">
           {!isVerySmallScreen && <OhmMenu />}
 

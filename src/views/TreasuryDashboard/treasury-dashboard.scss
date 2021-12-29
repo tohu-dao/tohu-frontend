@@ -11,8 +11,18 @@
   overflow-y: auto;
   -ms-overflow-style: none !important; /* IE and Edge */
   scrollbar-width: none !important; /* Firefox */
+  padding-bottom: 64px;
   &::-webkit-scrollbar {
     display: none !important;
+  }
+
+  .twitter-feed {
+    iframe {
+      height: 100% !important;
+    }
+  }
+  .twitter-feed > div {
+    height: calc(100% - 56px);
   }
 
   .ohm-card {
@@ -29,6 +39,9 @@
         min-width: 300px;
       }
       height: 355px;
+    }
+    .MuiSelect-icon {
+      margin-top: -2px;
     }
   }
   .hero-metrics {
@@ -60,6 +73,7 @@
     width: 97%;
   }
   .hero-metrics .ohm-card {
+    max-height: unset !important;
     > .MuiBox-root {
       flex-direction: column;
       align-items: flex-start;

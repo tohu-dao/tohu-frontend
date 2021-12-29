@@ -36,6 +36,17 @@ export const darkTheme = {
   containedSecondaryButtonHoverBG: "rgba(255, 255, 255, 0.15)",
   graphStrokeColor: "rgba(255, 255, 255, .1)",
   sidebarBackground: `linear-gradient(0deg, rgba(31,31,31,1) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 100%), url(${navBg})`,
+  chartColors: ["#46ab15", "#598fb5", "#775bb5"],
+  trendUp: "#43e055",
+  trendDown: "#ed3939",
+  mainBackground:
+    "linear-gradient(180deg, rgba(8, 35, 23, 0), rgba(10, 13, 10, 0.9)), " +
+    "linear-gradient(333deg, rgba(13, 27, 15, 0.2), rgba(18, 25, 17, 0.08)), " +
+    "radial-gradient(circle at 77% 89%, rgba(15, 25, 15, 0.8), rgba(15, 23, 19, 0) 50%), " +
+    "radial-gradient(circle at 15% 95%, rgba(15, 23, 15, 0.8), rgba(15, 23, 19, 0) 43%), " +
+    "radial-gradient(circle at 65% 23%, rgba(20, 42, 19, 0.4), rgba(23, 32, 21, 0) 70%), " +
+    "radial-gradient(circle at 10% 0%, rgba(12, 33, 12, 0.33), rgba(17, 21, 14, 0) 35%), " +
+    "radial-gradient(circle at 11% 100%, rgba(11, 25, 23, 0.3), rgba(11, 35, 23, 0) 30%)",
 };
 
 export const dark = responsiveFontSizes(
@@ -49,6 +60,7 @@ export const dark = responsiveFontSizes(
         background: {
           default: darkTheme.backgroundColor,
           paper: darkTheme.paperBg,
+          mainBackground: darkTheme.mainBackground,
         },
         contrastText: darkTheme.color,
         primary: {
@@ -62,6 +74,15 @@ export const dark = responsiveFontSizes(
           primary: darkTheme.color,
           secondary: darkTheme.gray,
         },
+        border: {
+          primary: darkTheme.paperBorder,
+        },
+        primaryColor: darkTheme.gold,
+        primaryColorDimmed: darkTheme.goldDimmed,
+        primaryColorBright: darkTheme.goldBright,
+        chartColors: darkTheme.chartColors,
+        trendUp: darkTheme.trendUp,
+        trendDown: darkTheme.trendDown,
         graphStrokeColor: darkTheme.graphStrokeColor,
       },
       typography: {
@@ -102,9 +123,11 @@ export const dark = responsiveFontSizes(
               backdropFilter: "blur(33px)",
             },
             "&.ohm-popover": {
-              backgroundColor: darkTheme.popoverBg,
               color: darkTheme.color,
               backdropFilter: "blur(15px)",
+            },
+            "&.tooltip-container": {
+              backgroundColor: `${darkTheme.paperBg}DD`,
             },
           },
         },

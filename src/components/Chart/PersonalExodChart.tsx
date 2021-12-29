@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { useTheme } from "@material-ui/core/styles";
-import Chart from "src/components/Chart/Chart";
-import { trim, formatCurrency } from "src/helpers";
-import { darkTheme } from "src/themes/dark.js";
+import { ExodiaLineChart } from "src/components/Chart/ExodiaChart";
+import { trim } from "src/helpers";
 import { Trans, t } from "@lingui/macro";
 import { calcYieldPercent, calcTotalExod } from "../../views/Calc/formulas";
 import styled from "styled-components";
@@ -63,9 +62,7 @@ const PersonalExodChart = ({
         }).format(data[0][mode]);
 
   return (
-    <Chart
-      type="line"
-      domain={["dataMin", "auto"]}
+    <ExodiaLineChart
       data={data}
       dataKey={[mode]}
       headerText={[<HeaderText mode={mode} switchMode={switchMode} />]}
@@ -80,13 +77,14 @@ const PersonalExodChart = ({
       }
       itemNames={[mode]}
       todayMessage=""
-      itemType=""
-      color={darkTheme.gold}
-      stroke={[darkTheme.gold]}
+      itemType="$"
+      dataFormat="$"
+      color={theme.palette.primaryColor}
+      stroke={[theme.palette.primaryColor]}
       infoTooltipMessage={mode === "sEXOD" ? infoTooltipMessage : usdTooltip}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
-      xInterval={30}
-      bulletpointColors={bulletpointColors}
+      bulletpoints={bulletpointColors}
+      timeSelection={false}
     />
   );
 };
@@ -176,7 +174,6 @@ const bulletpointColors = [
   {
     right: 20,
     top: -12,
-    background: darkTheme.gold,
   },
 ];
 

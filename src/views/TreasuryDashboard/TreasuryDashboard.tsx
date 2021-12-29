@@ -13,6 +13,11 @@ import {
   APYOverTimeGraph,
   RunwayAvailableGraph,
   DilutionGraph,
+  DebtRatioGraph,
+  OhmMintedGraph,
+  OhmMintedPerTotalSupplyGraph,
+  IndexAdjustedPrice,
+  GrowthOfSupply,
 } from "./components/Graph/Graph";
 
 const TreasuryDashboard = memo(() => {
@@ -28,7 +33,7 @@ const TreasuryDashboard = memo(() => {
         }}
       >
         <Box className="hero-metrics">
-          <Paper className="ohm-card">
+          <Paper className="ohm-card" style={{ maxHeight: "auto" }}>
             <Box display="flex" flexWrap="wrap" justifyContent="space-between" alignItems="center">
               <MarketCap />
               <OHMPrice />
@@ -42,19 +47,19 @@ const TreasuryDashboard = memo(() => {
         <Zoom in={true}>
           <Grid container spacing={2} className="data-grid">
             <Grid item lg={6} md={6} sm={12} xs={12}>
-              <Paper className="ohm-card ohm-chart-card">
+              <Paper className="ohm-card">
                 <TotalValueDepositedGraph />
               </Paper>
             </Grid>
 
             <Grid item lg={6} md={6} sm={12} xs={12}>
-              <Paper className="ohm-card ohm-chart-card">
+              <Paper className="ohm-card">
                 <MarketValueGraph />
               </Paper>
             </Grid>
 
             <Grid item lg={6} md={6} sm={12} xs={12}>
-              <Paper className="ohm-card ohm-chart-card">
+              <Paper className="ohm-card">
                 <RiskFreeValueGraph />
               </Paper>
             </Grid>
@@ -68,7 +73,7 @@ const TreasuryDashboard = memo(() => {
             {/*  Temporarily removed until correct data is in the graph
              <Grid item lg={6} md={12} sm={12} xs={12}>
               <Paper className="ohm-card">
-                <Chart
+                <ExodiaChart
                   type="bar"
                   data={data}
                   dataKey={["holders"]}
@@ -101,16 +106,45 @@ const TreasuryDashboard = memo(() => {
                 <APYOverTimeGraph />
               </Paper>
             </Grid> */}
-
             <Grid item lg={6} md={6} sm={12} xs={12}>
               <Paper className="ohm-card">
                 <RunwayAvailableGraph />
               </Paper>
             </Grid>
+            <Grid item lg={6} md={6} sm={12} xs={12}>
+              <Paper className="ohm-card">
+                <IndexAdjustedPrice />
+              </Paper>
+            </Grid>
+            <Grid item lg={6} md={6} sm={12} xs={12}>
+              <Paper className="ohm-card">
+                <GrowthOfSupply />
+              </Paper>
+            </Grid>
+            <Grid item lg={6} md={6} sm={12} xs={12}>
+              <Paper className="ohm-card">
+                <APYOverTimeGraph />
+              </Paper>
+            </Grid>
 
-            <Grid item xs={12}>
+            <Grid item lg={6} md={6} sm={12} xs={12}>
               <Paper className="ohm-card">
                 <DilutionGraph />
+              </Paper>
+            </Grid>
+            <Grid item lg={6} md={6} sm={12} xs={12}>
+              <Paper className="ohm-card">
+                <DebtRatioGraph />
+              </Paper>
+            </Grid>
+            <Grid item lg={6} md={6} sm={12} xs={12}>
+              <Paper className="ohm-card">
+                <OhmMintedGraph />
+              </Paper>
+            </Grid>
+            <Grid item lg={6} md={6} sm={12} xs={12}>
+              <Paper className="ohm-card">
+                <OhmMintedPerTotalSupplyGraph />
               </Paper>
             </Grid>
           </Grid>

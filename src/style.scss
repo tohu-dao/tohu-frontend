@@ -21,26 +21,6 @@ body {
   box-sizing: border-box;
 }
 
-.app {
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-  flex-flow: column;
-  flex-direction: column;
-  z-index: 1;
-  background-size: cover;
-  font-family: "Square";
-  overflow: hidden;
-  transition: all ease 0.33ms;
-  background: linear-gradient(180deg, rgba(8, 35, 23, 0), rgba(10, 13, 10, 0.9)),
-    linear-gradient(333deg, rgba(13, 27, 15, 0.2), rgba(18, 25, 17, 0.08)),
-    radial-gradient(circle at 77% 89%, rgba(15, 25, 15, 0.8), rgba(15, 23, 19, 0) 50%),
-    radial-gradient(circle at 15% 95%, rgba(15, 23, 15, 0.8), rgba(15, 23, 19, 0) 43%),
-    radial-gradient(circle at 65% 23%, rgba(20, 42, 19, 0.4), rgba(23, 32, 21, 0) 70%),
-    radial-gradient(circle at 10% 0%, rgba(12, 33, 12, 0.33), rgba(17, 21, 14, 0) 35%),
-    radial-gradient(circle at 11% 100%, rgba(11, 25, 23, 0.3), rgba(11, 35, 23, 0) 30%);
-}
-
 .MuiDrawer-paperAnchorDockedLeft {
   border-right: 0 !important;
 }

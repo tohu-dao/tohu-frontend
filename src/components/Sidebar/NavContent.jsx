@@ -15,6 +15,7 @@ import { useAddress, useWeb3Context } from "src/hooks/web3Context";
 import useBonds from "../../hooks/Bonds";
 import { Paper, Link, Box, Typography, SvgIcon } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
+import ShowChartIcon from "@material-ui/icons/ShowChart";
 import StarIcon from "@material-ui/icons/Stars";
 import HomeIcon from "@material-ui/icons/Home";
 import Tooltip from "@material-ui/core/Tooltip";
@@ -38,6 +39,9 @@ function NavContent() {
       return true;
     }
     if (currentPath.indexOf("obliterator") >= 0 && page === "obliterator") {
+      return true;
+    }
+    if (currentPath.indexOf("analytics") >= 0 && page === "analytics") {
       return true;
     }
     if ((currentPath.indexOf("bonds") >= 0 || currentPath.indexOf("choose_bond") >= 0) && page === "bonds") {
@@ -86,11 +90,25 @@ function NavContent() {
                   <Trans>Dashboard</Trans>
                 </Typography>
               </Link>
+              <Link
+                component={NavLink}
+                id="dash-nav"
+                to="/analytics"
+                isActive={(match, location) => {
+                  return checkPage(match, location, "analytics");
+                }}
+                className={`button-dapp-menu ${isActive ? "active" : ""}`}
+              >
+                <Typography variant="h6">
+                  <SvgIcon color="primary" component={ShowChartIcon} />
+                  <Trans>Analytics</Trans>
+                </Typography>
+              </Link>
 
               <Link
                 component={NavLink}
                 id="stake-nav"
-                to="/"
+                to="/stake"
                 isActive={(match, location) => {
                   return checkPage(match, location, "stake");
                 }}

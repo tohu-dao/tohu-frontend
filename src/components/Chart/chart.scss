@@ -9,5 +9,9 @@
   }
 }
 .ohm-chart {
-  //
+  .recharts-wrapper .recharts-cartesian-grid-vertical line:last-child,
+  .recharts-wrapper .recharts-cartesian-grid-horizontal line:last-child,
+  .recharts-wrapper .recharts-cartesian-grid-horizontal line:first-child {
+    stroke-opacity: 0;
+  }
 }
