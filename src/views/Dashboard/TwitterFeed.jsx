@@ -7,6 +7,8 @@ import { t, Trans } from "@lingui/macro";
 const TwitterFeed = () => {
   const theme = useTheme();
   const onTwitterLoad = tweetWidgetEl => {
+    if (!tweetWidgetEl) return;
+
     var body = tweetWidgetEl.contentWindow.document.querySelector("body");
     tweetWidgetEl.contentWindow.document.querySelectorAll("p").forEach(e => (e.style.lineHeight = "22px"));
     tweetWidgetEl.contentWindow.document.querySelectorAll("p").forEach(e => (e.style.fontSize = "1rem"));

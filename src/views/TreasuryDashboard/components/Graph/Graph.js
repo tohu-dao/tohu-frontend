@@ -52,6 +52,7 @@ export const TotalValueDepositedGraph = () => {
       infoTooltipMessage={tooltipInfoMessages.tvl}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
       headerSubText={`${data && formatCurrency(data[0].totalValueLocked)}`}
+      todayMessage=""
     />
   );
 };
@@ -108,7 +109,7 @@ export const MarketValueGraph = ({ isDashboard = false }) => {
       itemType={itemType.dollar}
       infoTooltipMessage={tooltipInfoMessages.mvt}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
-      isDashboard={isDashboard}
+      todayMessage=""
       showTotal
     />
   );
@@ -132,6 +133,7 @@ export const RiskFreeValueGraph = () => {
       itemType={itemType.dollar}
       infoTooltipMessage={tooltipInfoMessages.rfv}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
+      todayMessage=""
     />
   );
 };
@@ -156,6 +158,7 @@ export const ProtocolOwnedLiquidityGraph = () => {
       headerSubText={`${data && trim(data[0].treasuryOhmDaiPOL, 2)}% `}
       color={theme.palette.chartColors[0]}
       stroke={theme.palette.chartColors[0]}
+      todayMessage=""
     />
   );
 };
@@ -181,13 +184,14 @@ export const OHMStakedGraph = () => {
       dataFormat="percent"
       itemNames={tooltipItems.staked}
       itemType={itemType.percentage}
-      headerText={`${OHM_TICKER} staked`}
+      headerText="Staked Supply"
       color={theme.palette.chartColors[2]}
       stroke={theme.palette.chartColors[2]}
       bulletpoints={bulletpoints.staked}
       infoTooltipMessage={tooltipInfoMessages.staked}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
       headerSubText={`${staked && trim(staked[0].staked, 2)}% `}
+      todayMessage=""
     />
   );
 };
@@ -224,6 +228,7 @@ export const APYOverTimeGraph = () => {
       infoTooltipMessage={tooltipInfoMessages.apy}
       headerSubText={`${apy && apy[0].apy.toLocaleString("en-us")}%`}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
+      todayMessage=""
     />
   );
 };
@@ -259,6 +264,7 @@ export const RunwayAvailableGraph = () => {
       itemType={""}
       infoTooltipMessage={tooltipInfoMessages.runway}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
+      todayMessage=""
     />
   );
 };
@@ -289,6 +295,7 @@ export const DilutionGraph = () => {
       itemType={[itemType.percentage, "sEXOD"]}
       infoTooltipMessage={tooltipInfoMessages.dilution}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
+      todayMessage=""
       isDilution
     />
   );
@@ -402,6 +409,7 @@ export const DebtRatioGraph = () => {
       infoTooltipMessage={tooltipInfoMessages.debtratio}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
       isDebt={true}
+      todayMessage=""
       showTotal
     />
   );
@@ -433,6 +441,7 @@ export const IndexAdjustedPrice = () => {
       itemType={itemType.dollar}
       infoTooltipMessage={tooltipInfoMessages.indexAdjustedPrice}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
+      todayMessage=""
     />
   );
 };
@@ -465,6 +474,7 @@ export const GrowthOfSupply = () => {
       itemType={itemType.OHM}
       infoTooltipMessage={tooltipInfoMessages.growthOfSupply}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
+      todayMessage=""
     />
   );
 };

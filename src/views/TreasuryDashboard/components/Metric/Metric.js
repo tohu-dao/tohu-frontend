@@ -1,9 +1,10 @@
 import { useSelector } from "react-redux";
 import { useTreasuryMetrics } from "../../hooks/useTreasuryMetrics";
 import { Skeleton } from "@material-ui/lab";
-import { Typography, Box } from "@material-ui/core";
+import { Typography, Box, useMediaQuery } from "@material-ui/core";
 import { trim, formatCurrency } from "../../../../helpers";
 import InfoTooltip from "src/components/InfoTooltip/InfoTooltip.jsx";
+import { tooltipInfoMessages } from "../../treasuryData";
 import { OHM_TICKER, sOHM_TICKER, wsOHM_TICKER, EPOCH_INTERVAL } from "../../../../constants";
 
 export const Metric = props => (
@@ -26,11 +27,19 @@ Metric.Title = props => (
   </Typography>
 );
 
-Metric.SmallTitle = props => (
-  <Typography variant="h6" color="textSecondary" style={{ width: "100%", textAlign: "center" }}>
-    {props.children}
-  </Typography>
-);
+Metric.SmallTitle = props => {
+  const isSmallScreen = useMediaQuery("(max-width: 550px)");
+
+  return (
+    <Typography
+      variant={isSmallScreen ? "body2" : "h6"}
+      color="textSecondary"
+      style={{ width: "100%", textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center" }}
+    >
+      {props.children}
+    </Typography>
+  );
+};
 
 Metric.SmallValue = props => (
   <Typography variant="h6" style={{ width: "100%", textAlign: "center" }}>
@@ -74,7 +83,10 @@ export const CircSupply = ({ isDashboard = false }) => {
 
   return (
     <Metric className="circ" isDashboard={isDashboard}>
-      <Title> {isDashboard ? "Supply" : "Circulating Supply (total)"}</Title>
+      <Title>
+        {isDashboard ? "Supply" : "Supply (Circulating / Total)"}
+        <InfoTooltip message={tooltipInfoMessages.supply} />
+      </Title>
       <Value>{isDataLoaded && parseInt(circSupply) + " / " + parseInt(totalSupply)}</Value>
     </Metric>
   );
@@ -87,7 +99,10 @@ export const BackingPerOHM = ({ isDashboard = false }) => {
 
   return (
     <Metric className="bpo" isDashboard={isDashboard}>
-      <Title>{isDashboard ? "Backing" : `Backing per ${OHM_TICKER}`}</Title>
+      <Title>
+        {isDashboard ? "Backing" : `Backing per ${OHM_TICKER}`}
+        <InfoTooltip message={tooltipInfoMessages.backing} />
+      </Title>
       <Value>{!isNaN(backingPerOhm) && formatCurrency(backingPerOhm, 2)}</Value>
     </Metric>
   );
@@ -102,9 +117,7 @@ export const CurrentIndex = ({ isDashboard = false }) => {
     <Metric className="index" isDashboard={isDashboard}>
       <Title>
         Current Index
-        {!isDashboard && (
-          <InfoTooltip message="The current index tracks the amount of sEXOD accumulated since the beginning of staking. Basically, how much sEXOD one would have if they staked and held a single EXOD from day 1." />
-        )}
+        <InfoTooltip message="The current index tracks the amount of sEXOD accumulated since the beginning of staking. Basically, how much sEXOD one would have if they staked and held a single EXOD from day 1." />
       </Title>
       <Value>{currentIndex && trim(currentIndex, 2) + " " + sOHM_TICKER}</Value>
     </Metric>
@@ -120,13 +133,11 @@ export const WSOHMPrice = ({ isDashboard = false }) => {
     <Metric className="wsoprice" isDashboard={isDashboard}>
       <Title>
         {wsOHM_TICKER} Price
-        {!isDashboard && (
-          <InfoTooltip
-            message={
-              "wsEXOD = sEXOD * index\n\nThe price of wsEXOD is equal to the price of EXOD multiplied by the current index"
-            }
-          />
-        )}
+        <InfoTooltip
+          message={
+            "wsEXOD = sEXOD * index\n\nThe price of wsEXOD is equal to the price of EXOD multiplied by the current index"
+          }
+        />
       </Title>
       <Value>{wsOhmPrice && formatCurrency(wsOhmPrice, 2)}</Value>
     </Metric>
@@ -140,7 +151,10 @@ export const StakedPercentage = ({ isDashboard = false }) => {
 
   return (
     <Metric className="wsoprice" isDashboard={isDashboard}>
-      <Title>Staked supply</Title>
+      <Title>
+        Staked supply
+        <InfoTooltip message={tooltipInfoMessages.staked} />
+      </Title>
       <Value>{data && trim((data[0].sOhmCirculatingSupply / data[0].ohmCirculatingSupply) * 100, 2)}%</Value>
     </Metric>
   );
@@ -154,7 +168,10 @@ export const CurrentRunway = ({ isDashboard = false }) => {
 
   return (
     <Metric className="wsoprice" isDashboard={isDashboard}>
-      <Title>Runway</Title>
+      <Title>
+        Runway
+        <InfoTooltip message={tooltipInfoMessages.runway} />
+      </Title>
       <Value>{data && trim((data[0].runwayCurrent * 3 * epochLengthSeconds) / 86400, 2)} days</Value>
     </Metric>
   );
