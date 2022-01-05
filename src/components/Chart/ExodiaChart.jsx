@@ -206,7 +206,6 @@ export const ExodiaStackedLineChart = withChartCard(
     isExpanded = false,
     expandedGraphStrokeColor,
     strokeWidth = 1.6,
-    glowDeviation = "6",
     showTotal,
   }) => {
     const theme = useTheme();
@@ -220,7 +219,7 @@ export const ExodiaStackedLineChart = withChartCard(
         <ComposedChart data={formattedData}>
           <defs>
             {dataKey.map((key, index) => (
-              <LineShadow id={`color-${key}`} color={colors[index]} deviation={glowDeviation} />
+              <UnderGlow color={colors[index]} />
             ))}
           </defs>
           <XAxis
@@ -387,10 +386,7 @@ export const ExodiaLineChart = withChartCard(
     const theme = useTheme();
     const renderGlow = () => {
       return underglow ? (
-        <linearGradient id={`underglow-${color.replace("#", "")}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="5%" stopColor={color} stopOpacity={0.1} />
-          <stop offset="95%" stopColor={theme.palette.background.paper} stopOpacity={0.1} />
-        </linearGradient>
+        <UnderGlow color={color} />
       ) : (
         <LineShadow id={`shadow-${color.replace("#", "")}`} color={color} deviation={glowDeviation} />
       );
@@ -564,6 +560,17 @@ const LineShadow = ({ id, color, deviation = "12" }) => {
   );
 };
 
+const UnderGlow = ({ color }) => {
+  const theme = useTheme();
+
+  return (
+    <linearGradient id={`underglow-${color.replace("#", "")}`} x1="0" y1="0" x2="0" y2="1">
+      <stop offset="5%" stopColor={color} stopOpacity={0.2} />
+      <stop offset="100%" stopColor={theme.palette.background.paper} stopOpacity={0.3} />
+    </linearGradient>
+  );
+};
+
 const areaProps = (dataKey, color, strokeWidth) => {
   return {
     type: "monotone",
@@ -572,9 +579,9 @@ const areaProps = (dataKey, color, strokeWidth) => {
     stroke: color,
     dot: false,
     strokeWidth: strokeWidth,
-    filter: `url(#color-${dataKey})`,
+    fill: `url(#underglow-${color.replace("#", "")})`,
     color: color,
-    fillOpacity: 0,
+    fillOpacity: 1,
     stackId: "1",
   };
 };
