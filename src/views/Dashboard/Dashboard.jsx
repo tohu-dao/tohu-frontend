@@ -30,6 +30,7 @@ import RebaseTimer from "src/components/RebaseTimer/RebaseTimer";
 import TwitterFeed from "./TwitterFeed";
 import ApyMetric from "./ApyMetric";
 import Balance from "./Balance";
+import MigrationMessage from "src/components/MigrationMessage";
 
 const Dashboard = memo(() => {
   const theme = useTheme();
@@ -105,6 +106,9 @@ const Dashboard = memo(() => {
               >
                 <QuickRedeem />
               </Paper>
+            </Grid>
+            <Grid item lg={12} md={12} sm={12} xs={12}>
+              <MigrationMessage />
             </Grid>
             <Grid item lg={6} md={12} sm={12} xs={12}>
               <Paper className="ohm-card" style={{ paddingBottom: "5px" }}>
