@@ -80,6 +80,7 @@ export const dark = responsiveFontSizes(
         primaryColor: darkTheme.gold,
         primaryColorDimmed: darkTheme.goldDimmed,
         primaryColorBright: darkTheme.goldBright,
+        primaryButtonColor: darkTheme.primaryButtonColor,
         chartColors: darkTheme.chartColors,
         trendUp: darkTheme.trendUp,
         trendDown: darkTheme.trendDown,
