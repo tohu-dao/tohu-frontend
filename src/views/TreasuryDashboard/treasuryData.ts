@@ -20,6 +20,19 @@ query {
     treasuryDaiMarketValue
     treasuryWETHMarketValue
     treasuryGOhmBalance
+    treasuryGOhmMarketValue
+    treasuryMaiBalance
+    treasuryMonolithTotalPoolValue
+    treasuryMonolithMaiValue
+    treasuryMonolithMaiBalance
+    treasuryMonolithExodValue
+    treasuryMonolithExodBalance
+    treasuryMonolithWsExodValue
+    treasuryMonolithWsExodBalance
+    treasuryMonolithWFtmValue
+    treasuryMonolithWFtmBalance
+    treasuryMonolithGOhmValue
+    treasuryMonolithGOhmBalance
     currentAPY
     runway10k
     runway20k

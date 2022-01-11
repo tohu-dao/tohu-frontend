@@ -4,8 +4,6 @@ import { abi as OlympusStakingv2ABI } from "../abi/OlympusStakingv2.json";
 import { abi as sOHMv2 } from "../abi/sOhmv2.json";
 import { setAll, getTokenPrice, getMarketPrice, secondsUntilBlock, prettifySeconds } from "../helpers";
 import apollo from "../lib/apolloClient";
-import { apolloExt } from "src/lib/apolloClient";
-import { THE_GRAPH_URL_ETH } from "src/constants";
 import { createSlice, createSelector, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "src/store";
 import { IBaseAsyncThunk } from "./interfaces";
@@ -20,14 +18,8 @@ interface IProtocolMetrics {
   readonly marketCap: string;
   readonly totalValueLocked: string;
   readonly treasuryMarketValue: string;
-  readonly treasuryGOhmBalance: string;
   readonly nextEpochRebase: string;
   readonly nextDistributedOhm: string;
-}
-
-interface IBalances {
-  readonly timestamp: string;
-  readonly gOhmPrice: string;
 }
 
 export const loadAppDetails = createAsyncThunk(
@@ -100,25 +92,15 @@ export const loadGraphData = createAsyncThunk("app/loadGraphData", async () => {
         marketCap
         totalValueLocked
         treasuryMarketValue
-        treasuryGOhmBalance
         nextEpochRebase
         nextDistributedOhm
       }
     }
   `;
-  const ethBalancesQuery = `
-  query {
-    balances(first: 1, orderBy: timestamp, orderDirection: desc) {
-      gOhmPrice
-    }
-  }
-  `;
-  const [graphData, ethData] = await Promise.all([
-    apollo<{ protocolMetrics: IProtocolMetrics[] }>(protocolMetricsQuery),
-    apolloExt(ethBalancesQuery, THE_GRAPH_URL_ETH),
-  ]);
 
-  if (!graphData || !ethData) {
+  const graphData = await apollo<{ protocolMetrics: IProtocolMetrics[] }>(protocolMetricsQuery);
+
+  if (!graphData) {
     console.error("Returned a null response when querying TheGraph");
     return {};
   }
@@ -132,8 +114,6 @@ export const loadGraphData = createAsyncThunk("app/loadGraphData", async () => {
   const circSupply = parseFloat(graphData.data.protocolMetrics[0].ohmCirculatingSupply);
   const totalSupply = parseFloat(graphData.data.protocolMetrics[0].totalSupply);
   const treasuryMarketValue = parseFloat(graphData.data.protocolMetrics[0].treasuryMarketValue);
-  const treasuryGOhmBalance = parseFloat(graphData.data.protocolMetrics[0].treasuryGOhmBalance);
-  const gOhmPrice = parseFloat(ethData ? ethData.data.balances[0].gOhmPrice : 0);
   // const currentBlock = parseFloat(graphData.data._meta.block.number);
 
   return {
@@ -141,7 +121,7 @@ export const loadGraphData = createAsyncThunk("app/loadGraphData", async () => {
     marketCap,
     circSupply,
     totalSupply,
-    treasuryMarketValue: treasuryMarketValue + treasuryGOhmBalance * gOhmPrice,
+    treasuryMarketValue,
     marketPrice,
   } as IAppData;
 });
