@@ -68,6 +68,7 @@ export const MarketValueGraph = ({ isDashboard = false }) => {
   for (let i = 0; i < datalength - ethDatalength; i++) {
     ethData && ethData.push({ sOHMBalanceUSD: 0 });
   }
+  console.log(data);
 
   const stats =
     ethData &&

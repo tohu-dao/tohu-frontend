@@ -34,7 +34,7 @@
       opacity: 0.9;
     }
   }
-  
+
   .ohm-card {
     max-width: 803px;
   }
@@ -54,6 +54,7 @@
       text-align: center;
       display: flex;
       flex-direction: row;
+      width: 100%;
       .bond-header-name {
         text-align: center;
         margin-left: 0.33em;
@@ -122,4 +123,6 @@
   }
 }
 
-.web3modal-modal-lightbox { z-index: 70 !important; }
+.web3modal-modal-lightbox {
+  z-index: 70 !important;
+}

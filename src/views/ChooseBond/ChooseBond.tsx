@@ -42,24 +42,10 @@ function ChooseBond() {
 
   const isAppLoading: boolean = useAppSelector(state => state.app.loading);
   const isAccountLoading: boolean = useAppSelector(state => state.account.loading);
+  const treasuryBalance: number | undefined = useAppSelector(state => state.app.treasuryMarketValue);
 
   const marketPrice: number | undefined = useAppSelector(state => {
     return state.app.marketPrice;
-  });
-
-  const { data: ethTreasury } = useTreasuryOhm({ refetchOnMount: false });
-
-  const treasuryBalance: number | undefined = useAppSelector(state => {
-    if (state.bonding.loading == false) {
-      let tokenBalances = 0;
-      for (const bond in allBondsMap) {
-        if (state.bonding[bond]) {
-          tokenBalances += state.bonding[bond].purchased;
-        }
-      }
-      tokenBalances += ethTreasury && ethTreasury[0].sOHMBalanceUSD;
-      return tokenBalances;
-    }
   });
 
   return (

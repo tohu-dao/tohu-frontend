@@ -153,7 +153,7 @@ function NavContent() {
               <div className="dapp-menu-data discounts">
                 <div className="bond-discounts">
                   <Typography variant="body1">
-                    <Trans>Bond discounts</Trans>
+                    <Trans>Bond ROI</Trans>
                   </Typography>
                   {bonds.map((bond, i) => (
                     <Link component={NavLink} to={`/bonds/${bond.name}`} key={i} className={"bond"}>

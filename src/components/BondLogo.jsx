@@ -7,11 +7,16 @@ function BondLogo({ bond }) {
   // Need more space if its an LP token
   if (bond.isLP) {
     viewBox = "0 0 64 32";
-    style = { height: "32px", width: "62px" };
+    style = { height: "32px", width: "64" };
+  }
+
+  if (bond.isMonolith) {
+    viewBox = "0 0 96 32";
+    style = { height: "32px", width: "96px" };
   }
 
   return (
-    <Box display="flex" alignItems="center" justifyContent="center" width={"64px"}>
+    <Box display="flex" alignItems="center" justifyContent="center" width="96px">
       <SvgIcon component={bond.bondIconSvg} viewBox={viewBox} style={style} />
     </Box>
   );
