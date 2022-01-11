@@ -181,7 +181,7 @@ const withChartCard = Component => {
             </Box>
           )}
         </div>
-        <Box width="100%" minHeight={260} minWidth={310} className="ohm-chart">
+        <Box width="100%" minHeight={260} minWidth={220} className="ohm-chart">
           {loading || (data && data.length > 0) ? (
             <Component {...props} data={filteredData} />
           ) : (
@@ -487,7 +487,7 @@ export const ExodiaPieChart = withChartCard(
         <PieChart width={400} height={400}>
           <Pie
             data={data}
-            cx={isVerySmallScreen ? "19%" : isSmallScreen ? "22%" : "30%"}
+            cx={isVerySmallScreen ? "29%" : isSmallScreen ? "32%" : "42%"}
             cy="45%"
             innerRadius={isVerySmallScreen ? 35 : isSmallScreen ? 40 : 50}
             outerRadius={isVerySmallScreen ? 55 : isSmallScreen ? 65 : 80}
