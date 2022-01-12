@@ -6,7 +6,7 @@ export default function NotFound() {
   return (
     <div id="not-found">
       <div className="not-found-header">
-        <a href="https://olympusdao.finance" target="_blank">
+        <a href="https://exodia.fi" target="_blank" rel="nofollow noopener noreferrer">
           <img className="branding-header-icon" src={OlympusLogo} alt="OlympusDAO" />
         </a>
 

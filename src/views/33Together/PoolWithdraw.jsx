@@ -183,7 +183,7 @@ export const PoolWithdraw = props => {
                 <Link
                   href="https://v3.docs.pooltogether.com/protocol/prize-pool/fairness"
                   target="_blank"
-                  rel="noreferrer"
+                  rel="nofollow noopener noreferrer"
                   color="primary"
                 >
                   <br />
