@@ -315,10 +315,17 @@ export const OhmMintedGraph = () => {
   const minted =
     data &&
     data
-      .map(entry => ({
-        timestamp: entry.timestamp,
-        ohmMinted: entry.ohmMinted,
-      }))
+      .map((entry, index) => {
+        const lastFiveDays = data.slice(index, Math.min(index + 5, data.length));
+        const fiveDayAverage =
+          lastFiveDays.reduce((previous, current) => current.ohmMinted + previous, 0).toFixed(2) / 5;
+        console.log(entry.ohmMinted);
+        return {
+          timestamp: entry.timestamp,
+          ohmMinted: entry.ohmMinted,
+          fiveDayAverage: index < data.length - 5 ? fiveDayAverage : null,
+        };
+      })
       .slice(0, data.length - 1);
 
   const fiveDaySlice = minted && minted.slice(0, 5);
@@ -329,21 +336,22 @@ export const OhmMintedGraph = () => {
   }
 
   return (
-    <ExodiaLineChart
-      glowDeviation="2"
-      dataFormat="OHM"
+    <ExodiaMultiLineChart
+      dataFormat={["OHM", "OHM"]}
       data={minted}
-      dataKey={["ohmMinted"]}
+      dataKey={["ohmMinted", "fiveDayAverage"]}
       itemNames={tooltipItems.minted}
       itemType={itemType.OHM}
       headerText={`${OHM_TICKER} minted`}
-      color={theme.palette.chartColors[0]}
-      stroke={theme.palette.chartColors[0]}
+      colors={[theme.palette.chartColors[4], theme.palette.chartColors[0]]}
+      stroke={[theme.palette.chartColors[4], theme.palette.chartColors[0]]}
       bulletpoints={bulletpoints.staked}
       infoTooltipMessage={tooltipInfoMessages.minted}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
       headerSubText={`${(fiveDayTotal && fiveDayTotal / 5).toFixed(2)} EXOD`}
       todayMessage="5-day Average"
+      glowDeviation="4"
+      showNulls
     />
   );
 };
@@ -355,32 +363,42 @@ export const OhmMintedPerTotalSupplyGraph = () => {
   const minted =
     data &&
     data
-      .map(entry => ({
-        timestamp: entry.timestamp,
-        percentage: (entry.ohmMinted / entry.totalSupply) * 100,
-      }))
+      .map((entry, index) => {
+        const lastFiveDays = data.slice(index, Math.min(index + 5, data.length));
+        const fiveDayAverage =
+          lastFiveDays
+            .reduce((previous, current) => (current.ohmMinted / current.totalSupply) * 100 + previous, 0)
+            .toFixed(2) / 5;
+        return {
+          timestamp: entry.timestamp,
+          mintedPercent: (entry.ohmMinted / entry.totalSupply) * 100,
+          fiveDayAveragePercent: index < data.length - 5 ? fiveDayAverage : null,
+        };
+      })
       .slice(0, data.length - 1);
+
   const fiveDaySlice = minted && minted.slice(0, 5);
   let fiveDayTotal = 0;
   for (let i = 0; i < 5; i++) {
-    fiveDayTotal += fiveDaySlice && fiveDaySlice[i].percentage;
+    fiveDayTotal += fiveDaySlice && fiveDaySlice[i].mintedPercent;
   }
   return (
-    <ExodiaLineChart
-      glowDeviation="2"
-      dataFormat="percent"
+    <ExodiaMultiLineChart
+      glowDeviation="4"
+      dataFormat={["percent", "percent"]}
       data={minted}
-      dataKey={["percentage"]}
+      dataKey={["mintedPercent", "fiveDayAveragePercent"]}
       itemNames={tooltipItems.mcs}
       itemType={itemType.percentage}
       headerText={`${OHM_TICKER} Minted/Total Supply`}
-      color={theme.palette.chartColors[3]}
-      stroke={theme.palette.chartColors[3]}
+      colors={[theme.palette.chartColors[3], theme.palette.chartColors[0]]}
+      stroke={[theme.palette.chartColors[3], theme.palette.chartColors[0]]}
       bulletpoints={bulletpoints.tvl}
       infoTooltipMessage={tooltipInfoMessages.mcs}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
       headerSubText={`${(fiveDayTotal && fiveDayTotal / 5).toFixed(2)}%`}
       todayMessage="5-day Average"
+      showNulls
     />
   );
 };
@@ -482,6 +500,7 @@ export const GrowthOfSupply = () => {
       infoTooltipMessage={tooltipInfoMessages.growthOfSupply}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
       todayMessage=""
+      isGrowthOfSupply
     />
   );
 };

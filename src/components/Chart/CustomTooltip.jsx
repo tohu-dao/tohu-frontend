@@ -1,6 +1,7 @@
 import { Paper, Box, Typography, useTheme } from "@material-ui/core";
 import { bulletpoints } from "src/views/TreasuryDashboard/treasuryData";
 import _ from "lodash";
+import { trim } from "../../helpers";
 import "./customtooltip.scss";
 
 const renderDate = (index, payload, item) => {
@@ -36,6 +37,7 @@ const renderTooltipItems = (
   isStaked = false,
   isPOL = false,
   isDilution = false,
+  isGrowthOfSupply = false,
   isPie = false,
   colors,
   dataKey,
@@ -116,7 +118,7 @@ const renderTooltipItems = (
               </Box>
               {renderItem(isDilution ? itemType[itemIndex] : itemType, item.value)}
             </Box>
-            <Box>{!showTotal && renderDate(itemIndex, payload, item)}</Box>
+            <Box>{!showTotal && !isGrowthOfSupply && renderDate(itemIndex, payload, item)}</Box>
           </Box>
         );
       })}
@@ -138,6 +140,21 @@ const renderTooltipItems = (
           <Box>{renderDate(payload.length - 1, payload, payload[0])}</Box>
         </Box>
       )}
+      {isGrowthOfSupply && <br />}
+      {isGrowthOfSupply && (
+        <Box key={payload.length}>
+          <Box className="item" display="flex">
+            <Box display="flex" justifyContent="space-between">
+              <Typography variant="body2" className="field-name">
+                <span className="tooltip-bulletpoint" style={{ backgroundColor: theme.palette.text.secondary }}></span>
+                Growth vs Index
+              </Typography>
+            </Box>
+            {renderItem("%", trim(Math.abs(1 - payload[0].value / payload[1].value) * 100, 2))}
+          </Box>
+          <Box>{renderDate(payload.length - 1, payload, payload[0])}</Box>
+        </Box>
+      )}
     </>
   );
 };
@@ -152,6 +169,7 @@ function CustomTooltip({
   isStaked,
   isPOL,
   isDilution,
+  isGrowthOfSupply,
   isPie,
   colors,
   showTotal = false,
@@ -167,6 +185,7 @@ function CustomTooltip({
           isStaked,
           isPOL,
           isDilution,
+          isGrowthOfSupply,
           isPie,
           colors,
           dataKey,

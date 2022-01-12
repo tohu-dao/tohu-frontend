@@ -283,14 +283,18 @@ export const ExodiaMultiLineChart = withChartCard(
     strokeWidth = 1.6,
     dataAxis = [],
     isDilution = false,
+    isGrowthOfSupply = false,
     showTotal,
+    showNulls = false,
   }) => {
     const theme = useTheme();
     // Remove 0's
-    const formattedData = data.map(dataEntry => {
-      dataKey.forEach(key => (dataEntry[key] = dataEntry[key] || null));
-      return dataEntry;
-    });
+    const formattedData = showNulls
+      ? data
+      : data.map(dataEntry => {
+          dataKey.forEach(key => (dataEntry[key] = dataEntry[key] || null));
+          return dataEntry;
+        });
     return (
       <ResponsiveContainer minHeight={260} width="100%">
         <ComposedChart data={formattedData}>
@@ -346,6 +350,7 @@ export const ExodiaMultiLineChart = withChartCard(
                 colors={colors}
                 dataKey={dataKey}
                 isDilution={isDilution}
+                isGrowthOfSupply={isGrowthOfSupply}
                 showTotal={showTotal}
               />
             }
