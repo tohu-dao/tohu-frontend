@@ -72,27 +72,33 @@ export const MarketValueGraph = ({ isDashboard = false }) => {
   const stats =
     ethData &&
     data &&
-    data.map((e, i) => {
+    data.map((entry, i) => {
       const gOhmPrice = ethData[i].gOhmPrice ? ethData[i].gOhmPrice : 0;
-      const gOhmBalance = e.treasuryGOhmBalance ? e.treasuryGOhmBalance : 0;
+      const gOhmBalance = entry.treasuryGOhmBalance ? entry.treasuryGOhmBalance : 0;
       const sOHMBalanceUSD = ethData[i].sOHMBalanceUSD + gOhmBalance * gOhmPrice;
+      const treasuryExodMarketValue = entry.treasuryMonolithExodValue + entry.treasuryMonolithWsExodValue;
       return {
-        timestamp: e.id,
-        ...e,
-        sOHMBalanceUSD,
+        timestamp: entry.id,
+        ...entry,
+        sOHMBalanceUSD: entry.treasuryGOhmMarketValue || sOHMBalanceUSD,
+        treasuryExodMarketValue,
       };
     });
 
-  const value =
-    ethData && stats && stats[0].treasuryDaiMarketValue + stats[0].treasuryWETHMarketValue + stats[0].sOHMBalanceUSD;
-  const lastValue =
-    ethData && stats && stats[1].treasuryDaiMarketValue + stats[1].treasuryWETHMarketValue + stats[1].sOHMBalanceUSD;
+  const value = stats && stats[0].treasuryMarketValue;
+  const lastValue = stats && stats[1].treasuryMarketValue;
   const formattedValue = formatCurrency(value);
 
   return (
     <ExodiaStackedLineChart
       data={stats}
-      dataKey={["treasuryDaiMarketValue", "treasuryWETHMarketValue", "sOHMBalanceUSD"]}
+      dataKey={[
+        "treasuryExodMarketValue",
+        "treasuryDaiMarketValue",
+        "treasuryMaiBalance",
+        "treasuryWETHMarketValue",
+        "sOHMBalanceUSD",
+      ]}
       colors={theme.palette.chartColors}
       dataFormat="$"
       headerText={
@@ -123,7 +129,7 @@ export const RiskFreeValueGraph = () => {
     <ExodiaStackedLineChart
       data={data}
       format="currency"
-      dataKey={["treasuryDaiRiskFreeValue"]}
+      dataKey={["treasuryDaiRiskFreeValue", "treasuryMaiRiskFreeValue"]}
       colors={[theme.palette.chartColors[1], theme.palette.chartColors[2]]}
       dataFormat="$"
       headerText="Risk Free Value of Treasury Assets"
@@ -134,6 +140,7 @@ export const RiskFreeValueGraph = () => {
       infoTooltipMessage={tooltipInfoMessages.rfv}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
       todayMessage=""
+      showTotal
     />
   );
 };
@@ -185,8 +192,8 @@ export const OHMStakedGraph = () => {
       itemNames={tooltipItems.staked}
       itemType={itemType.percentage}
       headerText="Staked Supply"
-      color={theme.palette.chartColors[2]}
-      stroke={theme.palette.chartColors[2]}
+      color={theme.palette.chartColors[4]}
+      stroke={theme.palette.chartColors[4]}
       bulletpoints={bulletpoints.staked}
       infoTooltipMessage={tooltipInfoMessages.staked}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
@@ -222,8 +229,8 @@ export const APYOverTimeGraph = () => {
       headerText="APY over time"
       itemNames={tooltipItems.apy}
       itemType={itemType.percentage}
-      color={theme.palette.chartColors[1]}
-      stroke={theme.palette.chartColors[1]}
+      color={theme.palette.chartColors[3]}
+      stroke={theme.palette.chartColors[3]}
       bulletpoints={bulletpoints.apy}
       infoTooltipMessage={tooltipInfoMessages.apy}
       headerSubText={`${apy && apy[0].apy.toLocaleString("en-us")}%`}
@@ -255,7 +262,7 @@ export const RunwayAvailableGraph = () => {
     <ExodiaMultiLineChart
       data={runway}
       dataKey={["runwayCurrent", "runway7dot5k"]}
-      colors={[theme.palette.chartColors[0], theme.palette.chartColors[2]]}
+      colors={[theme.palette.chartColors[0], theme.palette.chartColors[4]]}
       headerText="Runway Available"
       headerSubText={`${runway && trim(runway[0].runwayCurrent, 1)} Days`}
       dataFormat={["days"]}
@@ -286,7 +293,7 @@ export const DilutionGraph = () => {
       data={dilution}
       dataKey={["percentage", "index"]}
       dataAxis={["left", "right"]}
-      colors={[theme.palette.chartColors[0], theme.palette.chartColors[1]]}
+      colors={[theme.palette.chartColors[0], theme.palette.chartColors[3]]}
       headerText="Dilution Over Time"
       dataFormat={["percent", "number"]}
       headerSubText={`${dilution && trim(dilution[0].percentage, 2)}%`}
@@ -367,8 +374,8 @@ export const OhmMintedPerTotalSupplyGraph = () => {
       itemNames={tooltipItems.mcs}
       itemType={itemType.percentage}
       headerText={`${OHM_TICKER} Minted/Total Supply`}
-      color={theme.palette.chartColors[1]}
-      stroke={theme.palette.chartColors[1]}
+      color={theme.palette.chartColors[3]}
+      stroke={theme.palette.chartColors[3]}
       bulletpoints={bulletpoints.tvl}
       infoTooltipMessage={tooltipInfoMessages.mcs}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
@@ -396,8 +403,8 @@ export const DebtRatioGraph = () => {
       deviation="2"
       data={debtRatios}
       dataKey={["daiDebtRatio", "ethDebtRatio", "ohmDaiDebtRatio"]}
-      colors={[theme.palette.chartColors[0], theme.palette.chartColors[2], theme.palette.chartColors[1]]}
-      stroke={[theme.palette.chartColors[0], theme.palette.chartColors[2], theme.palette.chartColors[1]]}
+      colors={[theme.palette.chartColors[0], theme.palette.chartColors[4], theme.palette.chartColors[3]]}
+      stroke={[theme.palette.chartColors[0], theme.palette.chartColors[4], theme.palette.chartColors[3]]}
       headerText="Debt Ratios"
       headerSubText={`Total ${
         debtRatios && trim(debtRatios[0].daiDebtRatio + debtRatios[0].ethDebtRatio + debtRatios[0].ohmDaiDebtRatio, 2)
@@ -431,8 +438,8 @@ export const IndexAdjustedPrice = () => {
     <ExodiaMultiLineChart
       data={indexAdjustedPrice}
       dataKey={["price", "indexAdjustedPrice"]}
-      colors={[theme.palette.chartColors[0], theme.palette.chartColors[2]]}
-      stroke={[theme.palette.chartColors[0], theme.palette.chartColors[2]]}
+      colors={[theme.palette.chartColors[0], theme.palette.chartColors[4]]}
+      stroke={[theme.palette.chartColors[0], theme.palette.chartColors[4]]}
       headerText="Index Adjusted Price"
       headerSubText={`$${indexAdjustedPrice && trim(indexAdjustedPrice[0].indexAdjustedPrice, 2)}`}
       dataFormat={["$"]}
@@ -462,8 +469,8 @@ export const GrowthOfSupply = () => {
     <ExodiaMultiLineChart
       data={formattedData}
       dataKey={["indexCircSupply", "circSupply"]}
-      colors={[theme.palette.chartColors[2], theme.palette.chartColors[0]]}
-      stroke={[theme.palette.chartColors[2], theme.palette.chartColors[0]]}
+      colors={[theme.palette.chartColors[4], theme.palette.chartColors[0]]}
+      stroke={[theme.palette.chartColors[4], theme.palette.chartColors[0]]}
       headerText="Growth of Supply"
       headerSubText={`${
         formattedData && trim(Math.abs(1 - formattedData[0].indexCircSupply / formattedData[0].circSupply) * 100, 2)
@@ -572,20 +579,30 @@ export const TreasuryBreakdownPie = () => {
   const gOhmPricePrevious = ethData && ethData[1].gOhmPrice ? ethData[1].gOhmPrice : 0;
   const gOhmBalancePrevious = data && ethData && data[1].treasuryGOhmBalance ? data[1].treasuryGOhmBalance : 0;
 
+  const exodValue = data && data[0].treasuryMonolithExodValue + data[0].treasuryMonolithWsExodValue;
   const daiValue = data && data[0].treasuryDaiMarketValue;
+  const maiValue = data && data[0].treasuryMaiBalance;
   const ftmValue = data && data[0].treasuryWETHMarketValue;
-  const gOhmValue = ethData && ethData[0].sOHMBalanceUSD + gOhmBalance * gOhmPrice;
+  const gOhmValue =
+    (data && data[0].treasuryGOhmMarketValue) || (ethData && ethData[0].sOHMBalanceUSD + gOhmBalance * gOhmPrice);
 
+  const exodValuePrevious = data && data[1].treasuryMonolithExodValue + data[1].treasuryMonolithWsExodValue;
   const daiValuePrevious = data && data[1].treasuryDaiMarketValue;
+  const maiValuePrevious = data && data[1].treasuryMaiBalance;
   const ftmValuePrevious = data && data[1].treasuryWETHMarketValue;
-  const gOhmValuePrevious = ethData && ethData[1].sOHMBalanceUSD + gOhmBalancePrevious * gOhmPricePrevious;
+  const gOhmValuePrevious =
+    (data && data[1].treasuryGOhmMarketValue) ||
+    (ethData && ethData[1].sOHMBalanceUSD + gOhmBalancePrevious * gOhmPricePrevious);
 
-  const totalValue = ethData && data && daiValue + ftmValue + gOhmValue;
-  const lastValue = ethData && data && daiValuePrevious + ftmValuePrevious + gOhmValuePrevious;
+  const totalValue = data && data[0].treasuryMarketValue;
+  const lastValue = data && data[1].treasuryMarketValue;
+
   const formattedValue = formatCurrency(totalValue);
 
   const pieData = totalValue && [
+    { value: Number(trim((exodValue / totalValue) * 100, 2)), name: "EXOD" },
     { value: Number(trim((daiValue / totalValue) * 100, 2)), name: "DAI" },
+    { value: Number(trim((maiValue / totalValue) * 100, 2)), name: "MAI" },
     { value: Number(trim((ftmValue / totalValue) * 100, 2)), name: "wFTM" },
     { value: Number(trim((gOhmValue / totalValue) * 100, 2)), name: "gOHM" },
   ];
@@ -626,8 +643,8 @@ export const TreasuryBreakdownPie = () => {
       </Grid>
       <Grid xs={7} sm={7} md={7} lg={7}>
         <TreasuryTable
-          currentData={[daiValue, ftmValue, gOhmValue]}
-          previousData={[daiValuePrevious, ftmValuePrevious, gOhmValuePrevious]}
+          currentData={[exodValue, daiValue, maiValue, ftmValue, gOhmValue]}
+          previousData={[exodValuePrevious, daiValuePrevious, maiValuePrevious, ftmValuePrevious, gOhmValuePrevious]}
           itemNames={tooltipItems.coin}
           colors={theme.palette.chartColors}
           totalValue={totalValue}
@@ -751,8 +768,8 @@ const TableGrid = styled.div`
   padding-left: 12px;
   grid-row-gap: 12px;
 
-  ${({ header }) => header && "padding-bottom: 12px;  margin-top: 86px;"}
-  ${({ header, isSmallScreen }) => header && isSmallScreen && "margin-top: 86px;"}
+  ${({ header }) => header && "padding-bottom: 12px;  margin-top: 42px;"}
+  ${({ header, isSmallScreen }) => header && isSmallScreen && "margin-top: 42px;"}
 `;
 
 const ColorMark = styled.div`

@@ -517,28 +517,19 @@ export const ExodiaPieChart = withChartCard(
   },
 );
 
-const formatCurrency = c => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-    minimumFractionDigits: 0,
-  }).format(c);
-};
-
 export const trimNumber = number => {
-  if (Number(number) > 1000000) return `${formatCurrency(parseFloat(number) / 1000000)}M`;
-  else if (Number(number) > 1000) return `${formatCurrency(parseFloat(number) / 1000)}k`;
+  if (Number(number) > 1000000) return `${parseFloat(number) / 100000}M`;
+  else if (Number(number) > 1000) return `${parseFloat(number) / 1000}k`;
   return number;
 };
 
 const tickFormatter = (number, dataFormat) => {
   if (number !== 0) {
     if (dataFormat === "percent") {
-      return `${trim(trimNumber(parseFloat(number)), 2)}%`;
+      return `${trimNumber(number)}%`;
     }
     if (dataFormat === "$") {
-      return trimNumber(number);
+      return `$${trimNumber(number)}`;
     }
     return trim(number, 2);
   }
