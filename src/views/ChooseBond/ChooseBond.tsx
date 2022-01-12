@@ -30,7 +30,6 @@ import {
   OhmMintedPerTotalSupplyGraph,
 } from "../TreasuryDashboard/components/Graph/Graph";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { useTreasuryOhm } from "../TreasuryDashboard/hooks/useTreasuryOhm";
 import styled from "styled-components";
 import _ from "lodash";
 
