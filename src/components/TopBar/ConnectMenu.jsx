@@ -88,7 +88,12 @@ function ConnectMenu({ theme }) {
               <Paper className="ohm-menu" elevation={1}>
                 {pendingTransactions.map((x, i) => (
                   <Box key={i} fullWidth>
-                    <Link key={x.txnHash} href={getEtherscanUrl(x.txnHash)} target="_blank" rel="noreferrer">
+                    <Link
+                      key={x.txnHash}
+                      href={getEtherscanUrl(x.txnHash)}
+                      target="_blank"
+                      rel="nofollow noopener noreferrer"
+                    >
                       <Button size="large" variant="contained" color="secondary" fullWidth>
                         <Typography align="left">
                           {x.text} <SvgIcon component={ArrowUpIcon} />

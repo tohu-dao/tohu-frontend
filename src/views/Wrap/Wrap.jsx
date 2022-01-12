@@ -197,6 +197,7 @@ function Wrap() {
                     href="https://ftmscan.com/address/0xe992C5Abddb05d86095B18a158251834D616f0D1"
                     aria-label="wsohm-wut"
                     target="_blank"
+                    rel="nofollow noopener noreferrer"
                   >
                     <Typography>wsEXOD</Typography> <SvgIcon component={InfoIcon} color="primary" />
                   </Link>
@@ -458,6 +459,7 @@ function Wrap() {
                 variant="outlined"
                 href="https://app.beets.fi/#/pools"
                 target="_blank"
+                rel="nofollow noopener noreferrer"
                 className="stake-lp-button"
               >
                 <Typography variant="h6">

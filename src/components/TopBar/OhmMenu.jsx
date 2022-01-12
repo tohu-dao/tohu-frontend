@@ -138,7 +138,7 @@ function OhmMenu() {
                   <Link
                     href={`https://spookyswap.finance/swap?inputCurrency=${daiAddress}&outputCurrency=${OHM_ADDRESS}`}
                     target="_blank"
-                    rel="noreferrer"
+                    rel="nofollow noopener noreferrer"
                   >
                     <Button size="large" variant="contained" color="secondary" fullWidth>
                       <Typography align="left">

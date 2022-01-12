@@ -23,7 +23,7 @@ export function BondDataCard({ bond }) {
             <Typography>{bond.displayName}</Typography>
             {bond.lpUrl && (
               <div>
-                <Link href={bond.lpUrl} target="_blank">
+                <Link href={bond.lpUrl} target="_blank" rel="nofollow noopener noreferrer">
                   <Typography variant="body1">
                     <Trans>View Pool</Trans>
                     <SvgIcon component={ArrowUp} htmlColor="#A3A3A3" />
@@ -92,7 +92,7 @@ export function BondTableData({ bond }) {
         <div className="bond-name">
           <Typography variant="body1">{bond.displayName}</Typography>
           {bond.lpUrl && (
-            <Link color="primary" href={bond.lpUrl} target="_blank">
+            <Link color="primary" href={bond.lpUrl} target="_blank" rel="nofollow noopener noreferrer">
               <Typography variant="body1">
                 <Trans>View Pool</Trans>
                 <SvgIcon component={ArrowUp} htmlColor="#A3A3A3" />

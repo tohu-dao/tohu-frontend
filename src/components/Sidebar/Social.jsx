@@ -8,23 +8,23 @@ import { ReactComponent as Telegram } from "../../assets/icons/telegram.svg";
 export default function Social() {
   return (
     <div className="social-row">
-      <Link href="https://github.com/ExodiaFinance" target="_blank">
+      <Link href="https://github.com/ExodiaFinance" target="_blank" rel="nofollow noopener noreferrer">
         <SvgIcon color="primary" component={GitHub} />
       </Link>
 
-      <Link href="https://exodiafi.medium.com/" target="_blank">
+      <Link href="https://exodiafi.medium.com/" target="_blank" rel="nofollow noopener noreferrer">
         <SvgIcon color="primary" component={Medium} />
       </Link>
 
-      <Link href="https://twitter.com/EXODIAFinance" target="_blank">
+      <Link href="https://twitter.com/EXODIAFinance" target="_blank" rel="nofollow noopener noreferrer">
         <SvgIcon color="primary" component={Twitter} />
       </Link>
 
-      <Link href="https://discord.gg/exodia" target="_blank">
+      <Link href="https://discord.gg/exodia" target="_blank" rel="nofollow noopener noreferrer">
         <SvgIcon color="primary" component={Discord} />
       </Link>
 
-      <Link href="https://t.co/nmK6cc8F8X" target="_blank">
+      <Link href="https://t.co/nmK6cc8F8X" target="_blank" rel="nofollow noopener noreferrer">
         <SvgIcon color="primary" component={Telegram} />
       </Link>
     </div>
