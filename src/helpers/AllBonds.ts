@@ -4,6 +4,7 @@ import { addresses } from "src/constants";
 import { ReactComponent as DaiImg } from "src/assets/tokens/DAI.svg";
 import { ReactComponent as OhmDaiImg } from "src/assets/tokens/OHM-DAI.svg";
 import { ReactComponent as wETHImg } from "src/assets/tokens/wETH.svg";
+import { ReactComponent as BeetsPoolImg } from "src/assets/tokens/BeetsPool.svg";
 import { abi as BondOhmDaiContract } from "src/abi/bonds/OhmDaiContract.json";
 import { abi as DaiBondContract } from "src/abi/bonds/DaiContract.json";
 import { abi as ReserveOhmDaiContract } from "src/abi/reserves/OhmDai.json";
@@ -89,13 +90,49 @@ export const ohm_dai = new LPBond({
     "https://spookyswap.finance/add/0x8D11eC38a3EB5E956B052f67Da8Bdc9bef8Abf3E/0x3b57f3FeAaF1e8254ec680275Ee6E7727C7413c7",
 });
 
+export const the_monolith_lp = new CustomBond({
+  name: "the_monolith_lp",
+  displayName: "The Monolith LP",
+  bondToken: "the-monolith-lp",
+  bondType: BondType.StableAsset,
+  isAvailable: { [NetworkID.Mainnet]: true },
+  bondIconSvg: BeetsPoolImg,
+  isMonolith: true,
+  bondContractABI: EthBondContract,
+  reserveContract: ReserveOhmDaiContract,
+  networkAddrs: {
+    [NetworkID.Mainnet]: {
+      bondAddress: "0x86E21dB31c154aE777e0C126999e89Df0C01D9Fa",
+      reserveAddress: "0xa216aa5d67ef95dde66246829c5103c7843d1aab",
+    },
+    [NetworkID.Testnet]: {
+      bondAddress: "",
+      reserveAddress: "",
+    },
+  },
+  customTreasuryBalanceFunc: async function (this: CustomBond, networkID, provider) {
+    const monolithContract = this.getContractForBond(networkID, provider);
+    const token = this.getContractForReserve(networkID, provider);
+
+    let [monolithPrice, monolithAmount]: [BigNumberish, BigNumberish] = await Promise.all([
+      monolithContract.assetPrice(),
+      token.balanceOf(addresses[networkID].TREASURY_ADDRESS),
+    ]);
+
+    monolithPrice = Number(monolithPrice.toString()) / Math.pow(10, 8);
+    monolithAmount = Number(monolithAmount.toString()) / Math.pow(10, 18);
+    return monolithAmount * monolithPrice;
+  },
+  lpUrl: "https://beets.fi/#/pool/0xa216aa5d67ef95dde66246829c5103c7843d1aab000100000000000000000112",
+});
+
 // HOW TO ADD A NEW BOND:
 // Is it a stableCoin bond? use `new StableBond`
 // Is it an LP Bond? use `new LPBond`
 // Add new bonds to this array!!
-export const allBonds = [dai, eth, ohm_dai];
+export const allBonds = [dai, eth, the_monolith_lp];
 // TODO (appleseed-expiredBonds): there may be a smarter way to refactor this
-export const allExpiredBonds: (StableBond | CustomBond | LPBond)[] = [];
+export const allExpiredBonds: (StableBond | CustomBond | LPBond)[] = [ohm_dai];
 export const allBondsMap = allBonds.reduce((prevVal, bond) => {
   return { ...prevVal, [bond.name]: bond };
 }, {});

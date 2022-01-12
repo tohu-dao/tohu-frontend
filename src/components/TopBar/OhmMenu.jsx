@@ -34,7 +34,6 @@ import token33tImg from "src/assets/tokens/token_33T.svg";
 import { segmentUA } from "../../helpers/userAnalyticHelpers";
 
 const addTokenToWallet = (tokenSymbol, tokenAddress, address) => async () => {
-  debugger;
   if (window.ethereum) {
     const host = window.location.origin;
     let tokenPath;

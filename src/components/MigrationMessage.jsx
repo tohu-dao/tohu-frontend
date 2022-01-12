@@ -24,7 +24,7 @@ const BannerContainer = styled.div`
   align-items: center;
   border-radius: 10px;
   width: 100%;
-  height: 3rem;
+  min-height: 3rem;
   padding: 1rem;
   background-color: ${({ background }) => background};
   color: ${({ textColor }) => textColor};
