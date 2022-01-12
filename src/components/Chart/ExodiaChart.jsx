@@ -523,8 +523,10 @@ export const ExodiaPieChart = withChartCard(
 );
 
 export const trimNumber = number => {
-  if (Number(number) > 1000000) return `${parseFloat(number) / 100000}M`;
-  else if (Number(number) > 1000) return `${parseFloat(number) / 1000}k`;
+  if (Number(number) > 1000000) {
+    console.log(number);
+    return `${parseFloat(number) / 1000000}M`;
+  } else if (Number(number) > 1000) return `${parseFloat(number) / 1000}k`;
   return number;
 };
 

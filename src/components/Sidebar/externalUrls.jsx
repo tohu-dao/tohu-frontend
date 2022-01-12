@@ -19,8 +19,8 @@ const externalUrls = [
     icon: <SvgIcon color="primary" component={DocsIcon} />,
   },
   {
-    title: <Trans>Buy on SpookySwap</Trans>,
-    url: "https://spookyswap.finance/swap?inputCurrency=0x8D11eC38a3EB5E956B052f67Da8Bdc9bef8Abf3E&outputCurrency=0x3b57f3feaaf1e8254ec680275ee6e7727c7413c7",
+    title: <Trans>Buy on Beethoven-X</Trans>,
+    url: "https://beets.fi/#/trade/0x3b57f3feaaf1e8254ec680275ee6e7727c7413c7",
     icon: (
       <span>
         <ShoppingCartIcon />
