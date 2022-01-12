@@ -19,6 +19,7 @@ import {
   IndexAdjustedPrice,
   GrowthOfSupply,
 } from "./components/Graph/Graph";
+import MigrationMessage from "src/components/MigrationMessage";
 
 const TreasuryDashboard = memo(() => {
   const isSmallScreen = useMediaQuery("(max-width: 650px)");
@@ -46,6 +47,9 @@ const TreasuryDashboard = memo(() => {
         </Box>
         <Zoom in={true}>
           <Grid container spacing={2} className="data-grid">
+            <Grid item lg={12} md={12} sm={12} xs={12}>
+              <MigrationMessage />
+            </Grid>
             <Grid item lg={6} md={6} sm={12} xs={12}>
               <Paper className="ohm-card">
                 <TotalValueDepositedGraph />

@@ -145,7 +145,13 @@ export const PoolInfo = props => {
         </div>
         <div className="data-row-centered">
           <div className="marginedBtn">
-            <Button variant="outlined" color="secondary" href={poolTogetherUILinks(chainID)[0]} target="_blank">
+            <Button
+              variant="outlined"
+              color="secondary"
+              href={poolTogetherUILinks(chainID)[0]}
+              target="_blank"
+              rel="nofollow noopener noreferrer"
+            >
               <Typography variant="body1">
                 <Trans>sOHM Prize Pool</Trans>&nbsp;
               </Typography>
@@ -153,7 +159,13 @@ export const PoolInfo = props => {
             </Button>
           </div>
           <div className="marginedBtn">
-            <Button variant="outlined" color="secondary" href={poolTogetherUILinks(chainID)[1]} target="_blank">
+            <Button
+              variant="outlined"
+              color="secondary"
+              href={poolTogetherUILinks(chainID)[1]}
+              target="_blank"
+              rel="nofollow noopener noreferrer"
+            >
               <Typography variant="body1">
                 <Trans>sOHM Pool Details</Trans>&nbsp;
               </Typography>

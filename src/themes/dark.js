@@ -36,7 +36,7 @@ export const darkTheme = {
   containedSecondaryButtonHoverBG: "rgba(255, 255, 255, 0.15)",
   graphStrokeColor: "rgba(255, 255, 255, .1)",
   sidebarBackground: `linear-gradient(0deg, rgba(31,31,31,1) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 100%), url(${navBg})`,
-  chartColors: ["#46ab15", "#598fb5", "#775bb5"],
+  chartColors: ["#46ab15", "#ebc342", "#db3737", "#598fb5", "#775bb5"],
   trendUp: "#43e055",
   trendDown: "#ed3939",
   mainBackground:
@@ -80,6 +80,7 @@ export const dark = responsiveFontSizes(
         primaryColor: darkTheme.gold,
         primaryColorDimmed: darkTheme.goldDimmed,
         primaryColorBright: darkTheme.goldBright,
+        primaryButtonColor: darkTheme.primaryButtonColor,
         chartColors: darkTheme.chartColors,
         trendUp: darkTheme.trendUp,
         trendDown: darkTheme.trendDown,

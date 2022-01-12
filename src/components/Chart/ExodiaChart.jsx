@@ -181,7 +181,7 @@ const withChartCard = Component => {
             </Box>
           )}
         </div>
-        <Box width="100%" minHeight={260} minWidth={310} className="ohm-chart">
+        <Box width="100%" minHeight={260} minWidth={220} className="ohm-chart">
           {loading || (data && data.length > 0) ? (
             <Component {...props} data={filteredData} />
           ) : (
@@ -206,7 +206,6 @@ export const ExodiaStackedLineChart = withChartCard(
     isExpanded = false,
     expandedGraphStrokeColor,
     strokeWidth = 1.6,
-    glowDeviation = "6",
     showTotal,
   }) => {
     const theme = useTheme();
@@ -220,7 +219,7 @@ export const ExodiaStackedLineChart = withChartCard(
         <ComposedChart data={formattedData}>
           <defs>
             {dataKey.map((key, index) => (
-              <LineShadow id={`color-${key}`} color={colors[index]} deviation={glowDeviation} />
+              <UnderGlow color={colors[index]} />
             ))}
           </defs>
           <XAxis
@@ -284,14 +283,18 @@ export const ExodiaMultiLineChart = withChartCard(
     strokeWidth = 1.6,
     dataAxis = [],
     isDilution = false,
+    isGrowthOfSupply = false,
     showTotal,
+    showNulls = false,
   }) => {
     const theme = useTheme();
     // Remove 0's
-    const formattedData = data.map(dataEntry => {
-      dataKey.forEach(key => (dataEntry[key] = dataEntry[key] || null));
-      return dataEntry;
-    });
+    const formattedData = showNulls
+      ? data
+      : data.map(dataEntry => {
+          dataKey.forEach(key => (dataEntry[key] = dataEntry[key] || null));
+          return dataEntry;
+        });
     return (
       <ResponsiveContainer minHeight={260} width="100%">
         <ComposedChart data={formattedData}>
@@ -347,6 +350,7 @@ export const ExodiaMultiLineChart = withChartCard(
                 colors={colors}
                 dataKey={dataKey}
                 isDilution={isDilution}
+                isGrowthOfSupply={isGrowthOfSupply}
                 showTotal={showTotal}
               />
             }
@@ -387,10 +391,7 @@ export const ExodiaLineChart = withChartCard(
     const theme = useTheme();
     const renderGlow = () => {
       return underglow ? (
-        <linearGradient id={`underglow-${color.replace("#", "")}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="5%" stopColor={color} stopOpacity={0.1} />
-          <stop offset="95%" stopColor={theme.palette.background.paper} stopOpacity={0.1} />
-        </linearGradient>
+        <UnderGlow color={color} />
       ) : (
         <LineShadow id={`shadow-${color.replace("#", "")}`} color={color} deviation={glowDeviation} />
       );
@@ -491,7 +492,7 @@ export const ExodiaPieChart = withChartCard(
         <PieChart width={400} height={400}>
           <Pie
             data={data}
-            cx={isVerySmallScreen ? "19%" : isSmallScreen ? "22%" : "30%"}
+            cx={isVerySmallScreen ? "29%" : isSmallScreen ? "32%" : "42%"}
             cy="45%"
             innerRadius={isVerySmallScreen ? 35 : isSmallScreen ? 40 : 50}
             outerRadius={isVerySmallScreen ? 55 : isSmallScreen ? 65 : 80}
@@ -521,28 +522,19 @@ export const ExodiaPieChart = withChartCard(
   },
 );
 
-const formatCurrency = c => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-    minimumFractionDigits: 0,
-  }).format(c);
-};
-
 export const trimNumber = number => {
-  if (Number(number) > 1000000) return `${formatCurrency(parseFloat(number) / 1000000)}M`;
-  else if (Number(number) > 1000) return `${formatCurrency(parseFloat(number) / 1000)}k`;
+  if (Number(number) > 1000000) return `${parseFloat(number) / 1000000}M`;
+  else if (Number(number) > 1000) return `${parseFloat(number) / 1000}k`;
   return number;
 };
 
 const tickFormatter = (number, dataFormat) => {
   if (number !== 0) {
     if (dataFormat === "percent") {
-      return `${trim(trimNumber(parseFloat(number)), 2)}%`;
+      return `${trimNumber(number)}%`;
     }
     if (dataFormat === "$") {
-      return trimNumber(number);
+      return `$${trimNumber(number)}`;
     }
     return trim(number, 2);
   }
@@ -564,6 +556,17 @@ const LineShadow = ({ id, color, deviation = "12" }) => {
   );
 };
 
+const UnderGlow = ({ color }) => {
+  const theme = useTheme();
+
+  return (
+    <linearGradient id={`underglow-${color.replace("#", "")}`} x1="0" y1="0" x2="0" y2="1">
+      <stop offset="5%" stopColor={color} stopOpacity={0.2} />
+      <stop offset="100%" stopColor={theme.palette.background.paper} stopOpacity={0.3} />
+    </linearGradient>
+  );
+};
+
 const areaProps = (dataKey, color, strokeWidth) => {
   return {
     type: "monotone",
@@ -572,9 +575,9 @@ const areaProps = (dataKey, color, strokeWidth) => {
     stroke: color,
     dot: false,
     strokeWidth: strokeWidth,
-    filter: `url(#color-${dataKey})`,
+    fill: `url(#underglow-${color.replace("#", "")})`,
     color: color,
-    fillOpacity: 0,
+    fillOpacity: 1,
     stackId: "1",
   };
 };

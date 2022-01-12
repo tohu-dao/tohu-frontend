@@ -175,7 +175,8 @@ export class StableBond extends Bond {
 export interface CustomBondOpts extends BondOpts {
   reserveContract: ethers.ContractInterface;
   bondType: number;
-  lpUrl: string;
+  lpUrl?: string;
+  isMonolith?: boolean;
   customTreasuryBalanceFunc: (
     this: CustomBond,
     networkID: NetworkID,
@@ -189,7 +190,8 @@ export class CustomBond extends Bond {
   }
   readonly reserveContract: ethers.ContractInterface;
   readonly displayUnits: string;
-  readonly lpUrl: string;
+  readonly lpUrl?: string;
+  readonly isMonolith: boolean;
 
   constructor(customBondOpts: CustomBondOpts) {
     super(customBondOpts.bondType, customBondOpts);
@@ -200,6 +202,7 @@ export class CustomBond extends Bond {
       this.isLP = false;
     }
     this.lpUrl = customBondOpts.lpUrl;
+    this.isMonolith = customBondOpts.isMonolith || false;
     // For stable bonds the display units are the same as the actual token
     this.displayUnits = customBondOpts.displayName;
     this.reserveContract = customBondOpts.reserveContract;

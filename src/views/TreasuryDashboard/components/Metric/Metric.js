@@ -34,7 +34,14 @@ Metric.SmallTitle = props => {
     <Typography
       variant={isSmallScreen ? "body2" : "h6"}
       color="textSecondary"
-      style={{ width: "100%", textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center" }}
+      style={{
+        width: "100%",
+        textAlign: "center",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        whiteSpace: "normal",
+      }}
     >
       {props.children}
     </Typography>
@@ -42,7 +49,7 @@ Metric.SmallTitle = props => {
 };
 
 Metric.SmallValue = props => (
-  <Typography variant="h6" style={{ width: "100%", textAlign: "center" }}>
+  <Typography variant="h6" style={{ width: "100%", textAlign: "center", whiteSpace: "normal" }}>
     {props.children || <Skeleton type="text" />}
   </Typography>
 );

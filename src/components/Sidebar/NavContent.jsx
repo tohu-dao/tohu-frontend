@@ -55,13 +55,17 @@ function NavContent() {
       <Box className="dapp-sidebar-inner" display="flex" justifyContent="space-between" flexDirection="column">
         <div className="dapp-menu-top">
           <Box className="branding-header">
-            <Link href="https://exodia.fi" target="_blank">
+            <Link href="https://exodia.fi" target="_blank" rel="nofollow noopener noreferrer">
               <img src={ExodiaLogo} alt={"Exodia logo"} />
             </Link>
 
             {address && (
               <div className="wallet-link">
-                <Link href={`https://ftmscan.com/address/${address}`} target="_blank">
+                <Link
+                  href={`https://ftmscan.com/address/${address}`}
+                  target="_blank"
+                  rel="nofollow noopener noreferrer"
+                >
                   {shorten(address)}
                 </Link>
               </div>
@@ -153,7 +157,7 @@ function NavContent() {
               <div className="dapp-menu-data discounts">
                 <div className="bond-discounts">
                   <Typography variant="body1">
-                    <Trans>Bond discounts</Trans>
+                    <Trans>Bond ROI</Trans>
                   </Typography>
                   {bonds.map((bond, i) => (
                     <Link component={NavLink} to={`/bonds/${bond.name}`} key={i} className={"bond"}>

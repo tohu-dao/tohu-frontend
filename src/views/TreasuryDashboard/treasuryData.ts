@@ -17,9 +17,24 @@ query {
     nextEpochRebase
     nextDistributedOhm
     treasuryDaiRiskFreeValue
+    treasuryWETHRiskFreeValue
     treasuryDaiMarketValue
     treasuryWETHMarketValue
     treasuryGOhmBalance
+    treasuryGOhmMarketValue
+    treasuryMaiBalance
+    treasuryMonolithTotalPoolValue
+    treasuryMonolithMaiValue
+    treasuryMaiRiskFreeValue
+    treasuryMonolithMaiBalance
+    treasuryMonolithExodValue
+    treasuryMonolithExodBalance
+    treasuryMonolithWsExodValue
+    treasuryMonolithWsExodBalance
+    treasuryMonolithWFtmValue
+    treasuryMonolithWFtmBalance
+    treasuryMonolithGOhmValue
+    treasuryMonolithGOhmBalance
     currentAPY
     runway10k
     runway20k
@@ -195,16 +210,16 @@ export const bulletpoints = {
 
 export const tooltipItems = {
   tvl: [t`Total Value Deposited`],
-  coin: [t`DAI`, t`wFTM`, t`gOHM`],
-  rfv: [t`DAI`],
+  coin: [t`EXOD`, t`DAI`, t`MAI`, t`wFTM`, t`gOHM`],
+  rfv: [t`DAI`, t`MAI`],
   holder: [t`Exodians`],
   apy: [t`APY`],
   staked: [t`Staked`],
   runway: [t`Current`, t`7.5K APY`, t`5K APY`, t`2.5K APY`],
   pol: [t`spLP Treasury`, t`Market spLP`],
   dilution: [t`Dilution Percentage`, t`Current Index`],
-  minted: [t`EXOD minted`],
-  mcs: [t`EXOD Minted/Total Supply`],
+  minted: [t`EXOD minted`, t`5 Day Average`],
+  mcs: [t`EXOD Minted/Total Supply`, t`5 Day Average`],
   debtratio: [t`DAI Debt Ratio`, t`wFTM Debt Ratio`, t`EXOD-DAI spLP Debt Ratio`],
   indexAdjustedPrice: [t`Market Price`, t`Index Adjusted Price`],
   growthOfSupply: [t`Index Adjusted Supply`, t`Circulating Supply`],
