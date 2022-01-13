@@ -41,6 +41,7 @@ interface BondOpts {
   bondContractABI: ethers.ContractInterface; // ABI for contract
   networkAddrs: NetworkAddresses; // Mapping of network --> Addresses
   bondToken: string; // Unused, but native token to buy the bond.
+  isMonolith?: boolean;
 }
 
 // Technically only exporting for the interface
@@ -57,6 +58,7 @@ export abstract class Bond {
 
   // The following two fields will differ on how they are set depending on bond type
   abstract isLP: Boolean;
+  abstract ismonolith?: boolean;
   abstract reserveContract: ethers.ContractInterface; // Token ABI
   abstract displayUnits: string;
 
@@ -176,7 +178,6 @@ export interface CustomBondOpts extends BondOpts {
   reserveContract: ethers.ContractInterface;
   bondType: number;
   lpUrl?: string;
-  isMonolith?: boolean;
   customTreasuryBalanceFunc: (
     this: CustomBond,
     networkID: NetworkID,

@@ -116,6 +116,11 @@
     }
   }
 
+  .bond-claim-table {
+    td {
+      padding: 18px 6px;
+    }
+  }
   .MuiTableBody-root .MuiTableRow-root .MuiTableCell-alignLeft.bond-name-cell {
     justify-content: space-between;
     display: flex;
