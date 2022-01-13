@@ -54,8 +54,10 @@ function ClaimBonds() {
     if (
       isPendingTxn(pendingTransactions, "redeem_all_bonds") ||
       isPendingTxn(pendingTransactions, "redeem_all_bonds_autostake") ||
-      bonds.some(bond => isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name)) ||
-      bonds.some(bond => isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name + "_autostake"))
+      [...bonds, ...expiredBonds].some(bond => isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name)) ||
+      [...bonds, ...expiredBonds].some(bond =>
+        isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name + "_autostake"),
+      )
     ) {
       return true;
     }
@@ -113,21 +115,13 @@ function ClaimBonds() {
                     </TableHead>
                     <TableBody>
                       {Object.entries(activeBonds).map((bond, i) => (
-                        <ClaimBondTableData key={i} userBond={bond} />
+                        <ClaimBondTableData key={i} userBond={bond} pendingClaim={pendingClaim} />
                       ))}
                     </TableBody>
                   </Table>
                   {numberOfBonds === 1 && Object.keys(activeBonds).length && (
                     <SingleAutoStake>
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        disabled={isPendingTxn(
-                          pendingTransactions,
-                          "redeem_bond_" + Object.values(activeBonds)[0].bond + "_autostake",
-                        )}
-                        onClick={onAutoStakeSingle}
-                      >
+                      <Button variant="outlined" color="primary" disabled={pendingClaim()} onClick={onAutoStakeSingle}>
                         <Typography variant="h6">
                           <TxnButtonTextGeneralPending
                             pendingTransactions={pendingTransactions}
@@ -142,7 +136,9 @@ function ClaimBonds() {
               )}
 
               {isSmallScreen &&
-                Object.entries(activeBonds).map((bond, i) => <ClaimBondCardData key={i} userBond={bond} />)}
+                Object.entries(activeBonds).map((bond, i) => (
+                  <ClaimBondCardData key={i} userBond={bond} pendingClaim={pendingClaim} />
+                ))}
 
               <Box
                 display="flex"

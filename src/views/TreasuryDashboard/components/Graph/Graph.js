@@ -591,6 +591,7 @@ export const TreasuryBreakdownPie = () => {
   const theme = useTheme();
   const { data } = useTreasuryMetrics({ refetchOnMount: false });
   let { data: ethData } = useTreasuryOhm({ refetchOnMount: false });
+  const isVerySmallScreen = useMediaQuery("(max-width: 400px)");
 
   const gOhmPrice = ethData && ethData[0].gOhmPrice ? ethData[0].gOhmPrice : 0;
   const gOhmBalance = data && ethData && data[0].treasuryGOhmBalance ? data[0].treasuryGOhmBalance : 0;
@@ -631,7 +632,11 @@ export const TreasuryBreakdownPie = () => {
         <Typography
           variant="h6"
           color="textPrimary"
-          style={{ marginBottom: "6px", display: "flex", alignItems: "flex-start" }}
+          style={{
+            marginBottom: "6px",
+            display: "flex",
+            alignItems: "flex-start",
+          }}
         >
           <SvgIcon
             color="textPrimary"
@@ -644,7 +649,14 @@ export const TreasuryBreakdownPie = () => {
           <Trend formattedValue={formattedValue} value={totalValue} lastValue={lastValue} />
         </Typography>
       </Box>
-      <Grid xs={5} sm={5} md={5} lg={5} style={{ margin: "0" }}>
+
+      <Grid
+        xs={isVerySmallScreen ? 12 : 5}
+        sm={5}
+        md={5}
+        lg={5}
+        style={{ margin: "0", height: isVerySmallScreen ? "140px" : "auto" }}
+      >
         <ExodiaPieChart
           data={pieData}
           colors={theme.palette.chartColors}
@@ -659,7 +671,7 @@ export const TreasuryBreakdownPie = () => {
           fullScreenDisabled
         />
       </Grid>
-      <Grid xs={7} sm={7} md={7} lg={7}>
+      <Grid xs={isVerySmallScreen ? 12 : 7} sm={7} md={7} lg={7} style={{ height: "50%" }}>
         <TreasuryTable
           currentData={[exodValue, daiValue, maiValue, ftmValue, gOhmValue]}
           previousData={[exodValuePrevious, daiValuePrevious, maiValuePrevious, ftmValuePrevious, gOhmValuePrevious]}

@@ -492,10 +492,10 @@ export const ExodiaPieChart = withChartCard(
         <PieChart width={400} height={400}>
           <Pie
             data={data}
-            cx={isVerySmallScreen ? "29%" : isSmallScreen ? "32%" : "42%"}
-            cy="45%"
+            cx={isVerySmallScreen ? "50%" : isSmallScreen ? "32%" : "42%"}
+            cy={isVerySmallScreen ? "27%" : "45%"}
             innerRadius={isVerySmallScreen ? 35 : isSmallScreen ? 40 : 50}
-            outerRadius={isVerySmallScreen ? 55 : isSmallScreen ? 65 : 80}
+            outerRadius={isVerySmallScreen ? 60 : isSmallScreen ? 65 : 80}
             fill="transparent"
             dataKey="value"
             stroke="#c1c1c1"

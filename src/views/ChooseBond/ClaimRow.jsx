@@ -13,7 +13,7 @@ import { useWeb3Context, useBonds } from "src/hooks";
 import { isPendingTxn } from "src/slices/PendingTxnsSlice";
 import { TxnButtonTextGeneralPending } from "src/components/TxnButtonText";
 
-export function ClaimBondTableData({ userBond }) {
+export function ClaimBondTableData({ userBond, pendingClaim }) {
   const dispatch = useDispatch();
   const { address, chainID, provider } = useWeb3Context();
   const { bonds, expiredBonds } = useBonds(chainID);
@@ -66,7 +66,7 @@ export function ClaimBondTableData({ userBond }) {
         <Button
           variant="outlined"
           color="primary"
-          disabled={isPendingTxn(pendingTransactions, "redeem_bond_" + bondName)}
+          disabled={pendingClaim()}
           onClick={() => onRedeem({ autostake: false })}
         >
           <Typography variant="h6">
@@ -82,7 +82,7 @@ export function ClaimBondTableData({ userBond }) {
   );
 }
 
-export function ClaimBondCardData({ userBond }) {
+export function ClaimBondCardData({ userBond, pendingClaim }) {
   const dispatch = useDispatch();
   const { address, chainID, provider } = useWeb3Context();
   const { bonds, expiredBonds } = useBonds(chainID);
@@ -139,7 +139,7 @@ export function ClaimBondCardData({ userBond }) {
         <Button
           variant="outlined"
           color="primary"
-          disabled={isPendingTxn(pendingTransactions, "redeem_bond_" + bondName)}
+          disabled={pendingClaim()}
           onClick={() => onRedeem({ autostake: false })}
         >
           <Typography variant="h5">
@@ -154,7 +154,7 @@ export function ClaimBondCardData({ userBond }) {
           variant="outlined"
           color="primary"
           onClick={() => onRedeem({ autostake: true })}
-          disabled={isPendingTxn(pendingTransactions, "redeem_bond_" + bondName + "_autostake")}
+          disabled={pendingClaim()}
         >
           <Typography variant="h5">
             <TxnButtonTextGeneralPending
