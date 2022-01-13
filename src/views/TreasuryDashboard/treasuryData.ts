@@ -45,6 +45,8 @@ query {
     runwayCurrent
     holders
     treasuryOhmDaiPOL
+    treasuryMonolithPOL
+    treasuryAveragePOL
     index
     ohmMinted
   }
@@ -75,6 +77,7 @@ query {
     dai_debt_ratio
     eth_debt_ratio
     ohmdai_debt_ratio
+    monolith_debt_ratio
     timestamp
   }
 }
@@ -216,11 +219,11 @@ export const tooltipItems = {
   apy: [t`APY`],
   staked: [t`Staked`],
   runway: [t`Current`, t`7.5K APY`, t`5K APY`, t`2.5K APY`],
-  pol: [t`spLP Treasury`, t`Market spLP`],
+  pol: [t`The Monolith LP Treasury`, t`The Monolith LP Market`],
   dilution: [t`Dilution Percentage`, t`Current Index`],
   minted: [t`EXOD minted`, t`5 Day Average`],
   mcs: [t`EXOD Minted/Total Supply`, t`5 Day Average`],
-  debtratio: [t`DAI Debt Ratio`, t`wFTM Debt Ratio`, t`EXOD-DAI spLP Debt Ratio`],
+  debtratio: [t`DAI Debt Ratio`, t`wFTM Debt Ratio`, t`EXOD-DAI spLP Debt Ratio`, t`The Monolith LP Debt Ratio`],
   indexAdjustedPrice: [t`Market Price`, t`Index Adjusted Price`],
   growthOfSupply: [t`Index Adjusted Supply`, t`Circulating Supply`],
   dashboardPrice: [t`EXOD Price`, t`wsEXOD Price`, t`Market Cap`],
