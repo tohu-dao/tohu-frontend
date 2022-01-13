@@ -66,7 +66,9 @@ function ClaimBonds() {
   const onRedeemAll = async ({ autostake }) => {
     console.log("redeeming all bonds");
 
-    const bondsToRedeem = bonds.filter(bond => activeBonds.some(activeBond => activeBond.bond === bond.name));
+    const bondsToRedeem = [...bonds, ...expiredBonds].filter(bond =>
+      activeBonds.some(activeBond => activeBond.bond === bond.name),
+    );
     await dispatch(redeemAllBonds({ address, bonds: bondsToRedeem, networkID: chainID, provider, autostake }));
 
     console.log("redeem all complete");

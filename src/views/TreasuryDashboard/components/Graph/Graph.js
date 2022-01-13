@@ -319,7 +319,6 @@ export const OhmMintedGraph = () => {
         const lastFiveDays = data.slice(index, Math.min(index + 5, data.length));
         const fiveDayAverage =
           lastFiveDays.reduce((previous, current) => current.ohmMinted + previous, 0).toFixed(2) / 5;
-        console.log(entry.ohmMinted);
         return {
           timestamp: entry.timestamp,
           ohmMinted: entry.ohmMinted,
@@ -711,7 +710,7 @@ const TreasuryTable = ({ currentData, previousData, totalValue, lastValue, itemN
               </Cell>
               <Cell>
                 <Typography variant="body1">
-                  {isSmallScreen ? trimNumber(currentData[index]) : formatCurrency(currentData[index])}
+                  {isSmallScreen ? `$${trimNumber(currentData[index])}` : formatCurrency(currentData[index])}
                 </Typography>
               </Cell>
               <Cell>

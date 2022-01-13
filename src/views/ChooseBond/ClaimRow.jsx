@@ -46,7 +46,7 @@ export function ClaimBondTableData({ userBond }) {
   }
 
   return (
-    <TableRow id={`${bondName}--claim`}>
+    <TableRow id={`${bondName}--claim`} className="bond-claim-table">
       <TableCell align="left" className="bond-name-cell">
         <BondLogo bond={bond} />
         <div className="bond-name">
