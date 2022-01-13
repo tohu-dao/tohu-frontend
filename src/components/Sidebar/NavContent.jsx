@@ -74,7 +74,7 @@ function NavContent() {
 
           <div className="dapp-menu-links">
             <div className="dapp-nav" id="navbarNav">
-              <Link href={`https://www.exodia.fi/`} target="_blank">
+              <Link href={`https://www.exodia.fi/`} target="_blank" rel="nofollow noopener noreferrer">
                 <Typography variant="h6">
                   <SvgIcon color="primary" component={HomeIcon} />
                   <Trans>Landing Page</Trans>
@@ -204,7 +204,7 @@ function NavContent() {
           <div className="dapp-menu-external-links">
             {Object.keys(externalUrls).map((link, i) => {
               return (
-                <Link key={i} href={`${externalUrls[link].url}`} target="_blank">
+                <Link key={i} href={`${externalUrls[link].url}`} target="_blank" rel="nofollow noopener noreferrer">
                   <Typography variant="h6">{externalUrls[link].icon}</Typography>
                   <Typography variant="h6">{externalUrls[link].title}</Typography>
                 </Link>
