@@ -149,20 +149,28 @@ export const ProtocolOwnedLiquidityGraph = () => {
   const theme = useTheme();
   const { data } = useTreasuryMetrics({ refetchOnMount: false });
 
+  // Remove 0's
+  const formattedData =
+    data &&
+    data.reduce((formatting, dataEntry) => {
+      if (dataEntry["treasuryMonolithPOL"]) formatting.push(dataEntry);
+      return formatting;
+    }, []);
+
   return (
     <ExodiaLineChart
       isPOL
       underglow
-      data={data}
+      data={formattedData}
       dataFormat="percent"
       itemNames={tooltipItems.pol}
       itemType={itemType.percentage}
-      dataKey={["treasuryOhmDaiPOL"]}
+      dataKey={["treasuryMonolithPOL"]}
       bulletpoints={bulletpoints.pol}
       infoTooltipMessage={tooltipInfoMessages.pol}
-      headerText="Protocol Owned Liquidity EXOD-DAI"
+      headerText="Protocol Owned Liquidity The Monolith LP"
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
-      headerSubText={`${data && trim(data[0].treasuryOhmDaiPOL, 2)}% `}
+      headerSubText={`${data && trim(data[0].treasuryMonolithPOL, 2)}% `}
       color={theme.palette.chartColors[0]}
       stroke={theme.palette.chartColors[0]}
       todayMessage=""
@@ -212,6 +220,7 @@ export const APYOverTimeGraph = () => {
 
   const apy =
     data &&
+    blockRateSeconds &&
     data.map(entry => ({
       timestamp: entry.timestamp,
       apy: Math.floor(
@@ -413,18 +422,36 @@ export const DebtRatioGraph = () => {
       daiDebtRatio: entry.dai_debt_ratio / 1e10,
       ethDebtRatio: entry.eth_debt_ratio / 1e10,
       ohmDaiDebtRatio: entry.ohmdai_debt_ratio / 1e19,
+      monolithDebtRatio: entry.monolith_debt_ratio / 1e10,
     }));
 
   return (
     <ExodiaMultiLineChart
       deviation="2"
       data={debtRatios}
-      dataKey={["daiDebtRatio", "ethDebtRatio", "ohmDaiDebtRatio"]}
-      colors={[theme.palette.chartColors[0], theme.palette.chartColors[4], theme.palette.chartColors[3]]}
-      stroke={[theme.palette.chartColors[0], theme.palette.chartColors[4], theme.palette.chartColors[3]]}
+      dataKey={["daiDebtRatio", "ethDebtRatio", "ohmDaiDebtRatio", "monolithDebtRatio"]}
+      colors={[
+        theme.palette.chartColors[0],
+        theme.palette.chartColors[4],
+        theme.palette.chartColors[3],
+        theme.palette.chartColors[1],
+      ]}
+      stroke={[
+        theme.palette.chartColors[0],
+        theme.palette.chartColors[4],
+        theme.palette.chartColors[3],
+        theme.palette.chartColors[1],
+      ]}
       headerText="Debt Ratios"
       headerSubText={`Total ${
-        debtRatios && trim(debtRatios[0].daiDebtRatio + debtRatios[0].ethDebtRatio + debtRatios[0].ohmDaiDebtRatio, 2)
+        debtRatios &&
+        trim(
+          debtRatios[0].daiDebtRatio +
+            debtRatios[0].ethDebtRatio +
+            debtRatios[0].ohmDaiDebtRatio +
+            debtRatios[0].monolithDebtRatio,
+          2,
+        )
       }%`}
       dataFormat={["percent"]}
       bulletpoints={bulletpoints.runway}
