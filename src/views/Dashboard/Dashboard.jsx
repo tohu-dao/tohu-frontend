@@ -35,7 +35,7 @@ import MigrationMessage from "src/components/MigrationMessage";
 const Dashboard = memo(() => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery("(max-width: 650px)");
-  const isVerySmallScreen = useMediaQuery("(max-width: 379px)");
+  const isVerySmallScreen = useMediaQuery("(max-width: 450px)");
   // Use marketPrice as indicator of loading.
   const isAppLoading = useSelector(state => !state.app?.marketPrice ?? true);
   const marketPrice = useSelector(state => {
@@ -120,32 +120,8 @@ const Dashboard = memo(() => {
                 <MarketValueGraph isDashboard />
               </Paper>
             </Grid>
-            <Grid item lg={6} md={12} sm={12} xs={12}>
-              <Box display="flex" justifyContent="space-between">
-                <Paper className="ohm-card" style={{ width: "calc(33% - 8px)", margin: "0", padding: "10px 6px" }}>
-                  <OHMPrice isDashboard />
-                </Paper>
-                <Paper className="ohm-card" style={{ width: "calc(33% - 8px)", margin: "0", padding: "10px 6px" }}>
-                  <StakedPercentage isDashboard />
-                </Paper>
-                <Paper className="ohm-card" style={{ width: "calc(33% - 8px)", margin: "0", padding: "10px 6px" }}>
-                  <CurrentRunway isDashboard />
-                </Paper>
-              </Box>
-            </Grid>
-            <Grid item lg={6} md={12} sm={12} xs={12}>
-              <Box display="flex" justifyContent="space-between">
-                <Paper className="ohm-card" style={{ width: "calc(33% - 8px)", margin: "0", padding: "10px 6px" }}>
-                  <BackingPerOHM isDashboard />
-                </Paper>
-                <Paper className="ohm-card" style={{ width: "calc(33% - 8px)", margin: "0", padding: "10px 6px" }}>
-                  <CurrentIndex isDashboard />
-                </Paper>
-                <Paper className="ohm-card" style={{ width: "calc(33% - 8px)", margin: "0", padding: "10px 6px" }}>
-                  <CircSupply isDashboard />
-                </Paper>
-              </Box>
-            </Grid>
+            {isVerySmallScreen ? <SmallMetrics /> : <Metrics />}
+
             <Grid item lg={6} md={12} sm={12} xs={12}>
               <Paper className="ohm-card" style={{ paddingBottom: "5px" }}>
                 <TreasuryBreakdownPie />
@@ -172,3 +148,74 @@ export default () => (
     <Dashboard />
   </QueryClientProvider>
 );
+
+const Metrics = () => {
+  return (
+    <>
+      <Grid item lg={6} md={12} sm={12} xs={12}>
+        <Box display="flex" justifyContent="space-between">
+          <Paper className="ohm-card" style={{ width: "calc(33% - 8px)", margin: "0", padding: "10px 6px" }}>
+            <OHMPrice isDashboard />
+          </Paper>
+          <Paper className="ohm-card" style={{ width: "calc(33% - 8px)", margin: "0", padding: "10px 6px" }}>
+            <StakedPercentage isDashboard />
+          </Paper>
+          <Paper className="ohm-card" style={{ width: "calc(33% - 8px)", margin: "0", padding: "10px 6px" }}>
+            <CurrentRunway isDashboard />
+          </Paper>
+        </Box>
+      </Grid>
+      <Grid item lg={6} md={12} sm={12} xs={12}>
+        <Box display="flex" justifyContent="space-between">
+          <Paper className="ohm-card" style={{ width: "calc(33% - 8px)", margin: "0", padding: "10px 6px" }}>
+            <BackingPerOHM isDashboard />
+          </Paper>
+          <Paper className="ohm-card" style={{ width: "calc(33% - 8px)", margin: "0", padding: "10px 6px" }}>
+            <CurrentIndex isDashboard />
+          </Paper>
+          <Paper className="ohm-card" style={{ width: "calc(33% - 8px)", margin: "0", padding: "10px 6px" }}>
+            <CircSupply isDashboard />
+          </Paper>
+        </Box>
+      </Grid>
+    </>
+  );
+};
+
+const SmallMetrics = () => {
+  return (
+    <>
+      <Grid item lg={12} md={12} sm={12} xs={12}>
+        <Box display="flex" justifyContent="space-between">
+          <Paper className="ohm-card" style={{ width: "calc(50% - 8px)", margin: "0", padding: "10px 6px" }}>
+            <OHMPrice isDashboard />
+          </Paper>
+          <Paper className="ohm-card" style={{ width: "calc(50% - 8px)", margin: "0", padding: "10px 6px" }}>
+            <StakedPercentage isDashboard />
+          </Paper>
+        </Box>
+      </Grid>
+      <Grid item lg={12} md={12} sm={12} xs={12}>
+        <Box display="flex" justifyContent="space-between">
+          <Paper className="ohm-card" style={{ width: "calc(50% - 8px)", margin: "0", padding: "10px 6px" }}>
+            <CurrentRunway isDashboard />
+          </Paper>
+
+          <Paper className="ohm-card" style={{ width: "calc(50% - 8px)", margin: "0", padding: "10px 6px" }}>
+            <BackingPerOHM isDashboard />
+          </Paper>
+        </Box>
+      </Grid>
+      <Grid item lg={12} md={12} sm={12} xs={12}>
+        <Box display="flex" justifyContent="space-between">
+          <Paper className="ohm-card" style={{ width: "calc(50% - 8px)", margin: "0", padding: "10px 6px" }}>
+            <CurrentIndex isDashboard />
+          </Paper>
+          <Paper className="ohm-card" style={{ width: "calc(50% - 8px)", margin: "0", padding: "10px 6px" }}>
+            <CircSupply isDashboard />
+          </Paper>
+        </Box>
+      </Grid>
+    </>
+  );
+};
