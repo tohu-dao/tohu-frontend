@@ -271,6 +271,7 @@ export const redeemBond = createAsyncThunk(
     } catch (e: unknown) {
       uaData.approved = false;
       dispatch(error((e as IJsonRPCError).message));
+      return;
     } finally {
       if (redeemTx) {
         segmentUA(uaData);

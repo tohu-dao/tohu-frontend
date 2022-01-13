@@ -47,8 +47,10 @@ const QuickRedeem = () => {
     if (
       isPendingTxn(pendingTransactions, "redeem_all_bonds") ||
       isPendingTxn(pendingTransactions, "redeem_all_bonds_autostake") ||
-      bonds.some(bond => isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name)) ||
-      bonds.some(bond => isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name + "_autostake"))
+      [...bonds, ...expiredBonds].some(bond => isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name)) ||
+      [...bonds, ...expiredBonds].some(bond =>
+        isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name + "_autostake"),
+      )
     ) {
       return true;
     }
@@ -57,7 +59,9 @@ const QuickRedeem = () => {
   };
 
   const onRedeemAll = async ({ autostake }) => {
-    const bondsToRedeem = bonds.filter(bond => activeBonds.some(activeBond => activeBond.bond === bond.name));
+    const bondsToRedeem = [...bonds, ...expiredBonds].filter(bond =>
+      activeBonds.some(activeBond => activeBond.bond === bond.name),
+    );
     await dispatch(redeemAllBonds({ address, bonds: bondsToRedeem, networkID: chainID, provider, autostake }));
   };
 

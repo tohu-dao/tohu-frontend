@@ -492,10 +492,10 @@ export const ExodiaPieChart = withChartCard(
         <PieChart width={400} height={400}>
           <Pie
             data={data}
-            cx={isVerySmallScreen ? "29%" : isSmallScreen ? "32%" : "42%"}
-            cy="45%"
+            cx={isVerySmallScreen ? "50%" : isSmallScreen ? "32%" : "42%"}
+            cy={isVerySmallScreen ? "27%" : "45%"}
             innerRadius={isVerySmallScreen ? 35 : isSmallScreen ? 40 : 50}
-            outerRadius={isVerySmallScreen ? 55 : isSmallScreen ? 65 : 80}
+            outerRadius={isVerySmallScreen ? 60 : isSmallScreen ? 65 : 80}
             fill="transparent"
             dataKey="value"
             stroke="#c1c1c1"
@@ -523,8 +523,8 @@ export const ExodiaPieChart = withChartCard(
 );
 
 export const trimNumber = number => {
-  if (Number(number) > 1000000) return `${parseFloat(number) / 1000000}M`;
-  else if (Number(number) > 1000) return `${parseFloat(number) / 1000}k`;
+  if (Number(number) > 1000000) return `${(parseFloat(number) / 1000000).toFixed(1)}M`;
+  else if (Number(number) > 1000) return `${(parseFloat(number) / 1000).toFixed(0)}k`;
   return number;
 };
 
