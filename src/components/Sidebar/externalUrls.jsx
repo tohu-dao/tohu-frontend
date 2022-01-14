@@ -20,7 +20,7 @@ const externalUrls = [
   },
   {
     title: <Trans>Buy on Beethoven-X</Trans>,
-    url: "https://beets.fi/#/trade/0x3b57f3feaaf1e8254ec680275ee6e7727c7413c7",
+    url: "https://beets.fi/#/trade/fantom/0x3b57f3feaaf1e8254ec680275ee6e7727c7413c7",
     icon: (
       <span>
         <ShoppingCartIcon />
