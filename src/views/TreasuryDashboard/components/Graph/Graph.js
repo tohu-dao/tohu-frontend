@@ -29,7 +29,6 @@ import { useTreasuryRebases } from "../../hooks/useTreasuryRebases";
 import { useDebtMetrics } from "../../hooks/useDebtMetrics";
 import { bulletpoints, tooltipItems, tooltipInfoMessages, itemType } from "../../treasuryData";
 import { EPOCH_INTERVAL, OHM_TICKER } from "../../../../constants";
-import { useTreasuryOhm } from "../../hooks/useTreasuryOhm";
 import { parse } from "date-fns";
 import { TrendingDown, TrendingUp, TrendingFlat, AccountBalance } from "@material-ui/icons";
 
