@@ -136,7 +136,7 @@ function OhmMenu() {
               <Paper className="ohm-menu" elevation={1}>
                 <Box component="div" className="buy-tokens">
                   <Link
-                    href="https://beets.fi/#/trade/0x3b57f3feaaf1e8254ec680275ee6e7727c7413c7"
+                    href="https://beets.fi/#/trade/fantom/0x3b57f3feaaf1e8254ec680275ee6e7727c7413c7"
                     target="_blank"
                     rel="nofollow noopener noreferrer"
                   >
