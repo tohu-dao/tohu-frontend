@@ -21,6 +21,7 @@ import {
   useMediaQuery,
   Box,
 } from "@material-ui/core";
+import gOhmData from "./gohmHistory";
 import { useTheme } from "@material-ui/core/styles";
 import { trim, formatCurrency } from "../../../../helpers";
 import { useTreasuryMetrics } from "../../hooks/useTreasuryMetrics";
@@ -28,7 +29,6 @@ import { useTreasuryRebases } from "../../hooks/useTreasuryRebases";
 import { useDebtMetrics } from "../../hooks/useDebtMetrics";
 import { bulletpoints, tooltipItems, tooltipInfoMessages, itemType } from "../../treasuryData";
 import { EPOCH_INTERVAL, OHM_TICKER } from "../../../../constants";
-import { useTreasuryOhm } from "../../hooks/useTreasuryOhm";
 import { parse } from "date-fns";
 import { TrendingDown, TrendingUp, TrendingFlat, AccountBalance } from "@material-ui/icons";
 
@@ -60,30 +60,15 @@ export const TotalValueDepositedGraph = () => {
 export const MarketValueGraph = ({ isDashboard = false }) => {
   const theme = useTheme();
   const { data } = useTreasuryMetrics({ refetchOnMount: false });
-  let { data: ethData } = useTreasuryOhm({ refetchOnMount: false });
 
-  const datalength = data && data.length;
-  const ethDatalength = ethData && ethData.length;
-
-  for (let i = 0; i < datalength - ethDatalength; i++) {
-    ethData && ethData.push({ sOHMBalanceUSD: 0 });
-  }
-
-  const stats =
-    ethData &&
-    data &&
-    data.map((entry, i) => {
-      const gOhmPrice = ethData[i].gOhmPrice ? ethData[i].gOhmPrice : 0;
-      const gOhmBalance = entry.treasuryGOhmBalance ? entry.treasuryGOhmBalance : 0;
-      const sOHMBalanceUSD = ethData[i].sOHMBalanceUSD + gOhmBalance * gOhmPrice;
-      const treasuryExodMarketValue = entry.treasuryMonolithExodValue + entry.treasuryMonolithWsExodValue;
-      return {
-        timestamp: entry.id,
-        ...entry,
-        sOHMBalanceUSD: entry.treasuryGOhmMarketValue || sOHMBalanceUSD,
-        treasuryExodMarketValue,
-      };
+  const reversedData = data && data.reverse();
+  data &&
+    reversedData.forEach((entry, index) => {
+      if (gOhmData[index]) reversedData[index].treasuryGOhmMarketValue = gOhmData[index];
+      reversedData[index].treasuryExodMarketValue = entry.treasuryMonolithExodValue + entry.treasuryMonolithWsExodValue;
     });
+
+  const stats = data && reversedData.reverse();
 
   const value = stats && stats[0].treasuryMarketValue;
   const lastValue = stats && stats[1].treasuryMarketValue;
@@ -97,7 +82,7 @@ export const MarketValueGraph = ({ isDashboard = false }) => {
         "treasuryDaiMarketValue",
         "treasuryMaiBalance",
         "treasuryWETHMarketValue",
-        "sOHMBalanceUSD",
+        "treasuryGOhmMarketValue",
       ]}
       colors={theme.palette.chartColors}
       dataFormat="$"
@@ -617,28 +602,19 @@ export const DashboardPriceGraph = ({ isDashboard = false }) => {
 export const TreasuryBreakdownPie = () => {
   const theme = useTheme();
   const { data } = useTreasuryMetrics({ refetchOnMount: false });
-  let { data: ethData } = useTreasuryOhm({ refetchOnMount: false });
   const isVerySmallScreen = useMediaQuery("(max-width: 400px)");
-
-  const gOhmPrice = ethData && ethData[0].gOhmPrice ? ethData[0].gOhmPrice : 0;
-  const gOhmBalance = data && ethData && data[0].treasuryGOhmBalance ? data[0].treasuryGOhmBalance : 0;
-  const gOhmPricePrevious = ethData && ethData[1].gOhmPrice ? ethData[1].gOhmPrice : 0;
-  const gOhmBalancePrevious = data && ethData && data[1].treasuryGOhmBalance ? data[1].treasuryGOhmBalance : 0;
 
   const exodValue = data && data[0].treasuryMonolithExodValue + data[0].treasuryMonolithWsExodValue;
   const daiValue = data && data[0].treasuryDaiMarketValue;
   const maiValue = data && data[0].treasuryMaiBalance;
   const ftmValue = data && data[0].treasuryWETHMarketValue;
-  const gOhmValue =
-    (data && data[0].treasuryGOhmMarketValue) || (ethData && ethData[0].sOHMBalanceUSD + gOhmBalance * gOhmPrice);
+  const gOhmValue = data && data[0].treasuryGOhmMarketValue;
 
   const exodValuePrevious = data && data[1].treasuryMonolithExodValue + data[1].treasuryMonolithWsExodValue;
   const daiValuePrevious = data && data[1].treasuryDaiMarketValue;
   const maiValuePrevious = data && data[1].treasuryMaiBalance;
   const ftmValuePrevious = data && data[1].treasuryWETHMarketValue;
-  const gOhmValuePrevious =
-    (data && data[1].treasuryGOhmMarketValue) ||
-    (ethData && ethData[1].sOHMBalanceUSD + gOhmBalancePrevious * gOhmPricePrevious);
+  const gOhmValuePrevious = data && data[1].treasuryGOhmMarketValue;
 
   const totalValue = data && data[0].treasuryMarketValue;
   const lastValue = data && data[1].treasuryMarketValue;
