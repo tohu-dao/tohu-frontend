@@ -58,7 +58,7 @@ export abstract class Bond {
 
   // The following two fields will differ on how they are set depending on bond type
   abstract isLP: Boolean;
-  abstract ismonolith?: boolean;
+  abstract isMonolith?: boolean;
   abstract reserveContract: ethers.ContractInterface; // Token ABI
   abstract displayUnits: string;
 
