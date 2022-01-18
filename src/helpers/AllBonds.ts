@@ -5,6 +5,7 @@ import { ReactComponent as DaiImg } from "src/assets/tokens/DAI.svg";
 import { ReactComponent as OhmDaiImg } from "src/assets/tokens/OHM-DAI.svg";
 import { ReactComponent as wETHImg } from "src/assets/tokens/wETH.svg";
 import { ReactComponent as BeetsPoolImg } from "src/assets/tokens/BeetsPool.svg";
+import { ReactComponent as gOHMImg } from "src/assets/tokens/gOHM.svg";
 import { abi as BondOhmDaiContract } from "src/abi/bonds/OhmDaiContract.json";
 import { abi as DaiBondContract } from "src/abi/bonds/DaiContract.json";
 import { abi as ReserveOhmDaiContract } from "src/abi/reserves/OhmDai.json";
@@ -126,11 +127,46 @@ export const the_monolith_lp = new CustomBond({
   lpUrl: "https://beets.fi/#/pool/0xa216aa5d67ef95dde66246829c5103c7843d1aab000100000000000000000112",
 });
 
+export const gohm = new CustomBond({
+  name: "gohm",
+  displayName: "gOHM",
+  lpUrl: "",
+  bondType: BondType.StableAsset,
+  bondToken: "gOHM",
+  isAvailable: { [NetworkID.Mainnet]: true },
+  bondIconSvg: gOHMImg,
+  bondContractABI: EthBondContract,
+  reserveContract: ierc20Abi, // The Standard ierc20Abi since they're normal tokens
+  networkAddrs: {
+    [NetworkID.Mainnet]: {
+      bondAddress: "0xcf69ba319ff0f8e2481de13d16ce7f74b063533e",
+      reserveAddress: "0x91fa20244Fb509e8289CA630E5db3E9166233FDc",
+    },
+    [NetworkID.Testnet]: {
+      bondAddress: "",
+      reserveAddress: "",
+    },
+  },
+  customTreasuryBalanceFunc: async function (this: CustomBond, networkID, provider) {
+    const gohmBondContract = this.getContractForBond(networkID, provider);
+    const token = this.getContractForReserve(networkID, provider);
+
+    let [gohmPrice, gohmAmount]: [BigNumberish, BigNumberish] = await Promise.all([
+      gohmBondContract.assetPrice(),
+      token.balanceOf(addresses[networkID].TREASURY_ADDRESS),
+    ]);
+
+    gohmPrice = Number(gohmPrice.toString()) / Math.pow(10, 8);
+    gohmAmount = Number(gohmAmount.toString()) / Math.pow(10, 18);
+    return gohmAmount * gohmPrice;
+  },
+});
+
 // HOW TO ADD A NEW BOND:
 // Is it a stableCoin bond? use `new StableBond`
 // Is it an LP Bond? use `new LPBond`
 // Add new bonds to this array!!
-export const allBonds = [dai, eth, the_monolith_lp];
+export const allBonds = [dai, eth, the_monolith_lp, gohm];
 // TODO (appleseed-expiredBonds): there may be a smarter way to refactor this
 export const allExpiredBonds: (StableBond | CustomBond | LPBond)[] = [ohm_dai];
 export const allBondsMap = allBonds.reduce((prevVal, bond) => {
