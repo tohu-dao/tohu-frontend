@@ -408,24 +408,27 @@ export const DebtRatioGraph = () => {
       ethDebtRatio: entry.eth_debt_ratio / 1e10,
       ohmDaiDebtRatio: entry.ohmdai_debt_ratio / 1e19,
       monolithDebtRatio: entry.monolith_debt_ratio / 1e10,
+      gOhmDebtRatio: entry.gOhm_debt_ratio / 1e10,
     }));
 
   return (
     <ExodiaMultiLineChart
       deviation="2"
       data={debtRatios}
-      dataKey={["daiDebtRatio", "ethDebtRatio", "ohmDaiDebtRatio", "monolithDebtRatio"]}
+      dataKey={["daiDebtRatio", "ethDebtRatio", "ohmDaiDebtRatio", "monolithDebtRatio", "gOhmDebtRatio"]}
       colors={[
+        theme.palette.chartColors[1],
+        theme.palette.chartColors[3],
+        theme.palette.chartColors[5],
         theme.palette.chartColors[0],
         theme.palette.chartColors[4],
-        theme.palette.chartColors[3],
-        theme.palette.chartColors[1],
       ]}
       stroke={[
+        theme.palette.chartColors[1],
+        theme.palette.chartColors[3],
+        theme.palette.chartColors[5],
         theme.palette.chartColors[0],
         theme.palette.chartColors[4],
-        theme.palette.chartColors[3],
-        theme.palette.chartColors[1],
       ]}
       headerText="Debt Ratios"
       headerSubText={`Total ${
@@ -434,7 +437,8 @@ export const DebtRatioGraph = () => {
           debtRatios[0].daiDebtRatio +
             debtRatios[0].ethDebtRatio +
             debtRatios[0].ohmDaiDebtRatio +
-            debtRatios[0].monolithDebtRatio,
+            debtRatios[0].monolithDebtRatio +
+            debtRatios[0].gOhmDebtRatio,
           2,
         )
       }%`}

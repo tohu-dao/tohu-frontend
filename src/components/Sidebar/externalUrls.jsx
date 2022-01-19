@@ -6,6 +6,7 @@ import { SvgIcon } from "@material-ui/core";
 import { Trans } from "@lingui/macro";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import TrendingUpIcon from "@material-ui/icons/TrendingUp";
+import { BEETS_LINK } from "src/constants";
 
 const externalUrls = [
   {
@@ -20,7 +21,7 @@ const externalUrls = [
   },
   {
     title: <Trans>Buy on Beethoven-X</Trans>,
-    url: "https://beets.fi/#/trade/fantom/0x3b57f3feaaf1e8254ec680275ee6e7727c7413c7",
+    url: BEETS_LINK,
     icon: (
       <span>
         <ShoppingCartIcon />

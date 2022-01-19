@@ -78,6 +78,7 @@ query {
     eth_debt_ratio
     ohmdai_debt_ratio
     monolith_debt_ratio
+    gOhm_debt_ratio
     timestamp
   }
 }
@@ -223,7 +224,13 @@ export const tooltipItems = {
   dilution: [t`Dilution Percentage`, t`Current Index`],
   minted: [t`EXOD minted`, t`5 Day Average`],
   mcs: [t`EXOD Minted/Total Supply`, t`5 Day Average`],
-  debtratio: [t`DAI Debt Ratio`, t`wFTM Debt Ratio`, t`EXOD-DAI spLP Debt Ratio`, t`The Monolith LP Debt Ratio`],
+  debtratio: [
+    t`DAI Debt Ratio`,
+    t`wFTM Debt Ratio`,
+    t`EXOD-DAI spLP Debt Ratio`,
+    t`The Monolith LP Debt Ratio`,
+    t`gOHM Debt Ratio`,
+  ],
   indexAdjustedPrice: [t`Market Price`, t`Index Adjusted Price`],
   growthOfSupply: [t`Index Adjusted Supply`, t`Circulating Supply`],
   dashboardPrice: [t`EXOD Price`, t`wsEXOD Price`, t`Market Cap`],

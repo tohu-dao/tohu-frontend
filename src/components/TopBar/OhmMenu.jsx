@@ -30,6 +30,7 @@ import OhmImg from "src/assets/tokens/token_OHM.svg";
 import SOhmImg from "src/assets/tokens/token_sOHM.svg";
 import WsOhmImg from "src/assets/tokens/token_wsOHM.svg";
 import token33tImg from "src/assets/tokens/token_33T.svg";
+import { BEETS_LINK } from "src/constants";
 
 import { segmentUA } from "../../helpers/userAnalyticHelpers";
 
@@ -135,11 +136,7 @@ function OhmMenu() {
             <Fade {...TransitionProps} timeout={100}>
               <Paper className="ohm-menu" elevation={1}>
                 <Box component="div" className="buy-tokens">
-                  <Link
-                    href="https://beets.fi/#/trade/fantom/0x3b57f3feaaf1e8254ec680275ee6e7727c7413c7"
-                    target="_blank"
-                    rel="nofollow noopener noreferrer"
-                  >
+                  <Link href={BEETS_LINK} target="_blank" rel="nofollow noopener noreferrer">
                     <Button size="large" variant="contained" color="secondary" fullWidth>
                       <Typography align="left">
                         Buy on Beethoven-X <SvgIcon component={ArrowUpIcon} htmlColor="#A3A3A3" />

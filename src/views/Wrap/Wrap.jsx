@@ -36,6 +36,7 @@ import { Skeleton } from "@material-ui/lab";
 import { error } from "../../slices/MessagesSlice";
 import { ethers } from "ethers";
 import { ReactComponent as ArrowUp } from "../../assets/icons/arrow-up.svg";
+import MigrationBanner from "src/components/MigrationMessage";
 
 function a11yProps(index) {
   return {
@@ -186,6 +187,9 @@ function Wrap() {
     <div id="stake-view">
       <Zoom in={true} onEntered={() => setZoomed(true)}>
         <>
+          <Paper className="ohm-card" style={{ padding: 0, border: "none" }}>
+            <MigrationBanner />
+          </Paper>
           <Paper className={`ohm-card`}>
             <Grid container direction="column" spacing={2}>
               <Grid item>
