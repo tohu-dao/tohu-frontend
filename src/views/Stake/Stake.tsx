@@ -38,6 +38,7 @@ import { useAppSelector } from "src/hooks";
 import PersonalExodChart from "../../components/Chart/PersonalExodChart";
 import StakeRow from "./StakeRow";
 import { ExpandMore } from "@material-ui/icons";
+import MigrationBanner from "src/components/MigrationMessage";
 
 function a11yProps(index: number) {
   return {
@@ -185,6 +186,9 @@ function Stake() {
 
   return (
     <div id="stake-view">
+      <Paper className="ohm-card" style={{ padding: 0, border: "none" }}>
+        <MigrationBanner />
+      </Paper>
       <Zoom in={true} onEntered={() => setZoomed(true)}>
         <Paper className={`ohm-card`}>
           <Grid container direction="column" spacing={2}>

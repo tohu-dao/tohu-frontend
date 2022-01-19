@@ -1,5 +1,6 @@
 export const THE_GRAPH_URL = "https://api.thegraph.com/subgraphs/name/exodiafinance/exodia-subgraph";
 export const THE_GRAPH_URL_ETH = "https://api.thegraph.com/subgraphs/name/exodiafinance/exodia-eth-treasury";
+export const BEETS_LINK = "https://beets.fi/#/trade/fantom/0x3b57f3feaaf1e8254ec680275ee6e7727c7413c7";
 export const EPOCH_INTERVAL = 28800;
 
 // NOT USED ANY MORE: Fetched from the blockchain `useAppSelector(state => state.app.blockRateSeconds)`
