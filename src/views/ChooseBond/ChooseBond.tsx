@@ -32,6 +32,7 @@ import {
 import { QueryClient, QueryClientProvider } from "react-query";
 import styled from "styled-components";
 import _ from "lodash";
+import MigrationBanner from "src/components/MigrationMessage";
 
 function ChooseBond() {
   const { chainID } = useWeb3Context();
@@ -49,6 +50,9 @@ function ChooseBond() {
 
   return (
     <div id="choose-bond-view">
+      <Paper className="ohm-card" style={{ padding: 0, border: "none" }}>
+        <MigrationBanner />
+      </Paper>
       <ClaimBonds />
       <BondContainer>
         <Zoom in={true}>
