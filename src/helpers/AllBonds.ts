@@ -6,6 +6,8 @@ import { ReactComponent as OhmDaiImg } from "src/assets/tokens/OHM-DAI.svg";
 import { ReactComponent as wETHImg } from "src/assets/tokens/wETH.svg";
 import { ReactComponent as BeetsPoolImg } from "src/assets/tokens/BeetsPool.svg";
 import { ReactComponent as gOHMImg } from "src/assets/tokens/gOHM.svg";
+import { ReactComponent as ROCKImg } from "src/assets/tokens/ROCK.svg";
+import { ReactComponent as fBEETSImg } from "src/assets/tokens/fBEETS.svg";
 import { abi as BondOhmDaiContract } from "src/abi/bonds/OhmDaiContract.json";
 import { abi as DaiBondContract } from "src/abi/bonds/DaiContract.json";
 import { abi as ReserveOhmDaiContract } from "src/abi/reserves/OhmDai.json";
@@ -162,6 +164,75 @@ export const gohm = new CustomBond({
   },
 });
 
+export const fbeets = new CustomBond({
+  name: "fbeets",
+  displayName: "fBEETS",
+  lpUrl: "",
+  bondType: BondType.StableAsset,
+  bondToken: "fBEETS",
+  isAvailable: { [NetworkID.Mainnet]: true },
+  bondIconSvg: fBEETSImg,
+  bondContractABI: EthBondContract,
+  reserveContract: ierc20Abi, // The Standard ierc20Abi since they're normal tokens
+  networkAddrs: {
+    [NetworkID.Mainnet]: {
+      bondAddress: "",
+      reserveAddress: "0x91fa20244Fb509e8289CA630E5db3E9166233FDc",
+    },
+    [NetworkID.Testnet]: {
+      bondAddress: "",
+      reserveAddress: "",
+    },
+  },
+  customTreasuryBalanceFunc: async function (this: CustomBond, networkID, provider) {
+    const fBeetsBondContract = this.getContractForBond(networkID, provider);
+    const token = this.getContractForReserve(networkID, provider);
+
+    let [fBeetsPrice, fBeetsAmount]: [BigNumberish, BigNumberish] = await Promise.all([
+      fBeetsBondContract.assetPrice(),
+      token.balanceOf(addresses[networkID].TREASURY_ADDRESS),
+    ]);
+
+    fBeetsPrice = Number(fBeetsPrice.toString()) / Math.pow(10, 8);
+    fBeetsAmount = Number(fBeetsAmount.toString()) / Math.pow(10, 18);
+    return fBeetsAmount * fBeetsPrice;
+  },
+});
+
+export const rock = new CustomBond({
+  name: "rock",
+  displayName: "ROCK",
+  lpUrl: "",
+  bondType: BondType.StableAsset,
+  bondToken: "ROCK",
+  isAvailable: { [NetworkID.Mainnet]: true },
+  bondIconSvg: ROCKImg,
+  bondContractABI: EthBondContract,
+  reserveContract: ierc20Abi, // The Standard ierc20Abi since they're normal tokens
+  networkAddrs: {
+    [NetworkID.Mainnet]: {
+      bondAddress: "",
+      reserveAddress: "0x91fa20244Fb509e8289CA630E5db3E9166233FDc",
+    },
+    [NetworkID.Testnet]: {
+      bondAddress: "",
+      reserveAddress: "",
+    },
+  },
+  customTreasuryBalanceFunc: async function (this: CustomBond, networkID, provider) {
+    const rocksBondContract = this.getContractForBond(networkID, provider);
+    const token = this.getContractForReserve(networkID, provider);
+
+    let [rockPrice, rockAmount]: [BigNumberish, BigNumberish] = await Promise.all([
+      rocksBondContract.assetPrice(),
+      token.balanceOf(addresses[networkID].TREASURY_ADDRESS),
+    ]);
+
+    rockPrice = Number(rockPrice.toString()) / Math.pow(10, 8);
+    rockAmount = Number(rockAmount.toString()) / Math.pow(10, 18);
+    return rockAmount * rockPrice;
+  },
+});
 // HOW TO ADD A NEW BOND:
 // Is it a stableCoin bond? use `new StableBond`
 // Is it an LP Bond? use `new LPBond`
@@ -169,6 +240,7 @@ export const gohm = new CustomBond({
 export const allBonds = [dai, eth, the_monolith_lp, gohm];
 // TODO (appleseed-expiredBonds): there may be a smarter way to refactor this
 export const allExpiredBonds: (StableBond | CustomBond | LPBond)[] = [ohm_dai];
+export const allUpcomingBonds = [fbeets, rock];
 export const allBondsMap = allBonds.reduce((prevVal, bond) => {
   return { ...prevVal, [bond.name]: bond };
 }, {});

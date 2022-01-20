@@ -25,7 +25,7 @@ function NavContent() {
   const [isActive] = useState();
   const address = useAddress();
   const { chainID } = useWeb3Context();
-  const { bonds } = useBonds(chainID);
+  const { bonds, upcomingBonds } = useBonds(chainID);
 
   const checkPage = useCallback((match, location, page) => {
     const currentPath = location.pathname.replace("/", "");
@@ -175,6 +175,14 @@ function NavContent() {
                         </Typography>
                       )}
                     </Link>
+                  ))}
+                  {upcomingBonds.map((bond, i) => (
+                    <div className="upcoming-bond">
+                      <Typography variant="body1" color="textPrimary">
+                        {bond.displayName}
+                        <span className="bond-pair-roi">Coming Soon!</span>
+                      </Typography>
+                    </div>
                   ))}
                 </div>
               </div>

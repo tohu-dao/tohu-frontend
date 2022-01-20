@@ -36,7 +36,7 @@ import MigrationBanner from "src/components/MigrationMessage";
 
 function ChooseBond() {
   const { chainID } = useWeb3Context();
-  const { bonds } = useBonds(chainID);
+  const { bonds, upcomingBonds } = useBonds(chainID);
   const isSmallScreen = useMediaQuery("(max-width: 733px)"); // change to breakpoint query
   const isVerySmallScreen = useMediaQuery("(max-width: 420px)");
 
@@ -125,6 +125,9 @@ function ChooseBond() {
                           {bonds.map(bond => (
                             <BondTableData key={bond.name} bond={bond} />
                           ))}
+                          {upcomingBonds.map(bond => (
+                            <BondTableData key={bond.name} bond={bond} upcoming />
+                          ))}
                         </TableBody>
                       </Table>
                     </TableContainer>
@@ -139,6 +142,11 @@ function ChooseBond() {
                   {bonds.map(bond => (
                     <Grid item xs={12} key={bond.name}>
                       <BondDataCard key={bond.name} bond={bond} />
+                    </Grid>
+                  ))}
+                  {upcomingBonds.map(bond => (
+                    <Grid item xs={12} key={bond.name}>
+                      <BondDataCard key={bond.name} bond={bond} upcoming />
                     </Grid>
                   ))}
                 </Grid>
