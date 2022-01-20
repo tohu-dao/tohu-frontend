@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import allBonds, { allExpiredBonds } from "src/helpers/AllBonds";
+import allBonds, { allExpiredBonds, allUpcomingBonds } from "src/helpers/AllBonds";
 import { IUserBondDetails } from "src/slices/AccountSlice";
 import { Bond } from "src/lib/Bond";
 import { IBondDetails } from "src/slices/BondSlice";
@@ -22,6 +22,7 @@ export interface IAllBondData extends Bond, IBondDetails, IUserBondDetails {}
 
 const initialBondArray = allBonds;
 const initialExpiredArray = allExpiredBonds;
+const initialUpcommingArray = allUpcomingBonds;
 // Slaps together bond data within the account & bonding states
 function useBonds(chainID: number) {
   const bondLoading = useSelector((state: IBondingStateView) => !state.bonding.loading);
@@ -29,6 +30,7 @@ function useBonds(chainID: number) {
   const accountBondsState = useSelector((state: IBondingStateView) => state.account.bonds);
   const [bonds, setBonds] = useState<Bond[] | IAllBondData[]>(initialBondArray);
   const [expiredBonds, setExpiredBonds] = useState<Bond[] | IAllBondData[]>(initialExpiredArray);
+  const [upcomingBonds] = useState<Bond[] | IAllBondData[]>(initialUpcommingArray);
 
   useEffect(() => {
     let bondDetails: IAllBondData[];
@@ -72,7 +74,7 @@ function useBonds(chainID: number) {
 
   // Debug Log:
   // console.log(bonds);
-  return { bonds, loading: bondLoading, expiredBonds };
+  return { bonds, loading: bondLoading, expiredBonds, upcomingBonds };
 }
 
 export default useBonds;
