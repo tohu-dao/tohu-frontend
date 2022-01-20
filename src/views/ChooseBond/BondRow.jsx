@@ -9,10 +9,10 @@ import { Skeleton } from "@material-ui/lab";
 import useBonds from "src/hooks/Bonds";
 import { useWeb3Context } from "../../hooks/web3Context";
 
-export function BondDataCard({ bond }) {
+export function BondDataCard({ bond, upcoming }) {
   const { chainID } = useWeb3Context();
   const { loading } = useBonds(chainID);
-  const isBondLoading = !bond.bondPrice ?? true;
+  const isBondLoading = (!bond.bondPrice && !upcoming) ?? true;
 
   return (
     <Slide direction="up" in={true}>
@@ -38,7 +38,15 @@ export function BondDataCard({ bond }) {
             <Trans>Price</Trans>
           </Typography>
           <Typography className="bond-price">
-            <>{isBondLoading ? <Skeleton width="50px" /> : <DisplayBondPrice key={bond.name} bond={bond} />}</>
+            <>
+              {isBondLoading ? (
+                <Skeleton width="50px" />
+              ) : upcoming ? (
+                "Coming Soon!"
+              ) : (
+                <DisplayBondPrice key={bond.name} bond={bond} />
+              )}
+            </>
           </Typography>
         </div>
         <div className="data-row">
@@ -46,7 +54,13 @@ export function BondDataCard({ bond }) {
             <Trans>ROI</Trans>
           </Typography>
           <Typography>
-            {isBondLoading ? <Skeleton width="50px" /> : <DisplayBondDiscount key={bond.name} bond={bond} />}
+            {isBondLoading ? (
+              <Skeleton width="50px" />
+            ) : upcoming ? (
+              "-"
+            ) : (
+              <DisplayBondDiscount key={bond.name} bond={bond} />
+            )}
           </Typography>
         </div>
 
@@ -57,6 +71,8 @@ export function BondDataCard({ bond }) {
           <Typography>
             {isBondLoading ? (
               <Skeleton width="80px" />
+            ) : upcoming ? (
+              "-"
             ) : (
               new Intl.NumberFormat("en-US", {
                 style: "currency",
@@ -67,22 +83,28 @@ export function BondDataCard({ bond }) {
             )}
           </Typography>
         </div>
-        <Link component={NavLink} to={`/bonds/${bond.name}`}>
-          <Button variant="outlined" color="primary" fullWidth disabled={!bond.isAvailable[chainID]}>
-            <Typography variant="h5">
-              {!bond.isAvailable[chainID] ? t`Sold Out` : t`Bond ${bond.displayName}`}
-            </Typography>
+        {upcoming ? (
+          <Button variant="outlined" color="primary" fullWidth disabled>
+            <Typography variant="h5">{t`Bond ${bond.displayName}`}</Typography>
           </Button>
-        </Link>
+        ) : (
+          <Link component={NavLink} to={`/bonds/${bond.name}`}>
+            <Button variant="outlined" color="primary" fullWidth disabled={!bond.isAvailable[chainID]}>
+              <Typography variant="h5">
+                {!bond.isAvailable[chainID] ? t`Sold Out` : t`Bond ${bond.displayName}`}
+              </Typography>
+            </Button>
+          </Link>
+        )}
       </Paper>
     </Slide>
   );
 }
 
-export function BondTableData({ bond }) {
+export function BondTableData({ bond, upcoming }) {
   const { chainID } = useWeb3Context();
   // Use BondPrice as indicator of loading.
-  const isBondLoading = !bond.bondPrice ?? true;
+  const isBondLoading = (!bond.bondPrice && !upcoming) ?? true;
   // const isBondLoading = useSelector(state => !state.bonding[bond]?.bondPrice ?? true);
 
   return (
@@ -103,16 +125,32 @@ export function BondTableData({ bond }) {
       </TableCell>
       <TableCell align="left">
         <Typography>
-          <>{isBondLoading ? <Skeleton width="50px" /> : <DisplayBondPrice key={bond.name} bond={bond} />}</>
+          <>
+            {isBondLoading ? (
+              <Skeleton width="50px" />
+            ) : upcoming ? (
+              "Coming Soon!"
+            ) : (
+              <DisplayBondPrice key={bond.name} bond={bond} />
+            )}
+          </>
         </Typography>
       </TableCell>
       <TableCell align="left">
         {" "}
-        {isBondLoading ? <Skeleton width="50px" /> : <DisplayBondDiscount key={bond.name} bond={bond} />}
+        {isBondLoading ? (
+          <Skeleton width="50px" />
+        ) : upcoming ? (
+          "-"
+        ) : (
+          <DisplayBondDiscount key={bond.name} bond={bond} upcoming />
+        )}
       </TableCell>
       <TableCell align="right">
         {isBondLoading ? (
           <Skeleton />
+        ) : upcoming ? (
+          "-"
         ) : (
           new Intl.NumberFormat("en-US", {
             style: "currency",
@@ -123,11 +161,17 @@ export function BondTableData({ bond }) {
         )}
       </TableCell>
       <TableCell>
-        <Link component={NavLink} to={`/bonds/${bond.name}`}>
-          <Button variant="outlined" color="primary" disabled={!bond.isAvailable[chainID]}>
-            <Typography variant="h6">{!bond.isAvailable[chainID] ? t`Sold Out` : t`do_bond`}</Typography>
+        {upcoming ? (
+          <Button variant="outlined" color="primary" disabled>
+            <Typography variant="h6">{t`do_bond`}</Typography>
           </Button>
-        </Link>
+        ) : (
+          <Link component={NavLink} to={`/bonds/${bond.name}`}>
+            <Button variant="outlined" color="primary" disabled={!bond.isAvailable[chainID]}>
+              <Typography variant="h6">{!bond.isAvailable[chainID] ? t`Sold Out` : t`do_bond`}</Typography>
+            </Button>
+          </Link>
+        )}
       </TableCell>
     </TableRow>
   );
