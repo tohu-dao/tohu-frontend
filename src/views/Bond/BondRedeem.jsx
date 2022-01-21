@@ -46,7 +46,7 @@ function BondRedeem({ bond }) {
   const vestingPeriod = () => {
     const vestingBlock = parseInt(currentBlock) + parseInt(bondingState.vestingTerm);
     const seconds = secondsUntilBlock(currentBlock, vestingBlock, blockRateSeconds);
-    return prettifySeconds(seconds, "day");
+    return prettifySeconds(seconds, "hr");
   };
 
   useEffect(() => {

@@ -50,7 +50,7 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
   const vestingPeriod = () => {
     const vestingBlock = parseInt(currentBlock) + parseInt(bond.vestingTerm);
     const seconds = secondsUntilBlock(currentBlock, vestingBlock, blockRateSeconds);
-    return prettifySeconds(seconds, "day");
+    return prettifySeconds(seconds, "hr");
   };
 
   async function onBond() {
