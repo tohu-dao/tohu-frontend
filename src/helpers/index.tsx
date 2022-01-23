@@ -106,6 +106,11 @@ export function prettifySeconds(seconds: number, resolution?: string) {
   const mDisplay = m > 0 ? m + (m == 1 ? " min" : " mins") : "";
 
   let result = dDisplay + hDisplay + mDisplay;
+  if (resolution === "hr") {
+    result = dDisplay + hDisplay;
+    result = result.slice(0, result.length - 2);
+    return result;
+  }
   if (mDisplay === "") {
     result = result.slice(0, result.length - 2);
   }
