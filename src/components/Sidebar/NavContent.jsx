@@ -10,9 +10,11 @@ import { ReactComponent as OlympusIcon } from "../../assets/icons/olympus-nav-he
 import ExodiaLogo from "../../assets/images/logo-wide.png";
 import { ReactComponent as PoolTogetherIcon } from "../../assets/icons/33-together.svg";
 import { Trans } from "@lingui/macro";
+import Davatar from "@davatar/react";
 import { trim, shorten } from "../../helpers";
 import { useAddress, useWeb3Context } from "src/hooks/web3Context";
 import useBonds from "../../hooks/Bonds";
+import { useENS } from "src/hooks/useENS";
 import { Paper, Link, Box, Typography, SvgIcon } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import ShowChartIcon from "@material-ui/icons/ShowChart";
@@ -26,6 +28,7 @@ function NavContent() {
   const address = useAddress();
   const { chainID } = useWeb3Context();
   const { bonds, upcomingBonds } = useBonds(chainID);
+  const { ensName } = useENS(address);
 
   const checkPage = useCallback((match, location, page) => {
     const currentPath = location.pathname.replace("/", "");
@@ -61,12 +64,15 @@ function NavContent() {
 
             {address && (
               <div className="wallet-link">
+                <span className="davatar">
+                  <Davatar size={20} address={address} />
+                </span>
                 <Link
                   href={`https://ftmscan.com/address/${address}`}
                   target="_blank"
                   rel="nofollow noopener noreferrer"
                 >
-                  {shorten(address)}
+                  {ensName || shorten(address)}
                 </Link>
               </div>
             )}
