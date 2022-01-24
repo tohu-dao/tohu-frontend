@@ -199,12 +199,12 @@ export const fbeets = new CustomBond({
   },
 });
 
-export const solid = new CustomBond({
-  name: "solid",
-  displayName: "SOLID",
+export const rock = new CustomBond({
+  name: "rock",
+  displayName: "ROCK",
   lpUrl: "",
   bondType: BondType.StableAsset,
-  bondToken: "SOLID",
+  bondToken: "ROCK",
   isAvailable: { [NetworkID.Mainnet]: true },
   bondIconSvg: ROCKImg,
   bondContractABI: EthBondContract,
@@ -240,7 +240,7 @@ export const solid = new CustomBond({
 export const allBonds = [dai, eth, the_monolith_lp, gohm];
 // TODO (appleseed-expiredBonds): there may be a smarter way to refactor this
 export const allExpiredBonds: (StableBond | CustomBond | LPBond)[] = [ohm_dai];
-export const allUpcomingBonds = [fbeets, solid];
+export const allUpcomingBonds = [fbeets, rock];
 export const allBondsMap = allBonds.reduce((prevVal, bond) => {
   return { ...prevVal, [bond.name]: bond };
 }, {});
