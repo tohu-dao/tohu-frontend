@@ -105,7 +105,7 @@ export const the_monolith_lp = new CustomBond({
   reserveContract: ReserveOhmDaiContract,
   networkAddrs: {
     [NetworkID.Mainnet]: {
-      bondAddress: "0x86E21dB31c154aE777e0C126999e89Df0C01D9Fa",
+      bondAddress: "0x18c01a517ed7216b52a4160c12bf814210477ef2",
       reserveAddress: "0xa216aa5d67ef95dde66246829c5103c7843d1aab",
     },
     [NetworkID.Testnet]: {
