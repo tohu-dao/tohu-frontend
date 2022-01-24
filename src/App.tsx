@@ -117,7 +117,7 @@ function App() {
   const loadApp = useCallback(
     loadProvider => {
       dispatch(loadAppDetails({ networkID: chainID, provider: loadProvider }));
-      bonds.map(bond => {
+      bonds.forEach(bond => {
         dispatch(calcBondDetails({ bond, value: "", provider: loadProvider, networkID: chainID }));
       });
     },
@@ -127,10 +127,10 @@ function App() {
   const loadAccount = useCallback(
     loadProvider => {
       dispatch(loadAccountDetails({ networkID: chainID, address, provider: loadProvider }));
-      bonds.map(bond => {
+      bonds.forEach(bond => {
         dispatch(calculateUserBondDetails({ address, bond, provider: loadProvider, networkID: chainID }));
       });
-      expiredBonds.map(bond => {
+      expiredBonds.forEach(bond => {
         dispatch(calculateUserBondDetails({ address, bond, provider: loadProvider, networkID: chainID }));
       });
     },

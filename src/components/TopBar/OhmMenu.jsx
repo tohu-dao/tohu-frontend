@@ -22,7 +22,7 @@ import { ReactComponent as ohmTokenImg } from "../../assets/tokens/token_OHM.svg
 import { ReactComponent as t33TokenImg } from "../../assets/tokens/token_33T.svg";
 
 import "./ohmmenu.scss";
-import { dai } from "src/helpers/AllBonds";
+import { dai } from "src/helpers/BondDefinitions";
 import { Trans } from "@lingui/macro";
 import { useWeb3Context } from "../../hooks/web3Context";
 
