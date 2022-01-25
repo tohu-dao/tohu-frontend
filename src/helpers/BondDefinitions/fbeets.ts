@@ -16,7 +16,7 @@ const fbeets = new CustomBond({
   reserveContract: ierc20Abi, // The Standard ierc20Abi since they're normal tokens
   networkAddrs: {
     [NetworkID.Mainnet]: {
-      bondAddress: "",
+      bondAddress: "0xe2eA15E992455972Ae11De0a543C48DbeAb9E5Ce",
       reserveAddress: "0x91fa20244Fb509e8289CA630E5db3E9166233FDc",
     },
     [NetworkID.Testnet]: {
