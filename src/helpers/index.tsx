@@ -8,7 +8,7 @@ import { SvgIcon } from "@material-ui/core";
 import { ReactComponent as OhmImg } from "../assets/tokens/token_OHM.svg";
 import { ReactComponent as SOhmImg } from "../assets/tokens/token_sOHM.svg";
 
-import { ohm_dai } from "./AllBonds";
+import { ohm_dai } from "./BondDefinitions";
 import { JsonRpcSigner, StaticJsonRpcProvider } from "@ethersproject/providers";
 import { IBaseAsyncThunk } from "src/slices/interfaces";
 import { PairContract, RedeemHelper } from "../typechain";
@@ -106,6 +106,11 @@ export function prettifySeconds(seconds: number, resolution?: string) {
   const mDisplay = m > 0 ? m + (m == 1 ? " min" : " mins") : "";
 
   let result = dDisplay + hDisplay + mDisplay;
+  if (resolution === "hr") {
+    result = dDisplay + hDisplay;
+    result = result.slice(0, result.length - 2);
+    return result;
+  }
   if (mDisplay === "") {
     result = result.slice(0, result.length - 2);
   }
