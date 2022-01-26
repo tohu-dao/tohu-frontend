@@ -17,7 +17,7 @@ const fbeets = new CustomBond({
   networkAddrs: {
     [NetworkID.Mainnet]: {
       bondAddress: "0xe2eA15E992455972Ae11De0a543C48DbeAb9E5Ce",
-      reserveAddress: "0x91fa20244Fb509e8289CA630E5db3E9166233FDc",
+      reserveAddress: "0xfcef8a994209d6916EB2C86cDD2AFD60Aa6F54b1",
     },
     [NetworkID.Testnet]: {
       bondAddress: "",

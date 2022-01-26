@@ -2,7 +2,10 @@ FROM node:16 as build
 
 WORKDIR /app
 COPY . .
+RUN git submodule update --init --recursive
 RUN yarn install --frozen-lockfile
+RUN yarn lingui:extract
+RUN yarn lingui:compile
 RUN yarn build
 
 FROM nginx
