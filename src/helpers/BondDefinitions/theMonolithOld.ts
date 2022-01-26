@@ -5,7 +5,7 @@ import { abi as EthBondContract } from "src/abi/bonds/EthContract.json";
 import customTreasuryBalance from "./customTreasuryBalance";
 
 const the_monolith_lp_old = new CustomBond({
-  name: "the_monolith_lp",
+  name: "the_monolith_lp_old",
   displayName: "The Monolith LP",
   bondToken: "the-monolith-lp",
   bondType: BondType.StableAsset,
