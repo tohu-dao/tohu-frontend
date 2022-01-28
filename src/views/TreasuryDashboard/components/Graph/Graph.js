@@ -83,6 +83,7 @@ export const MarketValueGraph = ({ isDashboard = false }) => {
         "treasuryMaiBalance",
         "treasuryWETHMarketValue",
         "treasuryGOhmMarketValue",
+        "treasuryfBeetsValue",
       ]}
       colors={theme.palette.chartColors}
       dataFormat="$"
@@ -404,31 +405,41 @@ export const DebtRatioGraph = () => {
     data &&
     data.map(entry => ({
       timestamp: entry.timestamp,
-      daiDebtRatio: entry.dai_debt_ratio / 1e10,
-      ethDebtRatio: entry.eth_debt_ratio / 1e10,
-      ohmDaiDebtRatio: entry.ohmdai_debt_ratio / 1e19,
-      monolithDebtRatio: entry.monolith_debt_ratio / 1e10,
-      gOhmDebtRatio: entry.gOhm_debt_ratio / 1e10,
+      daiDebtRatio: entry.dai_debt_ratio / 1e8,
+      ethDebtRatio: entry.eth_debt_ratio / 1e8,
+      ohmDaiDebtRatio: entry.ohmdai_debt_ratio / 1e17,
+      monolithDebtRatio: Math.max(entry.monolith_debt_ratio / 1e8 || 0, entry.monolithV2_debt_ratio / 1e8 || 0),
+      gOhmDebtRatio: entry.gOhm_debt_ratio / 1e8,
+      fBeetsDebtRatio: entry.fBeets_debt_ratio / 1e8,
     }));
 
   return (
     <ExodiaMultiLineChart
       deviation="2"
       data={debtRatios}
-      dataKey={["daiDebtRatio", "ethDebtRatio", "ohmDaiDebtRatio", "monolithDebtRatio", "gOhmDebtRatio"]}
+      dataKey={[
+        "daiDebtRatio",
+        "ethDebtRatio",
+        "ohmDaiDebtRatio",
+        "monolithDebtRatio",
+        "gOhmDebtRatio",
+        "fBeetsDebtRatio",
+      ]}
       colors={[
         theme.palette.chartColors[1],
         theme.palette.chartColors[3],
-        theme.palette.chartColors[5],
+        theme.palette.chartColors[6],
         theme.palette.chartColors[0],
         theme.palette.chartColors[4],
+        theme.palette.chartColors[5],
       ]}
       stroke={[
         theme.palette.chartColors[1],
         theme.palette.chartColors[3],
-        theme.palette.chartColors[5],
+        theme.palette.chartColors[6],
         theme.palette.chartColors[0],
         theme.palette.chartColors[4],
+        theme.palette.chartColors[5],
       ]}
       headerText="Debt Ratios"
       headerSubText={`Total ${
@@ -613,12 +624,14 @@ export const TreasuryBreakdownPie = () => {
   const maiValue = data && data[0].treasuryMaiBalance;
   const ftmValue = data && data[0].treasuryWETHMarketValue;
   const gOhmValue = data && data[0].treasuryGOhmMarketValue;
+  const fBeetsValue = data && data[0].treasuryfBeetsValue;
 
   const exodValuePrevious = data && data[1].treasuryMonolithExodValue + data[1].treasuryMonolithWsExodValue;
   const daiValuePrevious = data && data[1].treasuryDaiMarketValue;
   const maiValuePrevious = data && data[1].treasuryMaiBalance;
   const ftmValuePrevious = data && data[1].treasuryWETHMarketValue;
   const gOhmValuePrevious = data && data[1].treasuryGOhmMarketValue;
+  const fBeetsValuePrevious = data && data[1].treasuryfBeetsValue;
 
   const totalValue = data && data[0].treasuryMarketValue;
   const lastValue = data && data[1].treasuryMarketValue;
@@ -631,6 +644,7 @@ export const TreasuryBreakdownPie = () => {
     { value: Number(trim((maiValue / totalValue) * 100, 2)), name: "MAI" },
     { value: Number(trim((ftmValue / totalValue) * 100, 2)), name: "wFTM" },
     { value: Number(trim((gOhmValue / totalValue) * 100, 2)), name: "gOHM" },
+    { value: Number(trim((fBeetsValue / totalValue) * 100, 2)), name: "fBEETS" },
   ];
 
   return (
@@ -680,8 +694,15 @@ export const TreasuryBreakdownPie = () => {
       </Grid>
       <Grid xs={isVerySmallScreen ? 12 : 7} sm={7} md={7} lg={7} style={{ height: "50%" }}>
         <TreasuryTable
-          currentData={[exodValue, daiValue, maiValue, ftmValue, gOhmValue]}
-          previousData={[exodValuePrevious, daiValuePrevious, maiValuePrevious, ftmValuePrevious, gOhmValuePrevious]}
+          currentData={[exodValue, daiValue, maiValue, ftmValue, gOhmValue, fBeetsValue]}
+          previousData={[
+            exodValuePrevious,
+            daiValuePrevious,
+            maiValuePrevious,
+            ftmValuePrevious,
+            gOhmValuePrevious,
+            fBeetsValuePrevious,
+          ]}
           itemNames={tooltipItems.coin}
           colors={theme.palette.chartColors}
           totalValue={totalValue}
@@ -805,8 +826,8 @@ const TableGrid = styled.div`
   padding-left: 12px;
   grid-row-gap: 12px;
 
-  ${({ header }) => header && "padding-bottom: 12px;  margin-top: 42px;"}
-  ${({ header, isSmallScreen }) => header && isSmallScreen && "margin-top: 42px;"}
+  ${({ header }) => header && "padding-bottom: 12px;  margin-top: 32px;"}
+  ${({ header, isSmallScreen }) => header && isSmallScreen && "margin-top: 32px;"}
 `;
 
 const ColorMark = styled.div`
