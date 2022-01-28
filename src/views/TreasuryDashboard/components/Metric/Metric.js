@@ -100,7 +100,12 @@ export const CircSupply = ({ isDashboard = false }) => {
 };
 
 export const BackingPerOHM = ({ isDashboard = false }) => {
-  const backingPerOhm = useSelector(state => state.app.treasuryMarketValue / state.app.circSupply);
+  const { data } = useTreasuryMetrics({ refetchOnMount: false });
+  const circSupply = useSelector(state => state.app.circSupply);
+
+  const backing =
+    data && data[0].treasuryMarketValue - data[0].treasuryMonolithExodValue - data[0].treasuryMonolithWsExodValue;
+  const backingPerOhm = backing && circSupply && backing / circSupply;
   const Title = isDashboard ? Metric.SmallTitle : Metric.Title;
   const Value = isDashboard ? Metric.SmallValue : Metric.Value;
 

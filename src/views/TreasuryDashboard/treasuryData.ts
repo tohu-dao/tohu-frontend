@@ -35,6 +35,8 @@ query {
     treasuryMonolithWFtmBalance
     treasuryMonolithGOhmValue
     treasuryMonolithGOhmBalance
+    treasuryfBeetsBalance
+    treasuryfBeetsValue
     currentAPY
     runway10k
     runway20k
@@ -79,6 +81,8 @@ query {
     ohmdai_debt_ratio
     monolith_debt_ratio
     gOhm_debt_ratio
+    monolithV2_debt_ratio
+    fBeets_debt_ratio
     timestamp
   }
 }
@@ -214,7 +218,7 @@ export const bulletpoints = {
 
 export const tooltipItems = {
   tvl: [t`Total Value Deposited`],
-  coin: [t`EXOD`, t`DAI`, t`MAI`, t`wFTM`, t`gOHM`],
+  coin: [t`EXOD`, t`DAI`, t`MAI`, t`wFTM`, t`gOHM`, t`fBEETS`],
   rfv: [t`DAI`, t`MAI`],
   holder: [t`Exodians`],
   apy: [t`APY`],
@@ -230,6 +234,7 @@ export const tooltipItems = {
     t`EXOD-DAI spLP Debt Ratio`,
     t`The Monolith LP Debt Ratio`,
     t`gOHM Debt Ratio`,
+    t`fBEETS Debt Ratio`,
   ],
   indexAdjustedPrice: [t`Market Price`, t`Index Adjusted Price`],
   growthOfSupply: [t`Index Adjusted Supply`, t`Circulating Supply`],
@@ -243,7 +248,7 @@ export const tooltipInfoMessages = {
   pol: t`Protocol Owned Liquidity, is the amount of LP the treasury owns and controls. The more POL the better for the protocol and its users.`,
   holder: t`Holders, represents the total number of Exodians (sEXOD holders)`,
   staked: t`Staked supply is the percentage of circulating EXOD tokens which are currently staked.`,
-  backing: t`Backing is the dollar value of assets from the treasury backing a single EXOD.`,
+  backing: t`Backing is the dollar value of non EXOD assets from the treasury backing a single EXOD.`,
   supply: t`Supply (Circulating/Total) represents the circulating and total amount of EXOD in existence. The circulating supply includes all staked EXOD, wsEXOD and EXOD in liquidity pools while the total also includes EXOD in the DAO treasury.`,
   apy: t`Annual Percentage Yield, is the normalized representation of an interest rate, based on a compounding period over one year. Note that APYs provided are rather ballpark level indicators and not so much precise future results.`,
   runway: t`Runway, is the number of days sEXOD emissions can be sustained at a given rate. Lower APY = longer runway`,

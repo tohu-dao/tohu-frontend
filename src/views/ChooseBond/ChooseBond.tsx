@@ -50,7 +50,7 @@ function ChooseBond() {
 
   return (
     <div id="choose-bond-view">
-      <Paper className="ohm-card" style={{ padding: 0, border: "none" }}>
+      <Paper className="ohm-card" style={{ padding: 0, marginBottom: "1rem", border: "none" }}>
         <MigrationBanner />
       </Paper>
       <ClaimBonds />
