@@ -485,7 +485,7 @@ export const ExodiaPieChart = withChartCard(
     strokeWidth = 1.6,
   }) => {
     const isSmallScreen = useMediaQuery("(max-width: 550px)");
-    const isVerySmallScreen = useMediaQuery("(max-width: 400px)");
+    const isVerySmallScreen = useMediaQuery("(max-width: 450px)");
 
     return (
       <ResponsiveContainer minHeight={260} width="100%">
@@ -525,7 +525,7 @@ export const ExodiaPieChart = withChartCard(
 export const trimNumber = number => {
   if (Number(number) > 1000000) return `${(parseFloat(number) / 1000000).toFixed(1)}M`;
   else if (Number(number) > 1000) return `${(parseFloat(number) / 1000).toFixed(0)}k`;
-  return number;
+  return number ? number.toFixed(1) : "-";
 };
 
 const tickFormatter = (number, dataFormat) => {

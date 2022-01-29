@@ -617,7 +617,7 @@ export const DashboardPriceGraph = ({ isDashboard = false }) => {
 export const TreasuryBreakdownPie = () => {
   const theme = useTheme();
   const { data } = useTreasuryMetrics({ refetchOnMount: false });
-  const isVerySmallScreen = useMediaQuery("(max-width: 400px)");
+  const isVerySmallScreen = useMediaQuery("(max-width: 450px)");
 
   const exodValue = data && data[0].treasuryMonolithExodValue + data[0].treasuryMonolithWsExodValue;
   const daiValue = data && data[0].treasuryDaiMarketValue;
@@ -724,17 +724,17 @@ const TreasuryTable = ({ currentData, previousData, totalValue, lastValue, itemN
             <Trans>Asset</Trans>
           </Typography>
         </Cell>
-        <Cell>
+        <Cell center>
           <Typography variant="body1" color="textSecondary">
             <Trans>Value</Trans>
           </Typography>
         </Cell>
-        <Cell>
+        <Cell center>
           <Typography variant="body1" color="textSecondary">
             <Trans>%</Trans>
           </Typography>
         </Cell>
-        <Cell>
+        <Cell center>
           <Typography variant="body1" color="textSecondary">
             <Trans>Change</Trans>
           </Typography>
@@ -748,17 +748,17 @@ const TreasuryTable = ({ currentData, previousData, totalValue, lastValue, itemN
                 <ColorMark color={colors[index]} />
                 <Typography variant="body1">{name}</Typography>
               </Cell>
-              <Cell>
+              <Cell center>
                 <Typography variant="body1">
                   {isSmallScreen ? `$${trimNumber(currentData[index])}` : formatCurrency(currentData[index])}
                 </Typography>
               </Cell>
-              <Cell>
+              <Cell center>
                 <Typography variant="body1">
                   {trim((currentData[index] / totalValue) * 100, isSmallScreen ? 0 : 1)}%
                 </Typography>
               </Cell>
-              <Cell>
+              <Cell center>
                 <Typography variant="body1">
                   <Trend
                     value={currentData[index]}
@@ -827,7 +827,7 @@ const TableGrid = styled.div`
   grid-row-gap: 12px;
 
   ${({ header }) => header && "padding-bottom: 12px;  margin-top: 32px;"}
-  ${({ header, isSmallScreen }) => header && isSmallScreen && "margin-top: 32px;"}
+  ${({ header, isSmallScreen }) => header && isSmallScreen && "margin-top: 42px;"}
 `;
 
 const ColorMark = styled.div`
@@ -841,4 +841,5 @@ const ColorMark = styled.div`
 const Cell = styled.div`
   display: flex;
   align-items: center;
+  ${({ center }) => center && "justify-self: center;"}
 `;
