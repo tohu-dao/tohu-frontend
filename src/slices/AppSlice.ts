@@ -6,6 +6,7 @@ import { setAll, getTokenPrice, getMarketPrice, secondsUntilBlock, prettifySecon
 import apollo from "../lib/apolloClient";
 import { createSlice, createSelector, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "src/store";
+import { error } from "./MessagesSlice";
 import { IBaseAsyncThunk } from "./interfaces";
 import { OlympusStakingv2, SOhmv2 } from "../typechain";
 
@@ -24,59 +25,71 @@ interface IProtocolMetrics {
 
 export const loadAppDetails = createAsyncThunk(
   "app/loadAppDetails",
-  async ({ networkID, provider }: IBaseAsyncThunk, { dispatch }) => {
+  async ({ networkID, provider, attempts = 0 }: IBaseAsyncThunk, { dispatch }) => {
     if (!provider) {
       console.error("failed to connect to provider, please connect your wallet");
       return {};
     }
 
-    const stakingContract = new ethers.Contract(
-      addresses[networkID].STAKING_ADDRESS as string,
-      OlympusStakingv2ABI,
-      provider,
-    ) as OlympusStakingv2;
+    try {
+      const stakingContract = new ethers.Contract(
+        addresses[networkID].STAKING_ADDRESS as string,
+        OlympusStakingv2ABI,
+        provider,
+      ) as OlympusStakingv2;
 
-    const sohmMainContract = new ethers.Contract(
-      addresses[networkID].SOHM_ADDRESS as string,
-      sOHMv2,
-      provider,
-    ) as SOhmv2;
+      const sohmMainContract = new ethers.Contract(
+        addresses[networkID].SOHM_ADDRESS as string,
+        sOHMv2,
+        provider,
+      ) as SOhmv2;
 
-    const [currentBlock, epoch, circ, currentIndex] = await Promise.all([
-      provider.getBlockNumber(),
-      stakingContract.epoch(),
-      sohmMainContract.circulatingSupply(),
-      stakingContract.index(),
-    ]);
+      const [currentBlock, epoch, circ, currentIndex] = await Promise.all([
+        provider.getBlockNumber(),
+        stakingContract.epoch(),
+        sohmMainContract.circulatingSupply(),
+        stakingContract.index(),
+      ]);
 
-    const blockFifteenEpochsAgo = await provider.getBlock(currentBlock - EPOCH_INTERVAL * 15);
-    const blockRateSeconds =
-      (Date.now() / 1000 - blockFifteenEpochsAgo.timestamp) / (currentBlock - blockFifteenEpochsAgo.number);
+      const blockFifteenEpochsAgo = await provider.getBlock(currentBlock - EPOCH_INTERVAL * 15);
+      const blockRateSeconds =
+        (Date.now() / 1000 - blockFifteenEpochsAgo.timestamp) / (currentBlock - blockFifteenEpochsAgo.number);
 
-    // Calculating staking
-    const nRebasesFiveDays = (86400 * 5) / (blockRateSeconds * EPOCH_INTERVAL);
-    const nRebasesYear = (86400 * 365) / (blockRateSeconds * EPOCH_INTERVAL);
-    const stakingReward = epoch.distribute;
-    const stakingRebase = Number(stakingReward.toString()) / Number(circ.toString());
-    const fiveDayRate = Math.pow(1 + stakingRebase, nRebasesFiveDays) - 1;
-    const stakingAPY = Math.pow(1 + stakingRebase, nRebasesYear) - 1;
-    const endBlock = epoch.endBlock;
+      // Calculating staking
+      const nRebasesFiveDays = (86400 * 5) / (blockRateSeconds * EPOCH_INTERVAL);
+      const nRebasesYear = (86400 * 365) / (blockRateSeconds * EPOCH_INTERVAL);
+      const stakingReward = epoch.distribute;
+      const stakingRebase = Number(stakingReward.toString()) / Number(circ.toString());
+      const fiveDayRate = Math.pow(1 + stakingRebase, nRebasesFiveDays) - 1;
+      const stakingAPY = Math.pow(1 + stakingRebase, nRebasesYear) - 1;
+      const endBlock = epoch.endBlock;
 
-    console.log(`Fantom Block Rate: ${blockRateSeconds} seconds`);
-    return {
-      currentIndex: ethers.utils.formatUnits(currentIndex, "gwei"),
-      currentBlock,
-      fiveDayRate,
-      stakingAPY,
-      stakingRebase,
-      endBlock,
-      blockRateSeconds,
-    } as IAppData;
+      console.log(`Fantom Block Rate: ${blockRateSeconds} seconds`);
+      return {
+        currentIndex: ethers.utils.formatUnits(currentIndex, "gwei"),
+        currentBlock,
+        fiveDayRate,
+        stakingAPY,
+        stakingRebase,
+        endBlock,
+        blockRateSeconds,
+      } as IAppData;
+    } catch (e) {
+      if (attempts < 5) {
+        const newAttempts = attempts + 1;
+        dispatch(loadAppDetails({ networkID, provider, attempts: newAttempts }));
+      } else {
+        dispatch(error(`Failed to load app details. Please try refreshing the page.`));
+        throw e;
+      }
+    }
   },
 );
 
-export const loadGraphData = createAsyncThunk("app/loadGraphData", async () => {
-  const protocolMetricsQuery = `
+export const loadGraphData = createAsyncThunk(
+  "app/loadGraphData",
+  async ({ attempts = 0 }: { attempts?: number }, { dispatch }) => {
+    const protocolMetricsQuery = `
     query {
       _meta {
         block {
@@ -98,33 +111,43 @@ export const loadGraphData = createAsyncThunk("app/loadGraphData", async () => {
     }
   `;
 
-  const graphData = await apollo<{ protocolMetrics: IProtocolMetrics[] }>(protocolMetricsQuery);
+    try {
+      const graphData = await apollo<{ protocolMetrics: IProtocolMetrics[] }>(protocolMetricsQuery);
 
-  if (!graphData) {
-    console.error("Returned a null response when querying TheGraph");
-    return {};
-  }
+      if (!graphData) {
+        console.error("Returned a null response when querying TheGraph");
+        return {};
+      }
 
-  const stakingTVL = parseFloat(graphData.data.protocolMetrics[0].totalValueLocked);
-  // NOTE (appleseed): marketPrice from Graph was delayed, so get CoinGecko price
-  // NOTE (melondrone): this appears to work for us and is the same value as coingecko
-  const marketPrice = parseFloat(graphData.data.protocolMetrics[0].ohmPrice);
+      const stakingTVL = parseFloat(graphData.data.protocolMetrics[0].totalValueLocked);
+      // NOTE (appleseed): marketPrice from Graph was delayed, so get CoinGecko price
+      // NOTE (melondrone): this appears to work for us and is the same value as coingecko
+      const marketPrice = parseFloat(graphData.data.protocolMetrics[0].ohmPrice);
 
-  const marketCap = parseFloat(graphData.data.protocolMetrics[0].marketCap);
-  const circSupply = parseFloat(graphData.data.protocolMetrics[0].ohmCirculatingSupply);
-  const totalSupply = parseFloat(graphData.data.protocolMetrics[0].totalSupply);
-  const treasuryMarketValue = parseFloat(graphData.data.protocolMetrics[0].treasuryMarketValue);
-  // const currentBlock = parseFloat(graphData.data._meta.block.number);
-
-  return {
-    stakingTVL,
-    marketCap,
-    circSupply,
-    totalSupply,
-    treasuryMarketValue,
-    marketPrice,
-  } as IAppData;
-});
+      const marketCap = parseFloat(graphData.data.protocolMetrics[0].marketCap);
+      const circSupply = parseFloat(graphData.data.protocolMetrics[0].ohmCirculatingSupply);
+      const totalSupply = parseFloat(graphData.data.protocolMetrics[0].totalSupply);
+      const treasuryMarketValue = parseFloat(graphData.data.protocolMetrics[0].treasuryMarketValue);
+      // const currentBlock = parseFloat(graphData.data._meta.block.number);
+      return {
+        stakingTVL,
+        marketCap,
+        circSupply,
+        totalSupply,
+        treasuryMarketValue,
+        marketPrice,
+      } as IAppData;
+    } catch (e) {
+      if (attempts < 5) {
+        const newAttempts = attempts + 1;
+        dispatch(loadGraphData({ attempts: newAttempts }));
+      } else {
+        dispatch(error(`Failed to load app details. Please try refreshing the page.`));
+        throw e;
+      }
+    }
+  },
+);
 
 /**
  * checks if app.slice has marketPrice already
@@ -167,27 +190,37 @@ export const findOrLoadMarketPrice = createAsyncThunk(
 
 export const refreshRebaseTimer = createAsyncThunk(
   "app/loadRebaseTimer",
-  async ({ networkID, provider }: IBaseAsyncThunk, { dispatch, getState }) => {
-    const state: any = getState();
-    let blockRateSeconds = state.app.blockRateSeconds;
+  async ({ networkID, provider, attempts = 0 }: IBaseAsyncThunk, { dispatch, getState }) => {
+    try {
+      const state: any = getState();
+      let blockRateSeconds = state.app.blockRateSeconds;
 
-    const stakingContract = new ethers.Contract(
-      addresses[networkID].STAKING_ADDRESS as string,
-      OlympusStakingv2ABI,
-      provider,
-    ) as OlympusStakingv2;
+      const stakingContract = new ethers.Contract(
+        addresses[networkID].STAKING_ADDRESS as string,
+        OlympusStakingv2ABI,
+        provider,
+      ) as OlympusStakingv2;
 
-    const [currentBlock, epoch] = await Promise.all([provider.getBlockNumber(), stakingContract.epoch()]);
+      const [currentBlock, epoch] = await Promise.all([provider.getBlockNumber(), stakingContract.epoch()]);
 
-    if (!blockRateSeconds) {
-      const blockFifteenEpochsAgo = await provider.getBlock(currentBlock - EPOCH_INTERVAL * 15);
-      blockRateSeconds =
-        (Date.now() / 1000 - blockFifteenEpochsAgo.timestamp) / (currentBlock - blockFifteenEpochsAgo.number);
+      if (!blockRateSeconds) {
+        const blockFifteenEpochsAgo = await provider.getBlock(currentBlock - EPOCH_INTERVAL * 15);
+        blockRateSeconds =
+          (Date.now() / 1000 - blockFifteenEpochsAgo.timestamp) / (currentBlock - blockFifteenEpochsAgo.number);
+      }
+
+      const seconds = secondsUntilBlock(currentBlock, epoch.endBlock, blockRateSeconds);
+
+      return { secondsUntilRebase: seconds };
+    } catch (e) {
+      if (attempts < 5) {
+        const newAttempts = attempts + 1;
+        dispatch(loadGraphData({ attempts: newAttempts }));
+      } else {
+        dispatch(error(`Failed to load rebase timer. Please try refreshing the page.`));
+        throw e;
+      }
     }
-
-    const seconds = secondsUntilBlock(currentBlock, epoch.endBlock, blockRateSeconds);
-
-    return { secondsUntilRebase: seconds };
   },
 );
 
@@ -246,6 +279,7 @@ const appSlice = createSlice({
         state.loadingMarketPrice = true;
       })
       .addCase(loadGraphData.fulfilled, (state, action) => {
+        if (!action.payload) return;
         setAll(state, action.payload);
         state.loadingMarketPrice = false;
       })
@@ -257,6 +291,7 @@ const appSlice = createSlice({
         state.loading = true;
       })
       .addCase(loadAppDetails.fulfilled, (state, action) => {
+        if (!action.payload) return;
         setAll(state, action.payload);
         state.loading = false;
       })
@@ -276,6 +311,7 @@ const appSlice = createSlice({
         console.error(error.name, error.message, error.stack);
       })
       .addCase(refreshRebaseTimer.fulfilled, (state, action) => {
+        if (!action.payload) return;
         setAll(state, action.payload);
       });
   },

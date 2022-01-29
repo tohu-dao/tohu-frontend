@@ -9,6 +9,7 @@ export interface IJsonRPCError {
 export interface IBaseAsyncThunk {
   readonly networkID: NetworkID;
   readonly provider: StaticJsonRpcProvider | JsonRpcProvider;
+  readonly attempts?: number;
 }
 
 export interface IChangeApprovalAsyncThunk extends IBaseAsyncThunk {

@@ -3,7 +3,7 @@ import { addresses } from "../constants";
 import { abi as ierc20Abi } from "../abi/IERC20.json";
 import { abi as sOHMv2 } from "../abi/sOhmv2.json";
 import { abi as wsOHM } from "../abi/wsOHM.json";
-
+import { error } from "./MessagesSlice";
 import { setAll } from "../helpers";
 
 import { createAsyncThunk, createSelector, createSlice } from "@reduxjs/toolkit";
@@ -23,40 +23,54 @@ interface IUserBalances {
 
 export const getBalances = createAsyncThunk(
   "account/getBalances",
-  async ({ address, networkID, provider }: IBaseAddressAsyncThunk) => {
-    const ohmContract = new ethers.Contract(addresses[networkID].OHM_ADDRESS as string, ierc20Abi, provider) as IERC20;
-    const sohmContract = new ethers.Contract(
-      addresses[networkID].SOHM_ADDRESS as string,
-      ierc20Abi,
-      provider,
-    ) as IERC20;
-    const wsohmContract = new ethers.Contract(addresses[networkID].WSOHM_ADDRESS as string, wsOHM, provider) as WsOHM;
-
-    /*const poolTokenContract = new ethers.Contract(
-      addresses[networkID].PT_TOKEN_ADDRESS as string,
-      ierc20Abi,
-      provider,
+  async ({ address, networkID, provider, attempts = 0 }: IBaseAddressAsyncThunk, { dispatch }) => {
+    try {
+      const ohmContract = new ethers.Contract(
+        addresses[networkID].OHM_ADDRESS as string,
+        ierc20Abi,
+        provider,
       ) as IERC20;
-    const poolBalance = await poolTokenContract.balanceOf(address);
-    */
+      const sohmContract = new ethers.Contract(
+        addresses[networkID].SOHM_ADDRESS as string,
+        ierc20Abi,
+        provider,
+      ) as IERC20;
+      const wsohmContract = new ethers.Contract(addresses[networkID].WSOHM_ADDRESS as string, wsOHM, provider) as WsOHM;
 
-    const [ohm, sohm, wsohm] = await Promise.all([
-      ohmContract.balanceOf(address),
-      sohmContract.balanceOf(address),
-      wsohmContract.balanceOf(address),
-    ]);
-    // NOTE (appleseed): wsohmAsSohm is wsOHM given as a quantity of sOHM
-    const wsohmAsSohm = await wsohmContract.sOHMValue(wsohm);
+      /*const poolTokenContract = new ethers.Contract(
+        addresses[networkID].PT_TOKEN_ADDRESS as string,
+        ierc20Abi,
+        provider,
+        ) as IERC20;
+      const poolBalance = await poolTokenContract.balanceOf(address);
+      */
 
-    return {
-      balances: {
-        ohm: ethers.utils.formatUnits(ohm, "gwei"),
-        sohm: ethers.utils.formatUnits(sohm, "gwei"),
-        wsohm: ethers.utils.formatEther(wsohm),
-        wsohmAsSohm: ethers.utils.formatUnits(wsohmAsSohm, "gwei"),
-        pool: 0, //ethers.utils.formatUnits(poolBalance, "gwei"),
-      },
-    };
+      const [ohm, sohm, wsohm] = await Promise.all([
+        ohmContract.balanceOf(address),
+        sohmContract.balanceOf(address),
+        wsohmContract.balanceOf(address),
+      ]);
+      // NOTE (appleseed): wsohmAsSohm is wsOHM given as a quantity of sOHM
+      const wsohmAsSohm = await wsohmContract.sOHMValue(wsohm);
+
+      return {
+        balances: {
+          ohm: ethers.utils.formatUnits(ohm, "gwei"),
+          sohm: ethers.utils.formatUnits(sohm, "gwei"),
+          wsohm: ethers.utils.formatEther(wsohm),
+          wsohmAsSohm: ethers.utils.formatUnits(wsohmAsSohm, "gwei"),
+          pool: 0, //ethers.utils.formatUnits(poolBalance, "gwei"),
+        },
+      };
+    } catch (e) {
+      if (attempts < 5) {
+        const newAttempts = attempts + 1;
+        dispatch(loadAccountDetails({ networkID, provider, address, attempts: newAttempts }));
+      } else {
+        dispatch(error(`Failed to load your account balances. Please try refreshing the page.`));
+        throw e;
+      }
+    }
   },
 );
 
@@ -74,36 +88,50 @@ interface IUserAccountDetails {
 
 export const loadAccountDetails = createAsyncThunk(
   "account/loadAccountDetails",
-  async ({ networkID, provider, address }: IBaseAddressAsyncThunk, { dispatch }) => {
-    const ohmContract = new ethers.Contract(addresses[networkID].OHM_ADDRESS as string, ierc20Abi, provider) as IERC20;
-    const sohmContract = new ethers.Contract(addresses[networkID].SOHM_ADDRESS as string, sOHMv2, provider) as SOhmv2;
-    const wsohmContract = new ethers.Contract(addresses[networkID].WSOHM_ADDRESS as string, wsOHM, provider) as WsOHM;
+  async ({ networkID, provider, address, attempts = 0 }: IBaseAddressAsyncThunk, { dispatch }) => {
+    try {
+      const ohmContract = new ethers.Contract(
+        addresses[networkID].OHM_ADDRESS as string,
+        ierc20Abi,
+        provider,
+      ) as IERC20;
+      const sohmContract = new ethers.Contract(addresses[networkID].SOHM_ADDRESS as string, sOHMv2, provider) as SOhmv2;
+      const wsohmContract = new ethers.Contract(addresses[networkID].WSOHM_ADDRESS as string, wsOHM, provider) as WsOHM;
 
-    //const poolAllowance = await sohmContract.allowance(address, addresses[networkID].PT_PRIZE_POOL_ADDRESS);
+      //const poolAllowance = await sohmContract.allowance(address, addresses[networkID].PT_PRIZE_POOL_ADDRESS);
 
-    const [ohmStake, ohmUnstake, sohmWrap, ohmWrap, unwrapAllowance] = await Promise.all([
-      ohmContract.allowance(address, addresses[networkID].STAKING_HELPER_ADDRESS),
-      sohmContract.allowance(address, addresses[networkID].STAKING_ADDRESS),
-      sohmContract.allowance(address, addresses[networkID].WSOHM_ADDRESS),
-      ohmContract.allowance(address, addresses[networkID].WSOHM_ADDRESS),
-      wsohmContract.allowance(address, addresses[networkID].WSOHM_ADDRESS),
-    ]);
-    dispatch(getBalances({ address, networkID, provider }));
+      const [ohmStake, ohmUnstake, sohmWrap, ohmWrap, unwrapAllowance] = await Promise.all([
+        ohmContract.allowance(address, addresses[networkID].STAKING_HELPER_ADDRESS),
+        sohmContract.allowance(address, addresses[networkID].STAKING_ADDRESS),
+        sohmContract.allowance(address, addresses[networkID].WSOHM_ADDRESS),
+        ohmContract.allowance(address, addresses[networkID].WSOHM_ADDRESS),
+        wsohmContract.allowance(address, addresses[networkID].WSOHM_ADDRESS),
+      ]);
+      dispatch(getBalances({ address, networkID, provider }));
 
-    return {
-      staking: {
-        ohmStake: +ohmStake,
-        ohmUnstake: +ohmUnstake,
-      },
-      wrapping: {
-        sohmWrap: +sohmWrap,
-        ohmWrap: +ohmWrap,
-        ohmUnwrap: +unwrapAllowance,
-      },
-      pooling: {
-        sohmPool: +0,
-      },
-    };
+      return {
+        staking: {
+          ohmStake: +ohmStake,
+          ohmUnstake: +ohmUnstake,
+        },
+        wrapping: {
+          sohmWrap: +sohmWrap,
+          ohmWrap: +ohmWrap,
+          ohmUnwrap: +unwrapAllowance,
+        },
+        pooling: {
+          sohmPool: +0,
+        },
+      };
+    } catch (e) {
+      if (attempts < 5) {
+        const newAttempts = attempts + 1;
+        dispatch(loadAccountDetails({ networkID, provider, address, attempts: newAttempts }));
+      } else {
+        dispatch(error(`Failed to load your account allowances. Please try refreshing the page.`));
+        throw e;
+      }
+    }
   },
 );
 
@@ -115,7 +143,7 @@ export interface IUserBondDetails {
 }
 export const calculateUserBondDetails = createAsyncThunk(
   "account/calculateUserBondDetails",
-  async ({ address, bond, networkID, provider }: ICalcUserBondDetailsAsyncThunk) => {
+  async ({ address, bond, networkID, provider, attempts = 0 }: ICalcUserBondDetailsAsyncThunk, { dispatch }) => {
     if (!address) {
       return {
         bond: "",
@@ -130,42 +158,52 @@ export const calculateUserBondDetails = createAsyncThunk(
         pendingPayout: "",
       };
     }
-    // dispatch(fetchBondInProgress());
+    try {
+      // dispatch(fetchBondInProgress());
 
-    // Calculate bond details.
-    const bondContract = bond.getContractForBond(networkID, provider);
-    const reserveContract = bond.getContractForReserve(networkID, provider);
+      // Calculate bond details.
+      const bondContract = bond.getContractForBond(networkID, provider);
+      const reserveContract = bond.getContractForReserve(networkID, provider);
 
-    let pendingPayout, bondMaturationBlock, bondDetails;
-    let allowance,
-      balance = BigNumber.from(0);
+      let pendingPayout, bondMaturationBlock, bondDetails;
+      let allowance,
+        balance = BigNumber.from(0);
 
-    [bondDetails, pendingPayout, allowance, balance] = await Promise.all([
-      bondContract.bondInfo(address),
-      bondContract.pendingPayoutFor(address),
-      reserveContract.allowance(address, bond.getAddressForBond(networkID)),
-      reserveContract.balanceOf(address),
-    ]);
+      [bondDetails, pendingPayout, allowance, balance] = await Promise.all([
+        bondContract.bondInfo(address),
+        bondContract.pendingPayoutFor(address),
+        reserveContract.allowance(address, bond.getAddressForBond(networkID)),
+        reserveContract.balanceOf(address),
+      ]);
 
-    let interestDue: BigNumberish = Number(bondDetails.payout.toString()) / Math.pow(10, 9);
-    bondMaturationBlock = +bondDetails.vesting + +bondDetails.lastBlock;
+      let interestDue: BigNumberish = Number(bondDetails.payout.toString()) / Math.pow(10, 9);
+      bondMaturationBlock = +bondDetails.vesting + +bondDetails.lastBlock;
 
-    // formatEthers takes BigNumber => String
-    const balanceVal = ethers.utils.formatEther(balance);
+      // formatEthers takes BigNumber => String
+      const balanceVal = ethers.utils.formatEther(balance);
 
-    // balanceVal should NOT be converted to a number. it loses decimal precision
-    return {
-      bond: bond.name,
-      displayName: bond.displayName,
-      bondIconSvg: bond.bondIconSvg,
-      isLP: bond.isLP,
-      isMonolith: bond.isMonolith,
-      allowance: Number(allowance.toString()),
-      balance: balanceVal,
-      interestDue,
-      bondMaturationBlock,
-      pendingPayout: ethers.utils.formatUnits(pendingPayout, "gwei"),
-    };
+      // balanceVal should NOT be converted to a number. it loses decimal precision
+      return {
+        bond: bond.name,
+        displayName: bond.displayName,
+        bondIconSvg: bond.bondIconSvg,
+        isLP: bond.isLP,
+        isMonolith: bond.isMonolith,
+        allowance: Number(allowance.toString()),
+        balance: balanceVal,
+        interestDue,
+        bondMaturationBlock,
+        pendingPayout: ethers.utils.formatUnits(pendingPayout, "gwei"),
+      };
+    } catch (e) {
+      if (attempts < 5) {
+        const newAttempts = attempts + 1;
+        dispatch(calculateUserBondDetails({ address, bond, networkID, provider, attempts: newAttempts }));
+      } else {
+        dispatch(error(`Failed to load ${bond.name} details. Please try refreshing the page.`));
+        throw e;
+      }
+    }
   },
 );
 
@@ -212,6 +250,7 @@ const accountSlice = createSlice({
         state.loading = true;
       })
       .addCase(loadAccountDetails.fulfilled, (state, action) => {
+        if (!action.payload) return;
         setAll(state, action.payload);
         state.loading = false;
       })
@@ -223,6 +262,7 @@ const accountSlice = createSlice({
         state.loading = true;
       })
       .addCase(getBalances.fulfilled, (state, action) => {
+        if (!action.payload) return;
         setAll(state, action.payload);
         state.loading = false;
       })

@@ -81,105 +81,118 @@ export interface IBondDetails {
 }
 export const calcBondDetails = createAsyncThunk(
   "bonding/calcBondDetails",
-  async ({ bond, value, provider, networkID }: ICalcBondDetailsAsyncThunk, { dispatch }): Promise<IBondDetails> => {
-    if (!value || value === "") {
-      value = "0";
-    }
-    const amountInWei = ethers.utils.parseEther(value);
-    let purchaseDisabled = false;
+  async (
+    { bond, value, provider, networkID, attempts = 0 }: ICalcBondDetailsAsyncThunk,
+    { dispatch },
+  ): Promise<IBondDetails> => {
+    try {
+      if (!value || value === "") {
+        value = "0";
+      }
+      const amountInWei = ethers.utils.parseEther(value);
+      let purchaseDisabled = false;
 
-    let bondPrice = BigNumber.from(0),
-      bondDiscount = 0,
-      valuation = 0,
-      bondQuote: BigNumberish = BigNumber.from(0);
-    const bondContract = bond.getContractForBond(networkID, provider);
-    const bondCalcContract = getBondCalculator(networkID, provider);
-    let debtRatio: BigNumberish;
-    let marketPrice: number = 0;
+      let bondPrice = BigNumber.from(0),
+        bondDiscount = 0,
+        valuation = 0,
+        bondQuote: BigNumberish = BigNumber.from(0);
+      const bondContract = bond.getContractForBond(networkID, provider);
+      const bondCalcContract = getBondCalculator(networkID, provider);
+      let debtRatio: BigNumberish;
+      let marketPrice: number = 0;
 
-    const results = await Promise.all([
-      bondContract.terms(),
-      bondContract.maxPayout(),
-      // Could move purchased out into its own action to improve performance
-      bond.getTreasuryBalance(networkID, provider),
-      bondContract.standardizedDebtRatio(),
-      bondContract.bondPriceInUSD(),
-      dispatch(findOrLoadMarketPrice({ networkID, provider })).unwrap(),
-    ]);
-    const terms = results[0];
-    const maxBondPrice = results[1] || 0;
-    const purchased = results[2] || 0;
-    debtRatio = results[3] || BigNumber.from(0);
-    bondPrice = results[4] || BigNumber.from(0);
-    marketPrice = results[5]?.marketPrice;
+      const results = await Promise.all([
+        bondContract.terms(),
+        bondContract.maxPayout(),
+        // Could move purchased out into its own action to improve performance
+        bond.getTreasuryBalance(networkID, provider),
+        bondContract.standardizedDebtRatio(),
+        bondContract.bondPriceInUSD(),
+        dispatch(findOrLoadMarketPrice({ networkID, provider })).unwrap(),
+      ]);
+      const terms = results[0];
+      const maxBondPrice = results[1] || 0;
+      const purchased = results[2] || 0;
+      debtRatio = results[3] || BigNumber.from(0);
+      bondPrice = results[4] || BigNumber.from(0);
+      marketPrice = results[5]?.marketPrice;
 
-    if (isNaN(Number(bondPrice))) {
-      console.log("error getting bondPriceInUSD", bond.name, results[3]);
-    }
-    if (!marketPrice) {
-      console.error("Returned a null response from dispatch(findOrLoadMarketPrice)");
-    }
+      if (isNaN(Number(bondPrice))) {
+        console.log("error getting bondPriceInUSD", bond.name, results[3]);
+      }
+      if (!marketPrice) {
+        console.error("Returned a null response from dispatch(findOrLoadMarketPrice)");
+      }
 
-    bondDiscount = (marketPrice * Math.pow(10, 18) - Number(bondPrice.toString())) / Number(bondPrice.toString()); // 1 - bondPrice / (bondPrice * Math.pow(10, 9));
-    debtRatio = Number(debtRatio.toString()) / Math.pow(10, 9);
+      bondDiscount = (marketPrice * Math.pow(10, 18) - Number(bondPrice.toString())) / Number(bondPrice.toString()); // 1 - bondPrice / (bondPrice * Math.pow(10, 9));
+      debtRatio = Number(debtRatio.toString()) / Math.pow(10, 9);
 
-    if (Number(value) === 0) {
-      // if inputValue is 0 avoid the bondQuote calls
-      bondQuote = BigNumber.from(0);
-      purchaseDisabled = true;
-    } else if (bond.isLP) {
-      valuation = Number(
-        (await bondCalcContract.valuation(bond.getAddressForReserve(networkID), amountInWei)).toString(),
-      );
-      bondQuote = await bondContract.payoutFor(valuation);
-
-      if (!amountInWei.isZero() && Number(bondQuote.toString()) < 10000000) {
+      if (Number(value) === 0) {
+        // if inputValue is 0 avoid the bondQuote calls
         bondQuote = BigNumber.from(0);
-        const errorString = "Amount is too small!";
+        purchaseDisabled = true;
+      } else if (bond.isLP) {
+        valuation = Number(
+          (await bondCalcContract.valuation(bond.getAddressForReserve(networkID), amountInWei)).toString(),
+        );
+        bondQuote = await bondContract.payoutFor(valuation);
+
+        if (!amountInWei.isZero() && Number(bondQuote.toString()) < 10000000) {
+          bondQuote = BigNumber.from(0);
+          const errorString = "Amount is too small!";
+          purchaseDisabled = true;
+          dispatch(error(errorString));
+        } else {
+          bondQuote = Number(bondQuote.toString()) / Math.pow(10, 9);
+        }
+      } else {
+        // RFV = DAI
+        bondQuote = await bondContract.payoutFor(amountInWei);
+
+        if (!amountInWei.isZero() && Number(bondQuote.toString()) < 10000000000000000) {
+          bondQuote = BigNumber.from(0);
+          const errorString = "Amount is too small!";
+          purchaseDisabled = true;
+          dispatch(error(errorString));
+        } else {
+          bondQuote = Number(bondQuote.toString()) / Math.pow(10, 18);
+        }
+      }
+
+      // Display error if user tries to exceed maximum.
+      if (!!value && parseFloat(bondQuote.toString()) > Number(maxBondPrice.toString()) / Math.pow(10, 9)) {
+        const errorString =
+          "You're trying to bond more than the maximum payout available! The maximum bond payout is " +
+          (Number(maxBondPrice.toString()) / Math.pow(10, 9)).toFixed(2).toString() +
+          " " +
+          OHM_TICKER +
+          ".";
         purchaseDisabled = true;
         dispatch(error(errorString));
-      } else {
-        bondQuote = Number(bondQuote.toString()) / Math.pow(10, 9);
       }
-    } else {
-      // RFV = DAI
-      bondQuote = await bondContract.payoutFor(amountInWei);
 
-      if (!amountInWei.isZero() && Number(bondQuote.toString()) < 10000000000000000) {
-        bondQuote = BigNumber.from(0);
-        const errorString = "Amount is too small!";
-        purchaseDisabled = true;
-        dispatch(error(errorString));
+      console.log(bond.name, debtRatio);
+      return {
+        bond: bond.name,
+        bondDiscount,
+        debtRatio: Number(debtRatio.toString()),
+        bondQuote: Number(bondQuote.toString()),
+        purchased,
+        vestingTerm: Number(terms?.vestingTerm?.toString()),
+        maxBondPrice: Number(maxBondPrice.toString()) / Math.pow(10, 9),
+        bondPrice: Number(bondPrice.toString()) / Math.pow(10, 18),
+        marketPrice: marketPrice,
+        purchaseDisabled,
+      };
+    } catch (e) {
+      if (attempts < 5) {
+        const newAttempts = attempts + 1;
+        dispatch(calcBondDetails({ bond, value, provider, networkID, attempts: newAttempts }));
       } else {
-        bondQuote = Number(bondQuote.toString()) / Math.pow(10, 18);
+        dispatch(error(`Failed to load ${bond.name} details. Please try refreshing the page.`));
+        throw e;
       }
     }
-
-    // Display error if user tries to exceed maximum.
-    if (!!value && parseFloat(bondQuote.toString()) > Number(maxBondPrice.toString()) / Math.pow(10, 9)) {
-      const errorString =
-        "You're trying to bond more than the maximum payout available! The maximum bond payout is " +
-        (Number(maxBondPrice.toString()) / Math.pow(10, 9)).toFixed(2).toString() +
-        " " +
-        OHM_TICKER +
-        ".";
-      purchaseDisabled = true;
-      dispatch(error(errorString));
-    }
-
-    console.log(bond.name, debtRatio);
-    return {
-      bond: bond.name,
-      bondDiscount,
-      debtRatio: Number(debtRatio.toString()),
-      bondQuote: Number(bondQuote.toString()),
-      purchased,
-      vestingTerm: Number(terms?.vestingTerm?.toString()),
-      maxBondPrice: Number(maxBondPrice.toString()) / Math.pow(10, 9),
-      bondPrice: Number(bondPrice.toString()) / Math.pow(10, 18),
-      marketPrice: marketPrice,
-      purchaseDisabled,
-    };
   },
 );
 
@@ -380,6 +393,7 @@ const bondingSlice = createSlice({
         state.loading = true;
       })
       .addCase(calcBondDetails.fulfilled, (state, action) => {
+        if (!action.payload) return;
         setBondState(state, action.payload);
         state.loading = false;
       })
