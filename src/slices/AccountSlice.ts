@@ -1,5 +1,5 @@
 import { BigNumber, BigNumberish, ethers } from "ethers";
-import { addresses } from "../constants";
+import { addresses, MAX_RETRY_ATTEMPTS } from "../constants";
 import { abi as ierc20Abi } from "../abi/IERC20.json";
 import { abi as sOHMv2 } from "../abi/sOhmv2.json";
 import { abi as wsOHM } from "../abi/wsOHM.json";
@@ -63,7 +63,7 @@ export const getBalances = createAsyncThunk(
         },
       };
     } catch (e) {
-      if (attempts < 5) {
+      if (attempts < MAX_RETRY_ATTEMPTS) {
         const newAttempts = attempts + 1;
         dispatch(loadAccountDetails({ networkID, provider, address, attempts: newAttempts }));
       } else {
@@ -124,7 +124,7 @@ export const loadAccountDetails = createAsyncThunk(
         },
       };
     } catch (e) {
-      if (attempts < 5) {
+      if (attempts < MAX_RETRY_ATTEMPTS) {
         const newAttempts = attempts + 1;
         dispatch(loadAccountDetails({ networkID, provider, address, attempts: newAttempts }));
       } else {
@@ -196,7 +196,7 @@ export const calculateUserBondDetails = createAsyncThunk(
         pendingPayout: ethers.utils.formatUnits(pendingPayout, "gwei"),
       };
     } catch (e) {
-      if (attempts < 5) {
+      if (attempts < MAX_RETRY_ATTEMPTS) {
         const newAttempts = attempts + 1;
         dispatch(calculateUserBondDetails({ address, bond, networkID, provider, attempts: newAttempts }));
       } else {

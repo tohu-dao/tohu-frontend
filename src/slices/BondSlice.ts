@@ -1,5 +1,6 @@
 import { ethers, BigNumber, BigNumberish } from "ethers";
 import { contractForRedeemHelper } from "../helpers";
+import { MAX_RETRY_ATTEMPTS } from "../constants";
 import { getBalances, calculateUserBondDetails } from "./AccountSlice";
 import { pollUpdateState, pollManyUpdateState, PollUpdateStateParams } from "./PollStateUpdateSlice";
 import { findOrLoadMarketPrice } from "./AppSlice";
@@ -185,7 +186,7 @@ export const calcBondDetails = createAsyncThunk(
         purchaseDisabled,
       };
     } catch (e) {
-      if (attempts < 5) {
+      if (attempts < MAX_RETRY_ATTEMPTS) {
         const newAttempts = attempts + 1;
         dispatch(calcBondDetails({ bond, value, provider, networkID, attempts: newAttempts }));
       } else {

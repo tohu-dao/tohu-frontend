@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { addresses, EPOCH_INTERVAL } from "../constants";
+import { addresses, EPOCH_INTERVAL, MAX_RETRY_ATTEMPTS } from "../constants";
 import { abi as OlympusStakingv2ABI } from "../abi/OlympusStakingv2.json";
 import { abi as sOHMv2 } from "../abi/sOhmv2.json";
 import { setAll, getTokenPrice, getMarketPrice, secondsUntilBlock, prettifySeconds } from "../helpers";
@@ -75,7 +75,7 @@ export const loadAppDetails = createAsyncThunk(
         blockRateSeconds,
       } as IAppData;
     } catch (e) {
-      if (attempts < 5) {
+      if (attempts < MAX_RETRY_ATTEMPTS) {
         const newAttempts = attempts + 1;
         dispatch(loadAppDetails({ networkID, provider, attempts: newAttempts }));
       } else {
@@ -138,7 +138,7 @@ export const loadGraphData = createAsyncThunk(
         marketPrice,
       } as IAppData;
     } catch (e) {
-      if (attempts < 5) {
+      if (attempts < MAX_RETRY_ATTEMPTS) {
         const newAttempts = attempts + 1;
         dispatch(loadGraphData({ attempts: newAttempts }));
       } else {
@@ -213,7 +213,7 @@ export const refreshRebaseTimer = createAsyncThunk(
 
       return { secondsUntilRebase: seconds };
     } catch (e) {
-      if (attempts < 5) {
+      if (attempts < MAX_RETRY_ATTEMPTS) {
         const newAttempts = attempts + 1;
         dispatch(loadGraphData({ attempts: newAttempts }));
       } else {
