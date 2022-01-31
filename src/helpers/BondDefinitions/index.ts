@@ -1,4 +1,5 @@
 export { default as dai } from "./dai";
+export { default as wftm_old } from "./wftmOld";
 export { default as wftm } from "./wftm";
 export { default as ohm_dai } from "./ohmDai";
 export { default as the_monolith_lp_old } from "./theMonolithOld";

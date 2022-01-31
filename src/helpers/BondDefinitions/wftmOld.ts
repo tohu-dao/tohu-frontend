@@ -4,8 +4,8 @@ import { abi as EthBondContract } from "src/abi/bonds/EthContract.json";
 import { abi as ierc20Abi } from "src/abi/IERC20.json";
 import customTreasuryBalance from "./customTreasuryBalance";
 
-const wftm = new CustomBond({
-  name: "wftm",
+const wftmOld = new CustomBond({
+  name: "old_wftm",
   displayName: "wFTM",
   lpUrl: "",
   bondType: BondType.StableAsset,
@@ -16,7 +16,7 @@ const wftm = new CustomBond({
   reserveContract: ierc20Abi, // The Standard ierc20Abi since they're normal tokens
   networkAddrs: {
     [NetworkID.Mainnet]: {
-      bondAddress: "0x39086c3e5979d6f0ab0a54e3135d6e3edd53c395",
+      bondAddress: "0xd7cbA20A464C10FB03Bbc265D962ADa8e29af118",
       reserveAddress: "0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83",
     },
     [NetworkID.Testnet]: {
@@ -27,4 +27,4 @@ const wftm = new CustomBond({
   customTreasuryBalanceFunc: customTreasuryBalance,
 });
 
-export default wftm;
+export default wftmOld;
