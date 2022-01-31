@@ -279,7 +279,7 @@ const InputContainer = styled(Container)`
   .help-text {
     margin-right: 12px;
   }
-  @media (max-width: 450px) {
+  @media (max-width: 500px) {
     flex-direction: column;
 
     button {
