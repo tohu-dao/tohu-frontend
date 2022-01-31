@@ -148,7 +148,7 @@ const Container = styled.div`
 `;
 
 const InputContainer = styled(Container)`
-  @media (max-width: 450px) {
+  @media (max-width: 500px) {
     flex-direction: column;
 
     button {

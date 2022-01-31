@@ -35,7 +35,7 @@ import MigrationMessage from "src/components/MigrationMessage";
 const Dashboard = memo(() => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery("(max-width: 650px)");
-  const isVerySmallScreen = useMediaQuery("(max-width: 400px)");
+  const isVerySmallScreen = useMediaQuery("(max-width: 450px)");
   // Use marketPrice as indicator of loading.
   const isAppLoading = useSelector(state => !state.app?.marketPrice ?? true);
   const marketPrice = useSelector(state => {
@@ -125,7 +125,7 @@ const Dashboard = memo(() => {
             <Grid item lg={6} md={12} sm={12} xs={12}>
               <Paper
                 className="ohm-card"
-                style={{ paddingBottom: "5px", maxHeight: "440px", height: isVerySmallScreen ? "440px" : "auto" }}
+                style={{ paddingBottom: "5px", maxHeight: "450px", height: isVerySmallScreen ? "450px" : "auto" }}
               >
                 <TreasuryBreakdownPie />
               </Paper>

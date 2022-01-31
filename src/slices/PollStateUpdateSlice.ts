@@ -33,7 +33,7 @@ export const pollUpdateState: any = createAsyncThunk(
         dispatch(info("Transaction successful! Please wait while we fetch your updated balances."));
       }
 
-      if (attempts < 10) {
+      if (attempts < MAX_RETRY_ATTEMPTS) {
         await new Promise(resolve => setTimeout(resolve, 3000));
         dispatch(pollUpdateState({ field, stateAccessor, thunkToCall, attempts: attempts + 1 }));
       } else {
