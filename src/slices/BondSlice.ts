@@ -200,61 +200,68 @@ export const calcBondDetails = createAsyncThunk(
 export const calcAbsorptionBondDetails = createAsyncThunk(
   "bonding/calcAbsorptionBondDetails",
   async (
-    { bond, value, provider, networkID }: ICalcBondDetailsAsyncThunk,
+    { bond, value, provider, networkID, attempts = 0 }: ICalcBondDetailsAsyncThunk,
     { dispatch },
   ): Promise<Partial<IBondDetails>> => {
     if (!value || value === "") {
       value = "0";
     }
-    const amountInWei = ethers.utils.parseEther(value);
-    let purchaseDisabled = false;
+    try {
+      const amountInWei = ethers.utils.parseEther(value);
+      let purchaseDisabled = false;
 
-    let bondPrice = BigNumber.from(0);
-    let bondQuote: BigNumberish = BigNumber.from(0);
-    let discount = 0;
-    const bondContract = bond.getContractForAbsorptionBond(networkID, provider);
-    let marketPrice: number = 0;
+      let bondPrice = BigNumber.from(0);
+      let bondQuote: BigNumberish = BigNumber.from(0);
+      let discount = 0;
+      const bondContract = bond.getContractForAbsorptionBond(networkID, provider);
+      let marketPrice: number = 0;
 
-    const results = await Promise.all([
-      bond.getTreasuryBalance(networkID, provider),
-      bondContract.bondPrice(),
-      bondContract.endsAt(),
-      bondContract.vestingTerm(),
-      bondContract.bondedAmount(),
-      dispatch(findOrLoadMarketPrice({ networkID, provider })).unwrap(),
-    ]);
+      const results = await Promise.all([
+        bond.getTreasuryBalance(networkID, provider),
+        bondContract.bondPrice(),
+        bondContract.endsAt(),
+        bondContract.vestingTerm(),
+        dispatch(findOrLoadMarketPrice({ networkID, provider })).unwrap(),
+      ]);
 
-    const purchased = results[0] || 0;
-    bondPrice = results[1] || BigNumber.from(0);
-    const validUntil = results[2];
-    const vestingTerm = results[3];
-    const bondedAmount = results[4];
-    marketPrice = results[5]?.wsExodPrice;
+      const purchased = results[0] || 0;
+      bondPrice = results[1] || BigNumber.from(0);
+      const validUntil = results[2];
+      const vestingTerm = results[3];
+      marketPrice = results[4]?.wsExodPrice;
 
-    if (!marketPrice) {
-      console.error("Returned a null response from dispatch(findOrLoadMarketPrice)");
+      if (!marketPrice) {
+        console.error("Returned a null response from dispatch(findOrLoadMarketPrice)");
+      }
+
+      if (Number(value) === 0) {
+        // if inputValue is 0 avoid the bondQuote calls
+        bondQuote = BigNumber.from(0);
+        purchaseDisabled = true;
+      } else {
+        bondQuote = await bondContract.payoutFor(amountInWei);
+        bondQuote = Number(bondQuote.toString()) / Math.pow(10, 18);
+      }
+
+      return {
+        bond: bond.name,
+        bondQuote: Number(bondQuote.toString()),
+        purchased,
+        validUntil: Number(validUntil),
+        vestingTerm: Number(vestingTerm?.toString()),
+        marketPrice: marketPrice,
+        bondPrice: Number(bondPrice.toString()) / Math.pow(10, 9),
+        purchaseDisabled,
+      };
+    } catch (e) {
+      if (attempts < MAX_RETRY_ATTEMPTS) {
+        const newAttempts = attempts + 1;
+        dispatch(calcAbsorptionBondDetails({ bond, value, provider, networkID, attempts: newAttempts }));
+      } else {
+        dispatch(error(`Failed to load ${bond.name} details. Please try refreshing the page.`));
+        throw e;
+      }
     }
-
-    if (Number(value) === 0) {
-      // if inputValue is 0 avoid the bondQuote calls
-      bondQuote = BigNumber.from(0);
-      purchaseDisabled = true;
-    } else {
-      bondQuote = await bondContract.payoutFor(amountInWei);
-      bondQuote = Number(bondQuote.toString()) / Math.pow(10, 18);
-    }
-
-    return {
-      bond: bond.name,
-      bondQuote: Number(bondQuote.toString()),
-      purchased,
-      bondedAmount,
-      validUntil: Number(validUntil),
-      vestingTerm: Number(vestingTerm?.toString()),
-      marketPrice: marketPrice,
-      bondPrice: Number(bondPrice.toString()) / Math.pow(10, 9),
-      purchaseDisabled,
-    };
   },
 );
 
