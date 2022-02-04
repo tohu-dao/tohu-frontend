@@ -4,7 +4,7 @@ import { ethers } from "ethers";
 import { abi as ierc20Abi } from "src/abi/IERC20.json";
 import { getTokenPrice } from "src/helpers";
 import { getBondCalculator } from "src/helpers/BondCalculator";
-import { EthContract, PairContract } from "src/typechain";
+import { EthContract, PairContract, AbsorptionBondContract } from "src/typechain";
 import { addresses } from "src/constants";
 import React from "react";
 
@@ -42,6 +42,7 @@ interface BondOpts {
   networkAddrs: NetworkAddresses; // Mapping of network --> Addresses
   bondToken: string; // Unused, but native token to buy the bond.
   isMonolith?: boolean;
+  decimals?: string;
 }
 
 // Technically only exporting for the interface
@@ -55,10 +56,12 @@ export abstract class Bond {
   readonly bondContractABI: ethers.ContractInterface; // Bond ABI
   readonly networkAddrs: NetworkAddresses;
   readonly bondToken: string;
+  readonly decimals: string;
 
   // The following two fields will differ on how they are set depending on bond type
   abstract isLP: Boolean;
   abstract isMonolith?: boolean;
+  abstract isAbsorption?: boolean;
   abstract reserveContract: ethers.ContractInterface; // Token ABI
   abstract displayUnits: string;
 
@@ -74,6 +77,7 @@ export abstract class Bond {
     this.bondContractABI = bondOpts.bondContractABI;
     this.networkAddrs = bondOpts.networkAddrs;
     this.bondToken = bondOpts.bondToken;
+    this.decimals = bondOpts.decimals || "ether";
   }
 
   /**
@@ -91,6 +95,11 @@ export abstract class Bond {
   getContractForBond(networkID: NetworkID, provider: StaticJsonRpcProvider | JsonRpcSigner) {
     const bondAddress = this.getAddressForBond(networkID);
     return new ethers.Contract(bondAddress, this.bondContractABI, provider) as EthContract;
+  }
+
+  getContractForAbsorptionBond(networkID: NetworkID, provider: StaticJsonRpcProvider | JsonRpcSigner) {
+    const bondAddress = this.getAddressForBond(networkID);
+    return new ethers.Contract(bondAddress, this.bondContractABI, provider) as AbsorptionBondContract;
   }
 
   getAddressForReserve(networkID: NetworkID) {
@@ -178,6 +187,7 @@ export interface CustomBondOpts extends BondOpts {
   reserveContract: ethers.ContractInterface;
   bondType: number;
   lpUrl?: string;
+  isAbsorption?: boolean;
   customTreasuryBalanceFunc: (
     this: CustomBond,
     networkID: NetworkID,
@@ -193,6 +203,7 @@ export class CustomBond extends Bond {
   readonly displayUnits: string;
   readonly lpUrl?: string;
   readonly isMonolith: boolean;
+  readonly isAbsorption?: boolean;
 
   constructor(customBondOpts: CustomBondOpts) {
     super(customBondOpts.bondType, customBondOpts);
@@ -203,6 +214,7 @@ export class CustomBond extends Bond {
       this.isLP = false;
     }
     this.lpUrl = customBondOpts.lpUrl;
+    this.isAbsorption = customBondOpts.isAbsorption;
     this.isMonolith = customBondOpts.isMonolith || false;
     // For stable bonds the display units are the same as the actual token
     this.displayUnits = customBondOpts.displayName;

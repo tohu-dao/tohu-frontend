@@ -1,5 +1,6 @@
 import BondLogo from "../../components/BondLogo";
 import { DisplayBondPrice, DisplayBondDiscount } from "../Bond/Bond";
+import { trim } from "../../helpers";
 import { Box, Button, Link, Paper, Typography, TableRow, TableCell, SvgIcon, Slide } from "@material-ui/core";
 import { ReactComponent as ArrowUp } from "../../assets/icons/arrow-up.svg";
 import { NavLink } from "react-router-dom";
@@ -49,20 +50,22 @@ export function BondDataCard({ bond, upcoming }) {
             </>
           </Typography>
         </div>
-        <div className="data-row">
-          <Typography>
-            <Trans>ROI</Trans>
-          </Typography>
-          <Typography>
-            {isBondLoading ? (
-              <Skeleton width="50px" />
-            ) : upcoming ? (
-              "-"
-            ) : (
-              <DisplayBondDiscount key={bond.name} bond={bond} />
-            )}
-          </Typography>
-        </div>
+        {!bond.isAbsorption && (
+          <div className="data-row">
+            <Typography>
+              <Trans>ROI</Trans>
+            </Typography>
+            <Typography>
+              {isBondLoading ? (
+                <Skeleton width="50px" />
+              ) : upcoming ? (
+                "-"
+              ) : (
+                <DisplayBondDiscount key={bond.name} bond={bond} />
+              )}
+            </Typography>
+          </div>
+        )}
 
         <div className="data-row">
           <Typography>
@@ -73,6 +76,10 @@ export function BondDataCard({ bond, upcoming }) {
               <Skeleton width="80px" />
             ) : upcoming ? (
               "-"
+            ) : bond.isAbsorption ? (
+              <>
+                {trim(bond.purchased, 2)} {bond.displayName}
+              </>
             ) : (
               new Intl.NumberFormat("en-US", {
                 style: "currency",
@@ -88,7 +95,7 @@ export function BondDataCard({ bond, upcoming }) {
             <Typography variant="h5">{t`Bond ${bond.displayName}`}</Typography>
           </Button>
         ) : (
-          <Link component={NavLink} to={`/bonds/${bond.name}`}>
+          <Link component={NavLink} to={`/${bond.isAbsorption ? "absorption" : "bonds"}/${bond.name}`}>
             <Button variant="outlined" color="primary" fullWidth disabled={!bond.isAvailable[chainID]}>
               <Typography variant="h5">
                 {!bond.isAvailable[chainID] ? t`Sold Out` : t`Bond ${bond.displayName}`}
@@ -136,21 +143,27 @@ export function BondTableData({ bond, upcoming }) {
           </>
         </Typography>
       </TableCell>
-      <TableCell align="left">
-        {" "}
-        {isBondLoading ? (
-          <Skeleton width="50px" />
-        ) : upcoming ? (
-          "-"
-        ) : (
-          <DisplayBondDiscount key={bond.name} bond={bond} upcoming />
-        )}
-      </TableCell>
+      {!bond.isAbsorption && (
+        <TableCell align="left">
+          {" "}
+          {isBondLoading ? (
+            <Skeleton width="50px" />
+          ) : upcoming ? (
+            "-"
+          ) : (
+            <DisplayBondDiscount key={bond.name} bond={bond} upcoming />
+          )}
+        </TableCell>
+      )}
       <TableCell align="right">
         {isBondLoading ? (
           <Skeleton />
         ) : upcoming ? (
           "-"
+        ) : bond.isAbsorption ? (
+          <>
+            {trim(bond.purchased, 2)} {bond.displayName}
+          </>
         ) : (
           new Intl.NumberFormat("en-US", {
             style: "currency",
@@ -166,7 +179,7 @@ export function BondTableData({ bond, upcoming }) {
             <Typography variant="h6">{t`do_bond`}</Typography>
           </Button>
         ) : (
-          <Link component={NavLink} to={`/bonds/${bond.name}`}>
+          <Link component={NavLink} to={`/${bond.isAbsorption ? "absorption" : "bonds"}/${bond.name}`}>
             <Button variant="outlined" color="primary" disabled={!bond.isAvailable[chainID]}>
               <Typography variant="h6">{!bond.isAvailable[chainID] ? t`Sold Out` : t`do_bond`}</Typography>
             </Button>

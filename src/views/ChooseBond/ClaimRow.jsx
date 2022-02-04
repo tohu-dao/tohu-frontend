@@ -16,7 +16,8 @@ import { TxnButtonTextGeneralPending } from "src/components/TxnButtonText";
 export function ClaimBondTableData({ userBond, pendingClaim }) {
   const dispatch = useDispatch();
   const { address, chainID, provider } = useWeb3Context();
-  const { bonds, expiredBonds } = useBonds(chainID);
+  const { bonds, expiredBonds, absorptionBonds } = useBonds(chainID);
+  const allBonds = [...bonds, ...expiredBonds, ...absorptionBonds];
 
   const bond = userBond[1];
   const bondName = bond.bond;
@@ -41,7 +42,7 @@ export function ClaimBondTableData({ userBond, pendingClaim }) {
 
   async function onRedeem({ autostake }) {
     // TODO (appleseed-expiredBonds): there may be a smarter way to refactor this
-    let currentBond = [...bonds, ...expiredBonds].find(bnd => bnd.name === bondName);
+    let currentBond = allBonds.find(bnd => bnd.name === bondName);
     await dispatch(redeemBond({ address, bond: currentBond, networkID: chainID, provider, autostake }));
   }
 
@@ -82,10 +83,11 @@ export function ClaimBondTableData({ userBond, pendingClaim }) {
   );
 }
 
-export function ClaimBondCardData({ userBond, pendingClaim }) {
+export function ClaimBondCardData({ userBond, pendingClaim, isAbsorption }) {
   const dispatch = useDispatch();
   const { address, chainID, provider } = useWeb3Context();
-  const { bonds, expiredBonds } = useBonds(chainID);
+  const { bonds, expiredBonds, absorptionBonds } = useBonds(chainID);
+  const allBonds = [...bonds, ...expiredBonds, ...absorptionBonds];
 
   const bond = userBond[1];
   const bondName = bond.bond;
@@ -108,7 +110,7 @@ export function ClaimBondCardData({ userBond, pendingClaim }) {
 
   async function onRedeem({ autostake }) {
     // TODO (appleseed-expiredBonds): there may be a smarter way to refactor this
-    let currentBond = [...bonds, ...expiredBonds].find(bnd => bnd.name === bondName);
+    let currentBond = allBonds.find(bnd => bnd.name === bondName);
     await dispatch(redeemBond({ address, bond: currentBond, networkID: chainID, provider, autostake }));
   }
 
@@ -150,20 +152,22 @@ export function ClaimBondCardData({ userBond, pendingClaim }) {
             />
           </Typography>
         </Button>
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={() => onRedeem({ autostake: true })}
-          disabled={pendingClaim()}
-        >
-          <Typography variant="h5">
-            <TxnButtonTextGeneralPending
-              pendingTransactions={pendingTransactions}
-              type={"redeem_bond_" + bondName + "_autostake"}
-              defaultText={<Trans>Claim and Stake</Trans>}
-            />
-          </Typography>
-        </Button>
+        {!isAbsorption && (
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => onRedeem({ autostake: true })}
+            disabled={pendingClaim()}
+          >
+            <Typography variant="h5">
+              <TxnButtonTextGeneralPending
+                pendingTransactions={pendingTransactions}
+                type={"redeem_bond_" + bondName + "_autostake"}
+                defaultText={<Trans>Claim and Stake</Trans>}
+              />
+            </Typography>
+          </Button>
+        )}
       </Box>
     </Box>
   );

@@ -167,6 +167,7 @@ export const findOrLoadMarketPrice = createAsyncThunk(
   async ({ networkID, provider }: IBaseAsyncThunk, { dispatch, getState }) => {
     const state: any = getState();
     let marketPrice;
+    let index;
     // check if we already have loaded market price
     if (state.app.loadingMarketPrice === false && state.app.marketPrice) {
       // go get marketPrice from app.state
@@ -184,7 +185,25 @@ export const findOrLoadMarketPrice = createAsyncThunk(
         return;
       }
     }
-    return { marketPrice };
+
+    if (state.app.index && state.app.index > 1) {
+      index = state.app.index;
+    } else {
+      const stakingContract = new ethers.Contract(
+        addresses[networkID].STAKING_ADDRESS as string,
+        OlympusStakingv2ABI,
+        provider,
+      ) as OlympusStakingv2;
+      try {
+        index = await stakingContract.index();
+      } catch (e) {
+        // handle error here
+        console.error("Returned a null response from stakingContract.index()");
+        return;
+      }
+      index = ethers.utils.formatUnits(index, "gwei");
+    }
+    return { marketPrice, wsExodPrice: marketPrice * index };
   },
 );
 

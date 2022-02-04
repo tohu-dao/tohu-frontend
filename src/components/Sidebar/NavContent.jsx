@@ -20,6 +20,7 @@ import { Skeleton } from "@material-ui/lab";
 import ShowChartIcon from "@material-ui/icons/ShowChart";
 import StarIcon from "@material-ui/icons/Stars";
 import HomeIcon from "@material-ui/icons/Home";
+import CallMerge from "@material-ui/icons/CallMerge";
 import Tooltip from "@material-ui/core/Tooltip";
 import "./sidebar.scss";
 
@@ -48,6 +49,9 @@ function NavContent() {
       return true;
     }
     if ((currentPath.indexOf("bonds") >= 0 || currentPath.indexOf("choose_bond") >= 0) && page === "bonds") {
+      return true;
+    }
+    if (currentPath.indexOf("absorption") >= 0 && page === "absorption") {
       return true;
     }
     return false;
@@ -192,6 +196,21 @@ function NavContent() {
                   ))}
                 </div>
               </div>
+
+              <Link
+                component={NavLink}
+                id="bond-nav"
+                to="/absorption"
+                isActive={(match, location) => {
+                  return checkPage(match, location, "absorption");
+                }}
+                className={`button-dapp-menu ${isActive ? "active" : ""}`}
+              >
+                <Typography variant="h6">
+                  <SvgIcon color="primary" component={CallMerge} />
+                  <Trans>Absorption</Trans>
+                </Typography>
+              </Link>
 
               <Link
                 component={NavLink}

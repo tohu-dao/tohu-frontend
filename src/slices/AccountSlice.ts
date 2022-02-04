@@ -158,6 +158,7 @@ export const calculateUserBondDetails = createAsyncThunk(
         pendingPayout: "",
       };
     }
+
     try {
       // dispatch(fetchBondInProgress());
 
@@ -180,7 +181,7 @@ export const calculateUserBondDetails = createAsyncThunk(
       bondMaturationBlock = +bondDetails.vesting + +bondDetails.lastBlock;
 
       // formatEthers takes BigNumber => String
-      const balanceVal = ethers.utils.formatEther(balance);
+      const balanceVal = ethers.utils.formatUnits(balance, bond.decimals);
 
       // balanceVal should NOT be converted to a number. it loses decimal precision
       return {
@@ -188,6 +189,7 @@ export const calculateUserBondDetails = createAsyncThunk(
         displayName: bond.displayName,
         bondIconSvg: bond.bondIconSvg,
         isLP: bond.isLP,
+        isAbsorption: bond.isAbsorption,
         isMonolith: bond.isMonolith,
         allowance: Number(allowance.toString()),
         balance: balanceVal,

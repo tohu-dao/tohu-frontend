@@ -125,6 +125,14 @@ export const DisplayBondPrice = ({ bond }: { bond: IAllBondData }): ReactElement
     return <Fragment>--</Fragment>;
   }
 
+  if (bond.isAbsorption) {
+    return (
+      <>
+        {trim(bond.bondPrice, 2)} {bond.displayName}
+      </>
+    );
+  }
+
   return (
     <Fragment>
       {new Intl.NumberFormat("en-US", {
@@ -140,7 +148,7 @@ export const DisplayBondPrice = ({ bond }: { bond: IAllBondData }): ReactElement
 export const DisplayBondDiscount = ({ bond }: { bond: IAllBondData }): ReactNode => {
   const { chainID }: { chainID: NetworkID } = useWeb3Context();
 
-  if (typeof bond.bondDiscount === undefined || !bond.isAvailable[chainID]) {
+  if (bond.bondDiscount === undefined || !bond.isAvailable[chainID]) {
     return <Fragment>--</Fragment>;
   }
 
