@@ -42,7 +42,8 @@ interface BondOpts {
   networkAddrs: NetworkAddresses; // Mapping of network --> Addresses
   bondToken: string; // Unused, but native token to buy the bond.
   isMonolith?: boolean;
-  decimals?: string;
+  inputDecimals?: string;
+  outputDecimals?: string;
 }
 
 // Technically only exporting for the interface
@@ -56,7 +57,8 @@ export abstract class Bond {
   readonly bondContractABI: ethers.ContractInterface; // Bond ABI
   readonly networkAddrs: NetworkAddresses;
   readonly bondToken: string;
-  readonly decimals: string;
+  readonly inputDecimals: string;
+  readonly outputDecimals: string;
 
   // The following two fields will differ on how they are set depending on bond type
   abstract isLP: Boolean;
@@ -77,7 +79,8 @@ export abstract class Bond {
     this.bondContractABI = bondOpts.bondContractABI;
     this.networkAddrs = bondOpts.networkAddrs;
     this.bondToken = bondOpts.bondToken;
-    this.decimals = bondOpts.decimals || "ether";
+    this.inputDecimals = bondOpts.inputDecimals || "ether"; // Standard ERC-20 input E.g: DAI
+    this.outputDecimals = bondOpts.outputDecimals || "gwei"; // Typically EXOD which is 9 decimals, wsEXOD is 18.
   }
 
   /**

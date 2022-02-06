@@ -49,7 +49,7 @@ const Balance = () => {
           </Box>
           <Box display="flex" alignItems="center">
             <Typography variant="h6" style={{ marginRight: "12px", marginLeft: "18px" }}>
-              {trim(wsohmBalance || 0, 2)}
+              {trim(wsohmBalance || 0, 3)}
             </Typography>
             <Typography variant="body1">wsEXOD</Typography>
           </Box>

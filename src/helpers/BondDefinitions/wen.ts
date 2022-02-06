@@ -14,7 +14,8 @@ const wen = new CustomBond({
   bondIconSvg: wenImg,
   bondContractABI: AbsorptionBondContract,
   isAbsorption: true,
-  decimals: "gwei",
+  inputDecimals: "gwei", // WEN is 9 decimals
+  outputDecimals: "ether", // wsEXOD is 18 decimals
   reserveContract: ierc20Abi, // The Standard ierc20Abi since they're normal tokens
   networkAddrs: {
     [NetworkID.Mainnet]: {

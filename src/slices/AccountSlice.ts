@@ -177,11 +177,11 @@ export const calculateUserBondDetails = createAsyncThunk(
         reserveContract.balanceOf(address),
       ]);
 
-      let interestDue: BigNumberish = Number(bondDetails.payout.toString()) / Math.pow(10, 9);
+      let interestDue: BigNumberish = Number(ethers.utils.formatUnits(bondDetails.payout, bond.outputDecimals));
       bondMaturationBlock = +bondDetails.vesting + +bondDetails.lastBlock;
 
       // formatEthers takes BigNumber => String
-      const balanceVal = ethers.utils.formatUnits(balance, bond.decimals);
+      const balanceVal = ethers.utils.formatUnits(balance, bond.inputDecimals);
 
       // balanceVal should NOT be converted to a number. it loses decimal precision
       return {
@@ -195,7 +195,7 @@ export const calculateUserBondDetails = createAsyncThunk(
         balance: balanceVal,
         interestDue,
         bondMaturationBlock,
-        pendingPayout: ethers.utils.formatUnits(pendingPayout, "gwei"),
+        pendingPayout: ethers.utils.formatUnits(pendingPayout, bond.outputDecimals),
       };
     } catch (e) {
       if (attempts < MAX_RETRY_ATTEMPTS) {

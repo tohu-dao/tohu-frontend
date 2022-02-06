@@ -207,7 +207,7 @@ export const calcAbsorptionBondDetails = createAsyncThunk(
       value = "0";
     }
     try {
-      const amountInWei = ethers.utils.parseEther(value);
+      const parsedAmount = ethers.utils.parseUnits(value, bond.inputDecimals);
       let purchaseDisabled = false;
 
       let bondPrice = BigNumber.from(0);
@@ -239,8 +239,8 @@ export const calcAbsorptionBondDetails = createAsyncThunk(
         bondQuote = BigNumber.from(0);
         purchaseDisabled = true;
       } else {
-        bondQuote = await bondContract.payoutFor(amountInWei);
-        bondQuote = Number(bondQuote.toString()) / Math.pow(10, 18);
+        bondQuote = await bondContract.payoutFor(parsedAmount);
+        bondQuote = Number(ethers.utils.formatUnits(bondQuote, bond.outputDecimals));
       }
 
       return {
@@ -250,7 +250,7 @@ export const calcAbsorptionBondDetails = createAsyncThunk(
         validUntil: Number(validUntil),
         vestingTerm: Number(vestingTerm?.toString()),
         marketPrice: marketPrice,
-        bondPrice: Number(bondPrice.toString()) / Math.pow(10, 9),
+        bondPrice: Number(ethers.utils.formatUnits(bondPrice, bond.inputDecimals)),
         purchaseDisabled,
       };
     } catch (e) {
@@ -271,7 +271,7 @@ export const bondAsset = createAsyncThunk(
     const depositorAddress = address;
     const acceptedSlippage = slippage / 100 || 0.005; // 0.5% as default
     // parseUnits takes String => BigNumber
-    const valueInWei = ethers.utils.parseUnits(value.toString(), bond.decimals);
+    const parsedValue = ethers.utils.parseUnits(value.toString(), bond.inputDecimals);
     let balance;
     // Calculate maxPremium based on premium and slippage.
     // const calculatePremium = await bonding.calculatePremium();
@@ -292,9 +292,9 @@ export const bondAsset = createAsyncThunk(
     };
     try {
       if (bond.isAbsorption) {
-        bondTx = await bondContract.deposit(valueInWei, depositorAddress);
+        bondTx = await bondContract.deposit(parsedValue, depositorAddress);
       } else {
-        bondTx = await bondContract.deposit(valueInWei, maxPremium, depositorAddress);
+        bondTx = await bondContract.deposit(parsedValue, maxPremium, depositorAddress);
       }
       dispatch(
         fetchPendingTxns({ txnHash: bondTx.hash, text: "Bonding " + bond.displayName, type: "bond_" + bond.name }),

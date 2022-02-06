@@ -2,7 +2,7 @@ import { ChangeEvent, Fragment, ReactNode, ReactElement, useEffect, useState } f
 import { useDispatch, useSelector } from "react-redux";
 import { t, Trans } from "@lingui/macro";
 import { formatCurrency, trim } from "../../helpers";
-import { Backdrop, Box, Fade, Grid, Paper, Tab, Tabs, Typography } from "@material-ui/core";
+import { Backdrop, Box, Fade, Grid, Paper, Tab, Tabs, Typography, useTheme } from "@material-ui/core";
 import TabPanel from "../../components/TabPanel";
 import BondHeader from "./BondHeader";
 import BondRedeem from "./BondRedeem";
@@ -147,11 +147,16 @@ export const DisplayBondPrice = ({ bond }: { bond: IAllBondData }): ReactElement
 
 export const DisplayBondDiscount = ({ bond }: { bond: IAllBondData }): ReactNode => {
   const { chainID }: { chainID: NetworkID } = useWeb3Context();
+  const theme = useTheme();
 
   if (bond.bondDiscount === undefined || !bond.isAvailable[chainID]) {
-    return <Fragment>--</Fragment>;
+    return <>--</>;
   }
 
-  return <Fragment>{bond.bondDiscount && trim(bond.bondDiscount * 100, 2)}%</Fragment>;
+  return (
+    <span style={{ color: bond.bondDiscount * 100 > 0 ? theme.palette.primaryColorBright : "" }}>
+      {bond.bondDiscount && trim(bond.bondDiscount * 100, 2)}%
+    </span>
+  );
 };
 export default Bond;
