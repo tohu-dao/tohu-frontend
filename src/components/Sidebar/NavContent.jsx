@@ -15,7 +15,7 @@ import { trim, shorten } from "../../helpers";
 import { useAddress, useWeb3Context } from "src/hooks/web3Context";
 import useBonds from "../../hooks/Bonds";
 import { useENS } from "src/hooks/useENS";
-import { Paper, Link, Box, Typography, SvgIcon, useTheme } from "@material-ui/core";
+import { Paper, Link, Box, Typography, SvgIcon } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import ShowChartIcon from "@material-ui/icons/ShowChart";
 import StarIcon from "@material-ui/icons/Stars";
@@ -26,7 +26,6 @@ import "./sidebar.scss";
 
 function NavContent() {
   const [isActive] = useState();
-  const theme = useTheme();
   const address = useAddress();
   const { chainID } = useWeb3Context();
   const { bonds, upcomingBonds } = useBonds(chainID);
@@ -178,10 +177,7 @@ function NavContent() {
                         <Typography variant="body1">
                           {bond.displayName}
 
-                          <span
-                            className="bond-pair-roi"
-                            style={{ color: bond.bondDiscount * 100 > 0 ? theme.palette.primaryColorBright : "" }}
-                          >
+                          <span className="bond-pair-roi">
                             {!bond.isAvailable[chainID]
                               ? "Sold Out"
                               : `${bond.bondDiscount && trim(bond.bondDiscount * 100, 2)}%`}
