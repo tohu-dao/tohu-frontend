@@ -19,7 +19,7 @@ const wen = new CustomBond({
   reserveContract: ierc20Abi, // The Standard ierc20Abi since they're normal tokens
   networkAddrs: {
     [NetworkID.Mainnet]: {
-      bondAddress: "0xd245e3ddf9d339f91e3824e0f167654d0587c8a5", // TODO: @HOVOH CHANGE TO REAL CONTRACT
+      bondAddress: "0xf74c60fCa30BFbff0d99D5BFcba3A3fCEa8C47FB",
       reserveAddress: "0x86d7bccb91b1c5a01a7ad7d7d0efc7106928c7f8",
     },
     [NetworkID.Testnet]: {
