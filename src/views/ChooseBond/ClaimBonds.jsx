@@ -43,7 +43,7 @@ function ClaimBonds() {
   const activeBonds: IUserBondDetails[] = useAppSelector(state => {
     const withInterestDue = [];
     for (const bond in state.account.bonds) {
-      if (state.account.bonds[bond].interestDue > 0) {
+      if (state.account.bonds[bond].interestDue > 0 && !state.account.bonds[bond].isAbsorption) {
         withInterestDue.push(state.account.bonds[bond]);
       }
     }

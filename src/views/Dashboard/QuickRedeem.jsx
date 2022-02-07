@@ -30,8 +30,8 @@ const QuickRedeem = () => {
 
   const activeBonds: IUserBondDetails[] = useAppSelector(state => {
     const withInterestDue = [];
-    for (const bond in state.account.bonds) {
-      if (state.account.bonds[bond].interestDue > 0) {
+    for (const bond in [...bonds, ...expiredBonds]) {
+      if (bond.interestDue > 0) {
         withInterestDue.push(state.account.bonds[bond]);
       }
     }

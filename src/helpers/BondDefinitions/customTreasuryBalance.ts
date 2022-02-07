@@ -17,4 +17,13 @@ const customTreasuryBalance = async function (this: CustomBond, networkID: Netwo
   return balance * price;
 };
 
+export const bondedQuantity = async function (this: CustomBond, networkID: NetworkID, provider: StaticJsonRpcProvider) {
+  const token = this.getContractForReserve(networkID, provider);
+
+  let balance: BigNumberish = await token.balanceOf(this.networkAddrs[networkID].bondAddress);
+
+  balance = Number(balance.toString()) / Math.pow(10, 9);
+  return balance;
+};
+
 export default customTreasuryBalance;

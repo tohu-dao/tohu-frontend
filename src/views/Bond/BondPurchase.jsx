@@ -13,7 +13,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { prettifySeconds, secondsUntilBlock, shorten, trim } from "../../helpers";
-import { bondAsset, calcBondDetails, changeApproval } from "../../slices/BondSlice";
+import { bondAsset, calcBondDetails, calcAbsorptionBondDetails, changeApproval } from "../../slices/BondSlice";
 import { useWeb3Context } from "src/hooks/web3Context";
 import { isPendingTxn } from "src/slices/PendingTxnsSlice";
 import TxnButtonText from "src/components/TxnButtonText";
@@ -111,7 +111,11 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
   const bondDetailsDebounce = useDebounce(quantity, 500);
 
   useEffect(() => {
-    dispatch(calcBondDetails({ bond, value: quantity, provider, networkID: chainID }));
+    if (bond.isAbsorption) {
+      dispatch(calcAbsorptionBondDetails({ bond, value: quantity, provider, networkID: chainID }));
+    } else {
+      dispatch(calcBondDetails({ bond, value: quantity, provider, networkID: chainID }));
+    }
   }, [bondDetailsDebounce]);
 
   useEffect(() => {
@@ -122,7 +126,11 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
       }, 1000);
     } else {
       clearInterval(interval);
-      dispatch(calcBondDetails({ bond, value: quantity, provider, networkID: chainID }));
+      if (bond.isAbsorption) {
+        dispatch(calcAbsorptionBondDetails({ bond, value: quantity, provider, networkID: chainID }));
+      } else {
+        dispatch(calcBondDetails({ bond, value: quantity, provider, networkID: chainID }));
+      }
       setSecondsToRefresh(SECONDS_TO_REFRESH);
     }
     return () => clearInterval(interval);
@@ -260,40 +268,50 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
               <Trans>You Will Get</Trans>
             </Typography>
             <Typography id="bond-value-id" className="price-data">
-              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.bondQuote, 4) || "0"} ${OHM_TICKER}`}
-            </Typography>
-          </div>
-
-          <div className={`data-row`}>
-            <Typography>
-              <Trans>Max You Can Buy</Trans>
-            </Typography>
-            <Typography id="bond-value-id" className="price-data">
-              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.maxBondPrice, 4) || "0"} ${OHM_TICKER}`}
-            </Typography>
-          </div>
-
-          <div className="data-row">
-            <Typography>
-              <Trans>ROI</Trans>
-            </Typography>
-            <Typography>
-              {isBondLoading ? <Skeleton width="100px" /> : <DisplayBondDiscount key={bond.name} bond={bond} />}
-            </Typography>
-          </div>
-
-          <div className="data-row">
-            <Typography>
-              <Trans>Debt Ratio</Trans>
-            </Typography>
-            <Typography>
               {isBondLoading ? (
                 <Skeleton width="100px" />
               ) : (
-                `${trim(bond.isLP ? bond.debtRatio / 10000000 : bond.debtRatio * 10, 2)}%`
+                `${trim(bond.bondQuote, 4) || "0"} ${bond.isAbsorption ? "wsEXOD" : OHM_TICKER}`
               )}
             </Typography>
           </div>
+
+          {!bond.isAbsorption && (
+            <div className={`data-row`}>
+              <Typography>
+                <Trans>Max You Can Buy</Trans>
+              </Typography>
+              <Typography id="bond-value-id" className="price-data">
+                {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.maxBondPrice, 4) || "0"} ${OHM_TICKER}`}
+              </Typography>
+            </div>
+          )}
+
+          {!bond.isAbsorption && (
+            <div className="data-row">
+              <Typography>
+                <Trans>ROI</Trans>
+              </Typography>
+              <Typography>
+                {isBondLoading ? <Skeleton width="100px" /> : <DisplayBondDiscount key={bond.name} bond={bond} />}
+              </Typography>
+            </div>
+          )}
+
+          {!bond.isAbsorption && (
+            <div className="data-row">
+              <Typography>
+                <Trans>Debt Ratio</Trans>
+              </Typography>
+              <Typography>
+                {isBondLoading ? (
+                  <Skeleton width="100px" />
+                ) : (
+                  `${trim(bond.isLP ? bond.debtRatio / 10000000 : bond.debtRatio * 10, 2)}%`
+                )}
+              </Typography>
+            </div>
+          )}
 
           <div className="data-row">
             <Typography>

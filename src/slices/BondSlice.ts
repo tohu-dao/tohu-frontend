@@ -197,13 +197,81 @@ export const calcBondDetails = createAsyncThunk(
   },
 );
 
+export const calcAbsorptionBondDetails = createAsyncThunk(
+  "bonding/calcAbsorptionBondDetails",
+  async (
+    { bond, value, provider, networkID, attempts = 0 }: ICalcBondDetailsAsyncThunk,
+    { dispatch },
+  ): Promise<Partial<IBondDetails>> => {
+    if (!value || value === "") {
+      value = "0";
+    }
+    try {
+      const parsedAmount = ethers.utils.parseUnits(value, bond.inputDecimals);
+      let purchaseDisabled = false;
+
+      let bondPrice = BigNumber.from(0);
+      let bondQuote: BigNumberish = BigNumber.from(0);
+      let discount = 0;
+      const bondContract = bond.getContractForAbsorptionBond(networkID, provider);
+      let marketPrice: number = 0;
+
+      const results = await Promise.all([
+        bond.getTreasuryBalance(networkID, provider),
+        bondContract.bondPrice(),
+        bondContract.endsAt(),
+        bondContract.vestingTerm(),
+        dispatch(findOrLoadMarketPrice({ networkID, provider })).unwrap(),
+      ]);
+
+      const purchased = results[0] || 0;
+      bondPrice = results[1] || BigNumber.from(0);
+      const validUntil = results[2];
+      const vestingTerm = results[3];
+      marketPrice = results[4]?.wsExodPrice;
+
+      if (!marketPrice) {
+        console.error("Returned a null response from dispatch(findOrLoadMarketPrice)");
+      }
+
+      if (Number(value) === 0) {
+        // if inputValue is 0 avoid the bondQuote calls
+        bondQuote = BigNumber.from(0);
+        purchaseDisabled = true;
+      } else {
+        bondQuote = await bondContract.payoutFor(parsedAmount);
+        bondQuote = Number(ethers.utils.formatUnits(bondQuote, bond.outputDecimals));
+      }
+
+      return {
+        bond: bond.name,
+        bondQuote: Number(bondQuote.toString()),
+        purchased,
+        validUntil: Number(validUntil),
+        vestingTerm: Number(vestingTerm?.toString()),
+        marketPrice: marketPrice,
+        bondPrice: Number(ethers.utils.formatUnits(bondPrice, bond.inputDecimals)),
+        purchaseDisabled,
+      };
+    } catch (e) {
+      if (attempts < MAX_RETRY_ATTEMPTS) {
+        const newAttempts = attempts + 1;
+        dispatch(calcAbsorptionBondDetails({ bond, value, provider, networkID, attempts: newAttempts }));
+      } else {
+        dispatch(error(`Failed to load ${bond.name} details. Please try refreshing the page.`));
+        throw e;
+      }
+    }
+  },
+);
+
 export const bondAsset = createAsyncThunk(
   "bonding/bondAsset",
   async ({ value, address, bond, networkID, provider, slippage }: IBondAssetAsyncThunk, { dispatch }) => {
     const depositorAddress = address;
     const acceptedSlippage = slippage / 100 || 0.005; // 0.5% as default
     // parseUnits takes String => BigNumber
-    const valueInWei = ethers.utils.parseUnits(value.toString(), "ether");
+    const parsedValue = ethers.utils.parseUnits(value.toString(), bond.inputDecimals);
     let balance;
     // Calculate maxPremium based on premium and slippage.
     // const calculatePremium = await bonding.calculatePremium();
@@ -223,7 +291,11 @@ export const bondAsset = createAsyncThunk(
       txHash: "",
     };
     try {
-      bondTx = await bondContract.deposit(valueInWei, maxPremium, depositorAddress);
+      if (bond.isAbsorption) {
+        bondTx = await bondContract.deposit(parsedValue, depositorAddress);
+      } else {
+        bondTx = await bondContract.deposit(parsedValue, maxPremium, depositorAddress);
+      }
       dispatch(
         fetchPendingTxns({ txnHash: bondTx.hash, text: "Bonding " + bond.displayName, type: "bond_" + bond.name }),
       );
@@ -274,7 +346,11 @@ export const redeemBond = createAsyncThunk(
       txHash: "",
     };
     try {
-      redeemTx = await bondContract.redeem(address, autostake === true);
+      if (bond.isAbsorption) {
+        redeemTx = await bondContract.redeem(address);
+      } else {
+        redeemTx = await bondContract.redeem(address, autostake === true);
+      }
       const pendingTxnType = "redeem_bond_" + bond.name + (autostake === true ? "_autostake" : "");
       uaData.txHash = redeemTx.hash;
       dispatch(
@@ -302,8 +378,8 @@ export const redeemBond = createAsyncThunk(
     });
 
     statesToPoll.push({
-      field: `balances.${autostake ? "sohm" : "ohm"}`,
-      stateAccessor: `account.balances.${autostake ? "sohm" : "ohm"}`,
+      field: bond.isAbsorption ? "balances.wsohm" : `balances.${autostake ? "sohm" : "ohm"}`,
+      stateAccessor: bond.isAbsorption ? "balances.wsohm" : `account.balances.${autostake ? "sohm" : "ohm"}`,
       thunkToCall: () => dispatch(getBalances({ address, networkID, provider })),
     });
 
@@ -399,6 +475,17 @@ const bondingSlice = createSlice({
         state.loading = false;
       })
       .addCase(calcBondDetails.rejected, (state, { error }) => {
+        state.loading = false;
+        console.error(error.message);
+      })
+      .addCase(calcAbsorptionBondDetails.pending, state => {
+        state.loading = true;
+      })
+      .addCase(calcAbsorptionBondDetails.fulfilled, (state, action) => {
+        setBondState(state, action.payload);
+        state.loading = false;
+      })
+      .addCase(calcAbsorptionBondDetails.rejected, (state, { error }) => {
         state.loading = false;
         console.error(error.message);
       });
