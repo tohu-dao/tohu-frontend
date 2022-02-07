@@ -83,27 +83,29 @@ function BondRedeem({ bond }) {
                 defaultText={<Trans>Claim</Trans>}
               />
             </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              id="bond-claim-autostake-btn"
-              className="transaction-button"
-              fullWidth
-              disabled={
-                isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name + "_autostake") ||
-                isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name) ||
-                bond.pendingPayout == 0.0
-              }
-              onClick={() => {
-                onRedeem({ autostake: true });
-              }}
-            >
-              <TxnButtonText
-                pendingTransactions={pendingTransactions}
-                type={"redeem_bond_" + bond.name + "_autostake"}
-                defaultText={<Trans>Claim and Autostake</Trans>}
-              />
-            </Button>
+            {!bond.isAbsorption && (
+              <Button
+                variant="contained"
+                color="primary"
+                id="bond-claim-autostake-btn"
+                className="transaction-button"
+                fullWidth
+                disabled={
+                  isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name + "_autostake") ||
+                  isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name) ||
+                  bond.pendingPayout == 0.0
+                }
+                onClick={() => {
+                  onRedeem({ autostake: true });
+                }}
+              >
+                <TxnButtonText
+                  pendingTransactions={pendingTransactions}
+                  type={"redeem_bond_" + bond.name + "_autostake"}
+                  defaultText={<Trans>Claim and Autostake</Trans>}
+                />
+              </Button>
+            )}
           </>
         )}
       </Box>
@@ -132,23 +134,27 @@ function BondRedeem({ bond }) {
             <Typography className="price-data">{isBondLoading ? <Skeleton width="100px" /> : vestingTime()}</Typography>
           </div>
 
-          <div className="data-row">
-            <Typography>
-              <Trans>ROI</Trans>
-            </Typography>
-            <Typography>
-              {isBondLoading ? <Skeleton width="100px" /> : <DisplayBondDiscount key={bond.name} bond={bond} />}
-            </Typography>
-          </div>
+          {!bond.isAbsorption && (
+            <div className="data-row">
+              <Typography>
+                <Trans>ROI</Trans>
+              </Typography>
+              <Typography>
+                {isBondLoading ? <Skeleton width="100px" /> : <DisplayBondDiscount key={bond.name} bond={bond} />}
+              </Typography>
+            </div>
+          )}
 
-          <div className="data-row">
-            <Typography>
-              <Trans>Debt Ratio</Trans>
-            </Typography>
-            <Typography>
-              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.debtRatio / 10000000, 2)}%`}
-            </Typography>
-          </div>
+          {!bond.isAbsorption && (
+            <div className="data-row">
+              <Typography>
+                <Trans>Debt Ratio</Trans>
+              </Typography>
+              <Typography>
+                {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.debtRatio / 10000000, 2)}%`}
+              </Typography>
+            </div>
+          )}
 
           <div className="data-row">
             <Typography>

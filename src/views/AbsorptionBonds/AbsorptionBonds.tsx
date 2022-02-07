@@ -12,48 +12,67 @@ import {
   Typography,
   Zoom,
 } from "@material-ui/core";
-import { t, Trans } from "@lingui/macro";
-import { BondDataCard, BondTableData } from "./BondRow";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { formatCurrency } from "../../helpers";
-import useBonds from "../../hooks/Bonds";
-import { useWeb3Context } from "src/hooks/web3Context";
-
-import "./choosebond.scss";
+import { t, Trans } from "@lingui/macro";
 import { Skeleton } from "@material-ui/lab";
-import ClaimBonds from "./ClaimBonds";
-import { allBondsMap } from "src/helpers/AllBonds";
-import { useAppSelector } from "src/hooks";
-import {
-  DebtRatioGraph,
-  OhmMintedGraph,
-  OhmMintedPerTotalSupplyGraph,
-} from "../TreasuryDashboard/components/Graph/Graph";
 import { QueryClient, QueryClientProvider } from "react-query";
 import styled from "styled-components";
 import _ from "lodash";
-import MigrationBanner from "src/components/MigrationMessage";
+import moment from "moment";
 
-function ChooseBond() {
+import { formatCurrency } from "../../helpers";
+import useBonds from "../../hooks/Bonds";
+import { useWeb3Context } from "src/hooks/web3Context";
+import { allBondsMap } from "src/helpers/AllBonds";
+import { useAppSelector } from "src/hooks";
+import MigrationBanner from "src/components/MigrationMessage";
+import ClaimAbsorption from "./ClaimAbsorption";
+import { BondDataCard, BondTableData } from "../ChooseBond/BondRow";
+
+import "../ChooseBond/choosebond.scss";
+
+function AbsorptionBonds() {
   const { chainID } = useWeb3Context();
-  const { bonds, upcomingBonds } = useBonds(chainID);
+  const { absorptionBonds } = useBonds(chainID);
   const isSmallScreen = useMediaQuery("(max-width: 733px)"); // change to breakpoint query
-  const isVerySmallScreen = useMediaQuery("(max-width: 420px)");
+  const wsOhmPrice = useAppSelector(state => {
+    return state.app.marketPrice * state.app.currentIndex;
+  });
 
   const isAppLoading: boolean = useAppSelector(state => state.app.loading);
-  const isAccountLoading: boolean = useAppSelector(state => state.account.loading);
-  const treasuryBalance: number | undefined = useAppSelector(state => state.app.treasuryMarketValue);
-
-  const marketPrice: number | undefined = useAppSelector(state => {
-    return state.app.marketPrice;
-  });
 
   return (
     <div id="choose-bond-view">
       <Paper className="ohm-card" style={{ padding: 0, marginBottom: "1rem", border: "none" }}>
         <MigrationBanner />
       </Paper>
-      <ClaimBonds />
+      <Grid item xs={12}>
+        <Paper className="ohm-card full-width">
+          <Box className="card-header">
+            <Typography variant="h5" data-testid="t">
+              <Trans>Absorption Information</Trans>
+            </Typography>
+          </Box>
+          <Typography>
+            Exodia is absorbing the treasury of Wenwagmi DAO. Wenwagmi DAO users can swap WEN for wsEXOD by purchasing a
+            bond below. The value of wsEXOD received in return is proportional to your claim on the Wenwagmi DAO's
+            treasury plus 5%.
+          </Typography>
+          <br />
+          <br />
+          <Typography>
+            The bond received is staked on purchase in the form of wsEXOD and vests linearly over 14 days. Users may
+            claim their vested wsEXOD during this time.
+          </Typography>
+
+          <br />
+          <br />
+          <Typography>
+            Users have until {moment.unix(absorptionBonds[0]?.validUntil).format("ll")} to bond their WEN for wsEXOD.
+          </Typography>
+        </Paper>
+      </Grid>
+      <ClaimAbsorption />
       <BondContainer>
         <Zoom in={true}>
           <Grid container spacing={3}>
@@ -61,40 +80,28 @@ function ChooseBond() {
               <Paper className="ohm-card full-width">
                 <Box className="card-header">
                   <Typography variant="h5" data-testid="t">
-                    <Trans>Bond</Trans> (1,1)
+                    <Trans>Absorption Bonds</Trans>
                   </Typography>
                 </Box>
 
                 <Grid container item xs={12} style={{ margin: "10px 0px 20px" }} className="bond-hero">
                   <Grid item xs={6}>
-                    <Box textAlign={`${isVerySmallScreen ? "left" : "center"}`}>
+                    <Box textAlign="center">
                       <Typography variant="h5" color="textSecondary">
-                        <Trans>Treasury Balance</Trans>
-                      </Typography>
-                      <Box>
-                        {isAppLoading ? (
-                          <Skeleton width="180px" data-testid="treasury-balance-loading" />
-                        ) : (
-                          <Typography variant="h4" data-testid="treasury-balance">
-                            {new Intl.NumberFormat("en-US", {
-                              style: "currency",
-                              currency: "USD",
-                              maximumFractionDigits: 0,
-                              minimumFractionDigits: 0,
-                            }).format(Number(treasuryBalance))}
-                          </Typography>
-                        )}
-                      </Box>
-                    </Box>
-                  </Grid>
-
-                  <Grid item xs={6} className={`ohm-price`}>
-                    <Box textAlign={`${isVerySmallScreen ? "right" : "center"}`}>
-                      <Typography variant="h5" color="textSecondary">
-                        <Trans>EXOD Price</Trans>
+                        <Trans>wsEXOD Price</Trans>
                       </Typography>
                       <Typography variant="h4">
-                        {isAppLoading ? <Skeleton width="100px" /> : formatCurrency(Number(marketPrice), 2)}
+                        {isAppLoading ? <Skeleton width="100px" /> : formatCurrency(Number(wsOhmPrice), 2)}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Box textAlign="center">
+                      <Typography variant="h5" color="textSecondary">
+                        <Trans>Absorption End Date</Trans>
+                      </Typography>
+                      <Typography variant="h4">
+                        {isAppLoading ? <Skeleton /> : moment.unix(absorptionBonds[0]?.validUntil).format("ll")}
                       </Typography>
                     </Box>
                   </Grid>
@@ -110,10 +117,7 @@ function ChooseBond() {
                               <Trans>Bond</Trans>
                             </TableCell>
                             <TableCell align="left">
-                              <Trans>Price</Trans>
-                            </TableCell>
-                            <TableCell align="left">
-                              <Trans>ROI</Trans>
+                              <Trans>Price (1 wsEXOD)</Trans>
                             </TableCell>
                             <TableCell align="right">
                               <Trans>Purchased</Trans>
@@ -122,11 +126,8 @@ function ChooseBond() {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {bonds.map(bond => (
+                          {absorptionBonds.map(bond => (
                             <BondTableData key={bond.name} bond={bond} />
-                          ))}
-                          {upcomingBonds.map(bond => (
-                            <BondTableData key={bond.name} bond={bond} upcoming />
                           ))}
                         </TableBody>
                       </Table>
@@ -139,35 +140,14 @@ function ChooseBond() {
             {isSmallScreen && (
               <Box className="ohm-card-container" marginY="8px" width="100%">
                 <Grid container item spacing={3}>
-                  {bonds.map(bond => (
+                  {absorptionBonds.map(bond => (
                     <Grid item xs={12} key={bond.name}>
                       <BondDataCard key={bond.name} bond={bond} />
-                    </Grid>
-                  ))}
-                  {upcomingBonds.map(bond => (
-                    <Grid item xs={12} key={bond.name}>
-                      <BondDataCard key={bond.name} bond={bond} upcoming />
                     </Grid>
                   ))}
                 </Grid>
               </Box>
             )}
-
-            <Grid item lg={6} md={6} sm={12} xs={12}>
-              <Paper className="ohm-card full-width">
-                <OhmMintedGraph />
-              </Paper>
-            </Grid>
-            <Grid item lg={6} md={6} sm={12} xs={12}>
-              <Paper className="ohm-card full-width">
-                <OhmMintedPerTotalSupplyGraph />
-              </Paper>
-            </Grid>
-            <Grid item xs={12}>
-              <Paper className="ohm-card full-width">
-                <DebtRatioGraph />
-              </Paper>
-            </Grid>
           </Grid>
         </Zoom>
       </BondContainer>
@@ -188,6 +168,6 @@ const queryClient = new QueryClient();
 // much higher up in our App.
 export default () => (
   <QueryClientProvider client={queryClient}>
-    <ChooseBond />
+    <AbsorptionBonds />
   </QueryClientProvider>
 );

@@ -13,12 +13,22 @@ import useSegmentAnalytics from "./hooks/useSegmentAnalytics";
 import { segmentUA } from "./helpers/userAnalyticHelpers";
 import { shouldTriggerSafetyCheck } from "./helpers";
 
-import { calcBondDetails } from "./slices/BondSlice";
+import { calcBondDetails, calcAbsorptionBondDetails } from "./slices/BondSlice";
 import { loadAppDetails, loadGraphData, refreshRebaseTimer } from "./slices/AppSlice";
 import { loadAccountDetails, calculateUserBondDetails } from "./slices/AccountSlice";
 import { info } from "./slices/MessagesSlice";
 
-import { Stake, ChooseBond, Bond, Wrap, TreasuryDashboard, PoolTogether, Calc, Dashboard } from "./views";
+import {
+  Stake,
+  AbsorptionBonds,
+  ChooseBond,
+  Bond,
+  Wrap,
+  TreasuryDashboard,
+  PoolTogether,
+  Calc,
+  Dashboard,
+} from "./views";
 import Sidebar from "./components/Sidebar/Sidebar.jsx";
 import TopBar from "./components/TopBar/TopBar.jsx";
 import NavDrawer from "./components/Sidebar/NavDrawer.jsx";
@@ -93,8 +103,8 @@ function App() {
 
   const [walletChecked, setWalletChecked] = useState(false);
 
-  // TODO (appleseed-expiredBonds): there may be a smarter way to refactor this
-  const { bonds, expiredBonds } = useBonds(chainID);
+  const { bonds, expiredBonds, absorptionBonds } = useBonds(chainID);
+
   async function loadDetails(whichDetails: string) {
     // NOTE (unbanksy): If you encounter the following error:
     // Unhandled Rejection (Error): call revert exception (method="balanceOf(address)", errorArgs=null, errorName=null, errorSignature=null, reason=null, code=CALL_EXCEPTION, version=abi/5.4.0)
@@ -120,6 +130,9 @@ function App() {
       bonds.forEach(bond => {
         dispatch(calcBondDetails({ bond, value: "", provider: loadProvider, networkID: chainID }));
       });
+      absorptionBonds.forEach(bond => {
+        dispatch(calcAbsorptionBondDetails({ bond, value: "", provider: loadProvider, networkID: chainID }));
+      });
     },
     [connected],
   );
@@ -131,6 +144,9 @@ function App() {
         dispatch(calculateUserBondDetails({ address, bond, provider: loadProvider, networkID: chainID }));
       });
       expiredBonds.forEach(bond => {
+        dispatch(calculateUserBondDetails({ address, bond, provider: loadProvider, networkID: chainID }));
+      });
+      absorptionBonds.forEach(bond => {
         dispatch(calculateUserBondDetails({ address, bond, provider: loadProvider, networkID: chainID }));
       });
     },
@@ -258,6 +274,18 @@ function App() {
                   <PoolTogether />
                 </Route>
    */}
+
+              <Route path="/absorption">
+                {(absorptionBonds as IAllBondData[]).map(bond => {
+                  return (
+                    <Route exact key={bond.name} path={`/absorption/${bond.name}`}>
+                      <Bond bond={bond} />
+                    </Route>
+                  );
+                })}
+                <AbsorptionBonds />
+              </Route>
+
               <Route path="/bonds">
                 {(bonds as IAllBondData[]).map(bond => {
                   return (
