@@ -16,7 +16,7 @@ const externalUrls = [
   },
   {
     title: <Trans>Docs</Trans>,
-    url: "https://docs.exodia.finance",
+    url: "https://docs.exodia.fi",
     icon: <SvgIcon color="primary" component={DocsIcon} />,
   },
   {
