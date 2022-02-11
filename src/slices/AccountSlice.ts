@@ -5,6 +5,7 @@ import { abi as sOHMv2 } from "../abi/sOhmv2.json";
 import { abi as wsOHM } from "../abi/wsOHM.json";
 import { error } from "./MessagesSlice";
 import { setAll } from "../helpers";
+import { NetworkID } from "src/lib/Bond";
 
 import { createAsyncThunk, createSelector, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "src/store";
@@ -67,7 +68,9 @@ export const getBalances = createAsyncThunk(
         const newAttempts = attempts + 1;
         dispatch(loadAccountDetails({ networkID, provider, address, attempts: newAttempts }));
       } else {
-        dispatch(error(`Failed to load your account balances. Please try refreshing the page.`));
+        if ([NetworkID.Mainnet, NetworkID.Testnet].includes(networkID)) {
+          dispatch(error(`Failed to load your account balances. Please try refreshing the page.`));
+        }
         throw e;
       }
     }
@@ -128,7 +131,9 @@ export const loadAccountDetails = createAsyncThunk(
         const newAttempts = attempts + 1;
         dispatch(loadAccountDetails({ networkID, provider, address, attempts: newAttempts }));
       } else {
-        dispatch(error(`Failed to load your account allowances. Please try refreshing the page.`));
+        if ([NetworkID.Mainnet, NetworkID.Testnet].includes(networkID)) {
+          dispatch(error(`Failed to load your account allowances. Please try refreshing the page.`));
+        }
         throw e;
       }
     }
@@ -202,7 +207,9 @@ export const calculateUserBondDetails = createAsyncThunk(
         const newAttempts = attempts + 1;
         dispatch(calculateUserBondDetails({ address, bond, networkID, provider, attempts: newAttempts }));
       } else {
-        dispatch(error(`Failed to load ${bond.name} details. Please try refreshing the page.`));
+        if ([NetworkID.Mainnet, NetworkID.Testnet].includes(networkID)) {
+          dispatch(error(`Failed to load ${bond.name} details. Please try refreshing the page.`));
+        }
         throw e;
       }
     }
