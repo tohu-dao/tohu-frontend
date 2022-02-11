@@ -8,6 +8,7 @@ import { error, info } from "./MessagesSlice";
 import { clearPendingTxn, fetchPendingTxns } from "./PendingTxnsSlice";
 import { createAsyncThunk, createSelector, createSlice } from "@reduxjs/toolkit";
 import { getBondCalculator } from "src/helpers/BondCalculator";
+import { NetworkID } from "src/lib/Bond";
 import { RootState } from "src/store";
 import {
   IApproveBondAsyncThunk,
@@ -190,7 +191,9 @@ export const calcBondDetails = createAsyncThunk(
         const newAttempts = attempts + 1;
         dispatch(calcBondDetails({ bond, value, provider, networkID, attempts: newAttempts }));
       } else {
-        dispatch(error(`Failed to load ${bond.name} details. Please try refreshing the page.`));
+        if ([NetworkID.Mainnet, NetworkID.Testnet].includes(networkID)) {
+          dispatch(error(`Failed to load ${bond.name} details. Please try refreshing the page.`));
+        }
         throw e;
       }
     }
@@ -258,7 +261,9 @@ export const calcAbsorptionBondDetails = createAsyncThunk(
         const newAttempts = attempts + 1;
         dispatch(calcAbsorptionBondDetails({ bond, value, provider, networkID, attempts: newAttempts }));
       } else {
-        dispatch(error(`Failed to load ${bond.name} details. Please try refreshing the page.`));
+        if ([NetworkID.Mainnet, NetworkID.Testnet].includes(networkID)) {
+          dispatch(error(`Failed to load ${bond.name} details. Please try refreshing the page.`));
+        }
         throw e;
       }
     }
@@ -445,6 +450,7 @@ interface IBondSlice {
 }
 
 const setBondState = (state: IBondSlice, payload: any) => {
+  if (!payload?.bond) return;
   const bond = payload.bond;
   const newState = { ...state[bond], ...payload };
   state[bond] = newState;
