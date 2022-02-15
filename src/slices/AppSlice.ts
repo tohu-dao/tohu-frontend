@@ -9,6 +9,7 @@ import { RootState } from "src/store";
 import { error } from "./MessagesSlice";
 import { IBaseAsyncThunk } from "./interfaces";
 import { OlympusStakingv2, SOhmv2 } from "../typechain";
+import { NetworkID } from "src/lib/Bond";
 
 interface IProtocolMetrics {
   readonly timestamp: string;
@@ -79,7 +80,9 @@ export const loadAppDetails = createAsyncThunk(
         const newAttempts = attempts + 1;
         dispatch(loadAppDetails({ networkID, provider, attempts: newAttempts }));
       } else {
-        dispatch(error(`Failed to load app details. Please try refreshing the page.`));
+        if ([NetworkID.Mainnet, NetworkID.Testnet].includes(networkID)) {
+          dispatch(error(`Failed to load app details. Please try refreshing the page.`));
+        }
         throw e;
       }
     }
@@ -142,7 +145,9 @@ export const loadGraphData = createAsyncThunk(
         const newAttempts = attempts + 1;
         dispatch(loadGraphData({ attempts: newAttempts }));
       } else {
-        dispatch(error(`Failed to load app details. Please try refreshing the page.`));
+        if ([NetworkID.Mainnet, NetworkID.Testnet].includes(networkID)) {
+          dispatch(error(`Failed to load app details. Please try refreshing the page.`));
+        }
         throw e;
       }
     }
@@ -236,7 +241,9 @@ export const refreshRebaseTimer = createAsyncThunk(
         const newAttempts = attempts + 1;
         dispatch(loadGraphData({ attempts: newAttempts }));
       } else {
-        dispatch(error(`Failed to load rebase timer. Please try refreshing the page.`));
+        if ([NetworkID.Mainnet, NetworkID.Testnet].includes(networkID)) {
+          dispatch(error(`Failed to load rebase timer. Please try refreshing the page.`));
+        }
         throw e;
       }
     }

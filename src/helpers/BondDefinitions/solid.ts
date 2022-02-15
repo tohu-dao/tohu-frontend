@@ -4,12 +4,12 @@ import { abi as EthBondContract } from "src/abi/bonds/EthContract.json";
 import { abi as ierc20Abi } from "src/abi/IERC20.json";
 import customTreasuryBalance from "./customTreasuryBalance";
 
-const rock = new CustomBond({
-  name: "rock",
-  displayName: "ROCK",
+const solid = new CustomBond({
+  name: "solid",
+  displayName: "SOLID",
   lpUrl: "",
   bondType: BondType.StableAsset,
-  bondToken: "ROCK",
+  bondToken: "SOLID",
   isAvailable: { [NetworkID.Mainnet]: true },
   bondIconSvg: ROCKImg,
   bondContractABI: EthBondContract,
@@ -27,4 +27,4 @@ const rock = new CustomBond({
   customTreasuryBalanceFunc: customTreasuryBalance,
 });
 
-export default rock;
+export default solid;
