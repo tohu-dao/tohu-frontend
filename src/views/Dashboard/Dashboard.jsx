@@ -107,9 +107,9 @@ const Dashboard = memo(() => {
                 <QuickRedeem />
               </Paper>
             </Grid>
-            <Grid item lg={12} md={12} sm={12} xs={12}>
+            {/* <Grid item lg={12} md={12} sm={12} xs={12}>
               <MigrationMessage />
-            </Grid>
+            </Grid> */}
             <Grid item lg={6} md={12} sm={12} xs={12}>
               <Paper className="ohm-card" style={{ paddingBottom: "5px" }}>
                 <DashboardPriceGraph isDashboard />

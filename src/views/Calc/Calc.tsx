@@ -57,8 +57,7 @@ function Calc() {
   });
   const { data } = useTreasuryMetrics({ refetchOnMount: false });
 
-  const runway = data && data.filter((metric: any) => metric.runway10k > 5);
-  const currentRunway = runway && (runway[0].runwayCurrent * 3 * EPOCH_INTERVAL * blockRateSeconds) / 86400;
+  const currentRunway = data && data.protocolMetrics[0].runway;
 
   const trimmedBalance = Number(
     [sohmBalance, wsohmAsSohm]

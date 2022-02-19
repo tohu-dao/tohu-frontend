@@ -105,7 +105,7 @@ function App() {
 
   const { bonds, expiredBonds, absorptionBonds } = useBonds(chainID);
 
-  async function loadDetails(whichDetails: string) {
+  async function loadDetails(whichDetails: string, isRefresh: boolean = false) {
     // NOTE (unbanksy): If you encounter the following error:
     // Unhandled Rejection (Error): call revert exception (method="balanceOf(address)", errorArgs=null, errorName=null, errorSignature=null, reason=null, code=CALL_EXCEPTION, version=abi/5.4.0)
     // it's because the initial provider loaded always starts with chainID=1. This causes
@@ -115,39 +115,81 @@ function App() {
     let loadProvider = provider;
 
     if (whichDetails === "app") {
-      loadApp(loadProvider);
+      loadApp(loadProvider, isRefresh);
     }
 
     // don't run unless provider is a Wallet...
     if (whichDetails === "account" && address && connected) {
-      loadAccount(loadProvider);
+      loadAccount(loadProvider, isRefresh);
     }
   }
 
   const loadApp = useCallback(
-    loadProvider => {
-      dispatch(loadAppDetails({ networkID: chainID, provider: loadProvider }));
+    (loadProvider, isRefresh) => {
+      dispatch(loadAppDetails({ networkID: chainID, provider: loadProvider, attempts: isRefresh ? -1 : 0 }));
       bonds.forEach(bond => {
-        dispatch(calcBondDetails({ bond, value: "", provider: loadProvider, networkID: chainID }));
+        dispatch(
+          calcBondDetails({
+            bond,
+            value: "",
+            provider: loadProvider,
+            networkID: chainID,
+            attempts: isRefresh ? -1 : 0,
+          }),
+        );
       });
       absorptionBonds.forEach(bond => {
-        dispatch(calcAbsorptionBondDetails({ bond, value: "", provider: loadProvider, networkID: chainID }));
+        dispatch(
+          calcAbsorptionBondDetails({
+            bond,
+            value: "",
+            provider: loadProvider,
+            networkID: chainID,
+            attempts: isRefresh ? -1 : 0,
+          }),
+        );
       });
     },
     [connected],
   );
 
   const loadAccount = useCallback(
-    loadProvider => {
-      dispatch(loadAccountDetails({ networkID: chainID, address, provider: loadProvider }));
+    (loadProvider, isRefresh) => {
+      dispatch(
+        loadAccountDetails({ networkID: chainID, address, provider: loadProvider, attempts: isRefresh ? -1 : 0 }),
+      );
       bonds.forEach(bond => {
-        dispatch(calculateUserBondDetails({ address, bond, provider: loadProvider, networkID: chainID }));
+        dispatch(
+          calculateUserBondDetails({
+            address,
+            bond,
+            provider: loadProvider,
+            networkID: chainID,
+            attempts: isRefresh ? -1 : 0,
+          }),
+        );
       });
       expiredBonds.forEach(bond => {
-        dispatch(calculateUserBondDetails({ address, bond, provider: loadProvider, networkID: chainID }));
+        dispatch(
+          calculateUserBondDetails({
+            address,
+            bond,
+            provider: loadProvider,
+            networkID: chainID,
+            attempts: isRefresh ? -1 : 0,
+          }),
+        );
       });
       absorptionBonds.forEach(bond => {
-        dispatch(calculateUserBondDetails({ address, bond, provider: loadProvider, networkID: chainID }));
+        dispatch(
+          calculateUserBondDetails({
+            address,
+            bond,
+            provider: loadProvider,
+            networkID: chainID,
+            attempts: isRefresh ? -1 : 0,
+          }),
+        );
       });
     },
     [connected],
@@ -182,18 +224,28 @@ function App() {
 
   // this useEffect fires on state change from above. It will ALWAYS fire AFTER
   useEffect(() => {
+    let interval: any = null;
     // don't load ANY details until wallet is Checked
-    if (walletChecked) {
-      loadDetails("app");
-    }
+    if (walletChecked) loadDetails("app");
+
+    interval = setInterval(() => {
+      if (walletChecked) loadDetails("app", true);
+    }, 60000);
+
+    return () => clearInterval(interval);
   }, [walletChecked]);
 
   // this useEffect picks up any time a user Connects via the button
   useEffect(() => {
+    let interval: any = null;
     // don't load ANY details until wallet is Connected
-    if (connected) {
-      loadDetails("account");
-    }
+    if (connected) loadDetails("account");
+
+    interval = setInterval(() => {
+      if (connected) loadDetails("account", true);
+    }, 60000);
+
+    return () => clearInterval(interval);
   }, [connected]);
 
   const handleDrawerToggle = () => {
@@ -218,7 +270,8 @@ function App() {
     let interval: any = null;
     dispatch(refreshRebaseTimer({ networkID: chainID, provider }));
     interval = setInterval(() => {
-      dispatch(refreshRebaseTimer({ networkID: chainID, provider }));
+      dispatch(refreshRebaseTimer({ networkID: chainID, provider, attempts: -1 }));
+      dispatch(loadGraphData({ attempts: -1 }));
     }, 60000);
 
     return () => clearInterval(interval);

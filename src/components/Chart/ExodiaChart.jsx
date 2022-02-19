@@ -204,9 +204,9 @@ export const ExodiaStackedLineChart = withChartCard(
     itemNames,
     itemType,
     isExpanded = false,
-    expandedGraphStrokeColor,
     strokeWidth = 1.6,
     showTotal,
+    isPOL,
   }) => {
     const theme = useTheme();
     // Remove 0's
@@ -237,7 +237,7 @@ export const ExodiaStackedLineChart = withChartCard(
             tickLine={false}
             width={33}
             tickFormatter={number => tickFormatter(number, dataFormat)}
-            domain={[0, "auto"]}
+            domain={isPOL ? [0, 100] : [0, "auto"]}
             connectNulls={true}
             allowDataOverflow={false}
           />
@@ -275,7 +275,6 @@ export const ExodiaMultiLineChart = withChartCard(
     itemNames,
     itemType,
     isExpanded = false,
-    expandedGraphStrokeColor,
     scale,
     domain,
     withoutGlow,
@@ -358,7 +357,7 @@ export const ExodiaMultiLineChart = withChartCard(
           <CartesianGrid stroke={theme.palette.border.primary} strokeDasharray="4 4" />
 
           {dataKey.map((key, index) => (
-            <Line {...lineProps(key, colors[index], dataAxis[index], strokeWidth, withoutGlow)} />
+            <Line {...lineProps(key, colors[index], dataAxis[index], strokeWidth, withoutGlow, showNulls)} />
           ))}
         </ComposedChart>
       </ResponsiveContainer>
@@ -377,7 +376,6 @@ export const ExodiaLineChart = withChartCard(
     itemNames,
     itemType,
     isExpanded,
-    expandedGraphStrokeColor,
     scale,
     xInterval = 100,
     domain,
@@ -403,7 +401,6 @@ export const ExodiaLineChart = withChartCard(
           <defs>{!withoutGlow && renderGlow()}</defs>
           <XAxis
             dataKey="timestamp"
-            // interval={xInterval}
             axisLine={false}
             tickCount={3}
             tickLine={false}
@@ -463,6 +460,54 @@ export const ExodiaLineChart = withChartCard(
   },
 );
 
+export const ExodiaStackedBarChart = withChartCard(
+  ({ data, dataKey, colors, dataFormat, bulletpoints, itemNames, itemType, isExpanded }) => {
+    const theme = useTheme();
+
+    return (
+      <ResponsiveContainer minHeight={260} width="100%">
+        <BarChart data={data}>
+          <XAxis
+            dataKey="timestamp"
+            axisLine={false}
+            tickCount={3}
+            tickLine={false}
+            reversed={true}
+            tickFormatter={str => format(new Date(str * 1000), "MMM dd")}
+            padding={{ right: 20 }}
+          />
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tickCount={isExpanded ? EXPANDED_TICK_COUNT : TICK_COUNT}
+            width={33}
+            domain={[0, "auto"]}
+            allowDataOverflow={false}
+            tickFormatter={number => tickFormatter(number, dataFormat)}
+          />
+          <Tooltip
+            content={
+              <CustomTooltip
+                bulletpoints={bulletpoints}
+                itemNames={itemNames}
+                itemType={itemType}
+                dataKey={dataKey}
+                colors={colors}
+                showTotal
+              />
+            }
+            cursor={{ fill: theme.palette.background.default }}
+          />
+          <CartesianGrid stroke={theme.palette.border.primary} strokeDasharray="4 4" />
+          {dataKey.map((key, index) => (
+            <Bar dataKey={key} stackId="a" fill={colors[index]} />
+          ))}
+        </BarChart>
+      </ResponsiveContainer>
+    );
+  },
+);
+
 export const ExodiaPieChart = withChartCard(
   ({
     data,
@@ -473,7 +518,6 @@ export const ExodiaPieChart = withChartCard(
     itemNames,
     itemType,
     isExpanded,
-    expandedGraphStrokeColor,
     scale,
     xInterval = 100,
     domain,
@@ -536,7 +580,7 @@ const tickFormatter = (number, dataFormat) => {
     if (dataFormat === "$") {
       return `$${trimNumber(number)}`;
     }
-    return trim(number, 2);
+    return trimNumber(number, 2);
   }
   return "";
 };
@@ -582,7 +626,7 @@ const areaProps = (dataKey, color, strokeWidth) => {
   };
 };
 
-const lineProps = (dataKey, color, yAxis, strokeWidth, withoutGlow = false) => {
+const lineProps = (dataKey, color, yAxis, strokeWidth, withoutGlow = false, showNulls = false) => {
   return {
     type: "monotone",
     strokeLinecap: "round",
@@ -590,6 +634,7 @@ const lineProps = (dataKey, color, yAxis, strokeWidth, withoutGlow = false) => {
     stroke: color ? color : "none",
     color: color,
     dot: false,
+    connectNulls: showNulls,
     strokeWidth: strokeWidth,
     filter: withoutGlow ? undefined : `url(#color-${dataKey})`,
     yAxisId: yAxis === "right" ? "right" : "left",

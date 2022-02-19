@@ -1,9 +1,10 @@
 import { useSelector } from "react-redux";
 import { useTreasuryMetrics } from "../../hooks/useTreasuryMetrics";
 import { Skeleton } from "@material-ui/lab";
-import { Typography, Box, useMediaQuery } from "@material-ui/core";
+import { Typography, Box, useMediaQuery, useTheme } from "@material-ui/core";
 import { trim, formatCurrency } from "../../../../helpers";
 import InfoTooltip from "src/components/InfoTooltip/InfoTooltip.jsx";
+import { getTokenBalances } from "../Graph/treasuryGraphHelpers";
 import { tooltipInfoMessages } from "../../treasuryData";
 import { OHM_TICKER, sOHM_TICKER, wsOHM_TICKER, EPOCH_INTERVAL } from "../../../../constants";
 
@@ -100,11 +101,12 @@ export const CircSupply = ({ isDashboard = false }) => {
 };
 
 export const BackingPerOHM = ({ isDashboard = false }) => {
+  const theme = useTheme();
   const { data } = useTreasuryMetrics({ refetchOnMount: false });
   const circSupply = useSelector(state => state.app.circSupply);
+  const { tokenValues } = getTokenBalances(data, theme);
 
-  const backing =
-    data && data[0].treasuryMarketValue - data[0].treasuryMonolithExodValue - data[0].treasuryMonolithWsExodValue;
+  const backing = data && data.treasuries[0].marketValue - tokenValues[0]["EXOD"];
   const backingPerOhm = backing && circSupply && backing / circSupply;
   const Title = isDashboard ? Metric.SmallTitle : Metric.Title;
   const Value = isDashboard ? Metric.SmallValue : Metric.Value;
@@ -167,7 +169,9 @@ export const StakedPercentage = ({ isDashboard = false }) => {
         Staked supply
         <InfoTooltip message={tooltipInfoMessages.staked} />
       </Title>
-      <Value>{data && trim((data[0].sOhmCirculatingSupply / data[0].ohmCirculatingSupply) * 100, 2)}%</Value>
+      <Value>
+        {data && trim((data.simpleStakings[0].stakedSupply / data.protocolMetrics[0].circulatingSupply) * 100, 2)}%
+      </Value>
     </Metric>
   );
 };
@@ -176,7 +180,6 @@ export const CurrentRunway = ({ isDashboard = false }) => {
   const { data } = useTreasuryMetrics({ refetchOnMount: false });
   const Title = isDashboard ? Metric.SmallTitle : Metric.Title;
   const Value = isDashboard ? Metric.SmallValue : Metric.Value;
-  const epochLengthSeconds = EPOCH_INTERVAL * 0.9;
 
   return (
     <Metric className="wsoprice" isDashboard={isDashboard}>
@@ -184,7 +187,7 @@ export const CurrentRunway = ({ isDashboard = false }) => {
         Runway
         <InfoTooltip message={tooltipInfoMessages.runway} />
       </Title>
-      <Value>{data && trim((data[0].runwayCurrent * 3 * epochLengthSeconds) / 86400, 2)} days</Value>
+      <Value>{data && trim(data.protocolMetrics[0].runway, 1)} Days</Value>
     </Metric>
   );
 };

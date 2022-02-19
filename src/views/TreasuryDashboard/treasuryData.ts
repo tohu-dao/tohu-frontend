@@ -1,56 +1,63 @@
 import { t } from "@lingui/macro";
 
-// TODO: add paramaterization
 export const treasuryDataQuery = `
 query {
-  protocolMetrics(first: 100, orderBy: timestamp, orderDirection: desc) {
+  treasuries(first: 1000, orderBy: id, orderDirection: desc) {
+    id
+    marketValue
+    riskFreeValue
+    tokenBalances(first: 100) {
+      balance
+      isLiquidity
+      isRiskFree
+      token {
+        ticker
+        fullName
+      }
+      liquidity {
+        id
+      }
+      value
+    }
+    liquidities(first: 100) {
+      pol
+      timestamp
+      token {
+        ticker
+      }
+    }
+  }
+  simpleStakings(first: 1000, orderBy: id, orderDirection: desc) {
+    apy
+    index
+    rebaseRate
+    stakedSupply
+    id
+  }
+  protocolMetrics(first: 1000, orderBy: id, orderDirection: desc) {
+    circulatingSupply
+    holders
+    id
+    marketCap
+    price
+    runway
+    totalSupply
+    tvl
+  }
+  bonds(first: 1000, orderBy: timestamp, orderDirection: desc) {
+    amountIn
+    amountOut
+    debtRatio
     id
     timestamp
-    ohmCirculatingSupply
-    sOhmCirculatingSupply
-    totalSupply
-    ohmPrice
-    marketCap
-    totalValueLocked
-    treasuryRiskFreeValue
-    treasuryMarketValue
-    nextEpochRebase
-    nextDistributedOhm
-    treasuryDaiRiskFreeValue
-    treasuryWETHRiskFreeValue
-    treasuryDaiMarketValue
-    treasuryWETHMarketValue
-    treasuryGOhmBalance
-    treasuryGOhmMarketValue
-    treasuryMaiBalance
-    treasuryMonolithTotalPoolValue
-    treasuryMonolithMaiValue
-    treasuryMaiRiskFreeValue
-    treasuryMonolithMaiBalance
-    treasuryMonolithExodValue
-    treasuryMonolithExodBalance
-    treasuryMonolithWsExodValue
-    treasuryMonolithWsExodBalance
-    treasuryMonolithWFtmValue
-    treasuryMonolithWFtmBalance
-    treasuryMonolithGOhmValue
-    treasuryMonolithGOhmBalance
-    treasuryfBeetsBalance
-    treasuryfBeetsValue
-    currentAPY
-    runway10k
-    runway20k
-    runway50k
-    runway7dot5k
-    runway5k
-    runway2dot5k
-    runwayCurrent
-    holders
-    treasuryOhmDaiPOL
-    treasuryMonolithPOL
-    treasuryAveragePOL
-    index
-    ohmMinted
+    valueIn
+    valueOut
+    tokenIn {
+      ticker
+    }
+    tokenOut {
+      ticker
+    }
   }
 }
 `;

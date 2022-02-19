@@ -15,3 +15,9 @@
     stroke-opacity: 0;
   }
 }
+
+.bar-chart {
+  .recharts-wrapper .recharts-cartesian-grid-vertical line:nth-last-child(3) {
+    stroke-opacity: 0;
+  }
+}
