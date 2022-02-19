@@ -285,6 +285,7 @@ export const ExodiaMultiLineChart = withChartCard(
     isGrowthOfSupply = false,
     showTotal,
     showNulls = false,
+    isDiscount,
   }) => {
     const theme = useTheme();
     // Remove 0's
@@ -357,7 +358,16 @@ export const ExodiaMultiLineChart = withChartCard(
           <CartesianGrid stroke={theme.palette.border.primary} strokeDasharray="4 4" />
 
           {dataKey.map((key, index) => (
-            <Line {...lineProps(key, colors[index], dataAxis[index], strokeWidth, withoutGlow, showNulls)} />
+            <Line
+              {...lineProps(
+                key,
+                colors[index],
+                dataAxis[index],
+                isDiscount && index === 1 ? 3 : strokeWidth,
+                withoutGlow,
+                showNulls,
+              )}
+            />
           ))}
         </ComposedChart>
       </ResponsiveContainer>
