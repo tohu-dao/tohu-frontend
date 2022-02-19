@@ -463,6 +463,60 @@ export const OhmMintedPerTotalSupplyGraph = () => {
   );
 };
 
+export const BondDiscounts = () => {
+  const theme = useTheme();
+  const { data } = useTreasuryMetrics({ refetchOnMount: false });
+
+  const discounts =
+    data &&
+    data.bondDeposits
+      .map(entry => {
+        const value = ((entry.valueOut - entry.valueIn) / entry.valueIn) * 100;
+        if (value > 50) {
+          console.log(entry);
+          return {};
+        }
+        if (value < 1) console.log(entry);
+        return {
+          timestamp: entry.timestamp,
+          discount: value,
+        };
+      })
+      .reverse()
+      .filter(entry => Object.keys(entry).length);
+
+  const discountsWithEma =
+    discounts &&
+    discounts
+      .map((entry, index) => {
+        if (index < 50) return entry;
+        const last50 = discounts.slice(index - 50, index);
+        const ma = last50.reduce((sum, current) => sum + current.discount, 0) / 50;
+        return { ...entry, last50Ma: ma };
+      })
+      .reverse();
+
+  return (
+    <ExodiaMultiLineChart
+      glowDeviation="0"
+      type="line"
+      data={discountsWithEma}
+      dataKey={["discount", "last50Ma"]}
+      dataFormat="percent"
+      headerText="Bond Discounts (at time of bonding)"
+      headerSubText={discountsWithEma && `Last 50 MA: ${trim(discountsWithEma[0].last50Ma, 2)}%`}
+      itemNames={["Discount", "Last 50 Average"]}
+      itemType={itemType.percentage}
+      colors={[theme.palette.chartColors[4], theme.palette.chartColors[0]]}
+      stroke={[theme.palette.chartColors[4], theme.palette.chartColors[0]]}
+      bulletpoints={bulletpoints.apy}
+      isDashboard
+      isDiscount
+      todayMessage=""
+    />
+  );
+};
+
 export const DebtRatioGraph = () => {
   const theme = useTheme();
   const { data } = useTreasuryMetrics({ refetchOnMount: false });
@@ -507,6 +561,7 @@ export const BondValuesChart = () => {
       itemNames={dataKeys}
       itemType={itemType.dollar}
       todayMessage=""
+      isDashboard
       showTotal
     />
   );

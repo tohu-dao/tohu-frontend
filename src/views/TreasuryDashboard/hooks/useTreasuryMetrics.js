@@ -16,6 +16,7 @@ export const useTreasuryMetrics = options => {
         protocolMetrics: data.protocolMetrics.slice(0, -2).map(entry => transformStringsToFloats(entry)),
         simpleStakings: data.simpleStakings.slice(0, -2).map(entry => transformStringsToFloats(entry)),
         treasuries: data.treasuries.slice(0, -2).map(entry => transformStringsToFloats(entry)),
+        bondDeposits: data.bondDeposits.slice(0, -2).map(entry => transformStringsToFloats(entry)),
       };
     },
     { ...options, refetchInterval: 60000 },

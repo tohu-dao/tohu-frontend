@@ -59,6 +59,16 @@ query {
       ticker
     }
   }
+  bondDeposits(first: 1000, orderDirection: desc, orderBy: timestamp) {
+    valueIn
+    amountIn
+    valueOut
+    amountOut
+    timestamp
+    tokenIn {
+      ticker
+    }
+  }
 }
 `;
 
