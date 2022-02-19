@@ -24,14 +24,16 @@ export async function getMarketPrice({ networkID, provider }: IBaseAsyncThunk) {
 
 /**
  * gets price of token from coingecko
- * @param tokenId STRING taken from https://www.coingecko.com/api/documentations/v3#/coins/get_coins_list
+ * @param tokenAddress STRING taken from https://www.coingecko.com/api/documentations/v3#/coins/get_coins_list
  * @returns INTEGER usd value
  */
-export async function getTokenPrice(tokenId = "olympus") {
+export async function getTokenPrice(tokenAddress = addresses[250].OHM_ADDRESS) {
   let resp;
   try {
-    resp = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${tokenId}&vs_currencies=usd`);
-    return resp.data[tokenId].usd;
+    resp = await axios.get(
+      `https://api.coingecko.com/api/v3/simple/token_price/fantom?contract_addresses=${tokenAddress}&vs_currencies=usd`,
+    );
+    return resp.data[tokenAddress].usd;
   } catch (e) {
     // console.log("coingecko api error: ", e);
   }

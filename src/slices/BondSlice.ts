@@ -187,6 +187,7 @@ export const calcBondDetails = createAsyncThunk(
         purchaseDisabled,
       };
     } catch (e) {
+      if (attempts < 0) return;
       if (attempts < MAX_RETRY_ATTEMPTS) {
         const newAttempts = attempts + 1;
         dispatch(calcBondDetails({ bond, value, provider, networkID, attempts: newAttempts }));
@@ -257,6 +258,7 @@ export const calcAbsorptionBondDetails = createAsyncThunk(
         purchaseDisabled,
       };
     } catch (e) {
+      if (attempts < 0) return;
       if (attempts < MAX_RETRY_ATTEMPTS) {
         const newAttempts = attempts + 1;
         dispatch(calcAbsorptionBondDetails({ bond, value, provider, networkID, attempts: newAttempts }));

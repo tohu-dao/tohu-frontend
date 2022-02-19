@@ -186,9 +186,9 @@ function Stake() {
 
   return (
     <div id="stake-view">
-      <Paper className="ohm-card" style={{ padding: 0, border: "none" }}>
+      {/* <Paper className="ohm-card" style={{ padding: 0, border: "none" }}>
         <MigrationBanner />
-      </Paper>
+      </Paper> */}
       <Zoom in={true} onEntered={() => setZoomed(true)}>
         <Paper className={`ohm-card`}>
           <Grid container direction="column" spacing={2}>
