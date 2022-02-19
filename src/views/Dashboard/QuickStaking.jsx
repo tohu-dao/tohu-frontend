@@ -38,10 +38,10 @@ const QuickStaking = () => {
   const isAppLoading = useSelector(state => state.app.loading);
 
   const ohmBalance = useAppSelector(state => {
-    return state.account.balances && state.account.balances.ohm;
+    return (state.account.balances && state.account.balances.ohm) || 0;
   });
   const sohmBalance = useAppSelector(state => {
-    return state.account.balances && state.account.balances.sohm;
+    return (state.account.balances && state.account.balances.sohm) || 0;
   });
   const stakeAllowance = useAppSelector(state => {
     return (state.account.staking && state.account.staking.ohmStake) || 0;
