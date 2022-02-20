@@ -72,39 +72,6 @@ query {
 }
 `;
 
-export const rebasesDataQuery = `
-query {
-  rebases(orderBy: timestamp, first: 1000, orderDirection: desc) {
-    percentage
-    timestamp
-  }
-}
-`;
-
-export const treasuryOhmQuery = `
-query {
-  balances(first: 100, orderBy: timestamp, orderDirection: desc) {
-    sOHMBalanceUSD
-    gOhmPrice
-  }
-}
-`;
-
-export const debtQuery = `
-query {
-  bondDiscounts(first: 1000, orderBy: timestamp, orderDirection: desc) {
-    dai_debt_ratio
-    eth_debt_ratio
-    ohmdai_debt_ratio
-    monolith_debt_ratio
-    gOhm_debt_ratio
-    monolithV2_debt_ratio
-    fBeets_debt_ratio
-    timestamp
-  }
-}
-`;
-
 // export default treasuryData;
 export const bulletpoints = {
   tvl: [

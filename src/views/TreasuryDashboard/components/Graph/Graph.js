@@ -26,8 +26,6 @@ import gOhmData from "./gohmHistory";
 import { useTheme } from "@material-ui/core/styles";
 import { trim, formatCurrency } from "../../../../helpers";
 import { useTreasuryMetrics } from "../../hooks/useTreasuryMetrics";
-import { useTreasuryRebases } from "../../hooks/useTreasuryRebases";
-import { useDebtMetrics } from "../../hooks/useDebtMetrics";
 import { bulletpoints, tooltipItems, tooltipInfoMessages, itemType } from "../../treasuryData";
 import { EPOCH_INTERVAL, OHM_TICKER } from "../../../../constants";
 import { parse } from "date-fns";
