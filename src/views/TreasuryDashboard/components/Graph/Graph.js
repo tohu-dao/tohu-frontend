@@ -454,7 +454,7 @@ export const OhmMintedPerTotalSupplyGraph = () => {
       stroke={[theme.palette.chartColors[3], theme.palette.chartColors[0]]}
       bulletpoints={bulletpoints.tvl}
       infoTooltipMessage={tooltipInfoMessages.mcs}
-      headerSubText={`${(fiveDayTotal && fiveDayTotal / 5).toFixed(2)}%`}
+      headerSubText={`${(minted.length && minted[0].fiveDayAveragePercent).toFixed(2)}%`}
       todayMessage="5-day Average"
       showNulls
     />
@@ -470,11 +470,8 @@ export const BondDiscounts = () => {
     data.bondDeposits
       .map(entry => {
         const value = ((entry.valueOut - entry.valueIn) / entry.valueIn) * 100;
-        if (value > 50) {
-          console.log(entry);
-          return {};
-        }
-        if (value < 1) console.log(entry);
+        if (value > 50) return {};
+
         return {
           timestamp: entry.timestamp,
           discount: value,
