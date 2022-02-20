@@ -29,7 +29,7 @@ export const getTokenBalances = (data, theme, { isRiskFree = false, type = "valu
         }
       }
     });
-    values.gOHM = values.gOHM || gohmHistory[entry.timestamp];
+    values.gOHM = Math.max(values.gOHM || 0, gohmHistory[entry.timestamp] || 0);
     return values;
   });
 
