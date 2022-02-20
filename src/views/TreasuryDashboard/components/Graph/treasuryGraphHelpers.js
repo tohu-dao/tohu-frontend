@@ -1,5 +1,6 @@
 import { formatCurrency } from "../../../../helpers";
 import { getColor } from "./graphHelpers";
+import gohmHistory from "./gohmHistory";
 
 // Smooth out bad data by putting the ticker name under the timestamp.
 // The value corresponds to how many data points back or forwards to jump to.
@@ -14,10 +15,8 @@ export const getTokenBalances = (data, theme, { isRiskFree = false, type = "valu
   const keys = {};
 
   const tokenValues = data.treasuries.map((entry, index) => {
-    const values = {};
+    const values = { timestamp: entry.timestamp };
     entry.tokenBalances.forEach((tokenBalance, tickerIndex) => {
-      values.timestamp = entry.timestamp;
-
       if (!isRiskFree || (isRiskFree && tokenBalance.isRiskFree)) {
         const ticker = tokenBalance.token.ticker;
         keys[ticker] = ticker;
@@ -30,6 +29,7 @@ export const getTokenBalances = (data, theme, { isRiskFree = false, type = "valu
         }
       }
     });
+    values.gOHM = values.gOHM || gohmHistory[entry.timestamp];
     return values;
   });
 
