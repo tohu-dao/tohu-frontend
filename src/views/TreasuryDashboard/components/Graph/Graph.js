@@ -692,6 +692,7 @@ export const DashboardPriceGraph = ({ isDashboard = false }) => {
       SelectOptions={SelectDataType}
       color={theme.palette.chartColors[0]}
       stroke={theme.palette.chartColors[0]}
+      initialTimeSelected="3 month"
       headerText={
         <>
           {selectedData == "price" ? "EXOD Price" : selectedData == "wsEXOD" ? "wsEXOD Price" : "Market Cap"}{" "}
