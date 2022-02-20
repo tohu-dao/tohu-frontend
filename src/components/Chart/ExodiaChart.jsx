@@ -304,7 +304,7 @@ export const ExodiaMultiLineChart = withChartCard(
           <defs>
             {!withoutGlow &&
               dataKey.map((key, index) => (
-                <LineShadow id={`color-${key}`} color={colors[index]} deviation={glowDeviation} />
+                <LineShadow id={`color-${key.replace(" ", "-")}`} color={colors[index]} deviation={glowDeviation} />
               ))}
           </defs>
           <XAxis
@@ -649,7 +649,7 @@ const lineProps = (dataKey, color, yAxis, strokeWidth, withoutGlow = false, show
     dot: false,
     connectNulls: showNulls,
     strokeWidth: strokeWidth,
-    filter: withoutGlow ? undefined : `url(#color-${dataKey})`,
+    filter: withoutGlow ? undefined : `url(#color-${dataKey.replace(" ", "-")})`,
     yAxisId: yAxis === "right" ? "right" : "left",
   };
 };
