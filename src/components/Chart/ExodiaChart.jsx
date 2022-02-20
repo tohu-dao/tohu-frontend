@@ -53,10 +53,11 @@ const withChartCard = Component => {
     data,
     timeSelection = true,
     fullScreenDisabled = false,
+    initialTimeSelected = "all",
     ...props
   }) => {
     const [open, setOpen] = useState(false);
-    const [time, setTime] = useState("all");
+    const [time, setTime] = useState(initialTimeSelected);
     const [filteredData, setFilteredData] = useState(data);
     const [loading, setLoading] = useState(true);
 
@@ -70,12 +71,14 @@ const withChartCard = Component => {
     }, [data]);
 
     useEffect(() => {
-      if (time === "all") return setFilteredData(data);
+      if (data && data.length) {
+        if (time === "all") return setFilteredData(data);
 
-      const [value, type] = time.includes(" ") ? time.split(" ") : [1, time];
-      const cutOff = moment().subtract(value, type);
-      const newData = data.filter(entry => moment(entry.timestamp * 1000).isAfter(cutOff));
-      setFilteredData(newData);
+        const [value, type] = time.includes(" ") ? time.split(" ") : [1, time];
+        const cutOff = moment().subtract(value, type);
+        const newData = data.filter(entry => moment(entry.timestamp * 1000).isAfter(cutOff));
+        setFilteredData(newData);
+      }
     }, [time, data]);
 
     if (loading)
