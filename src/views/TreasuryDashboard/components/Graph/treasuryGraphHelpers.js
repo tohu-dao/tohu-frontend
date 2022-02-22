@@ -96,7 +96,6 @@ export const getAssetTypeWeight = data => {
     let liquidity = 0;
     let reserves = 0;
     let riskFree = 0;
-    let liquidityMarketCapRatio = 0;
     entry.tokenBalances.forEach((tokenBalance, index) => {
       values.timestamp = entry.timestamp;
 
@@ -114,7 +113,6 @@ export const getAssetTypeWeight = data => {
     values.liquidity = (liquidity / (reserves + riskFree + liquidity)) * 100;
     values.reserves = (reserves / (reserves + riskFree + liquidity)) * 100;
     values.riskFree = (riskFree / (reserves + riskFree + liquidity)) * 100;
-    values.liquidityMarketCapRatio = (liquidity / data.protocolMetrics[index].marketCap) * 100;
     return values;
   });
 };
