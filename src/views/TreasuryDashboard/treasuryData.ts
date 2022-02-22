@@ -1,89 +1,82 @@
 import { t } from "@lingui/macro";
 
-// TODO: add paramaterization
 export const treasuryDataQuery = `
 query {
-  protocolMetrics(first: 100, orderBy: timestamp, orderDirection: desc) {
+  auxes(first: 1000) {
+    historicalGOhmValue
     id
-    timestamp
-    ohmCirculatingSupply
-    sOhmCirculatingSupply
-    totalSupply
-    ohmPrice
-    marketCap
-    totalValueLocked
-    treasuryRiskFreeValue
-    treasuryMarketValue
-    nextEpochRebase
-    nextDistributedOhm
-    treasuryDaiRiskFreeValue
-    treasuryWETHRiskFreeValue
-    treasuryDaiMarketValue
-    treasuryWETHMarketValue
-    treasuryGOhmBalance
-    treasuryGOhmMarketValue
-    treasuryMaiBalance
-    treasuryMonolithTotalPoolValue
-    treasuryMonolithMaiValue
-    treasuryMaiRiskFreeValue
-    treasuryMonolithMaiBalance
-    treasuryMonolithExodValue
-    treasuryMonolithExodBalance
-    treasuryMonolithWsExodValue
-    treasuryMonolithWsExodBalance
-    treasuryMonolithWFtmValue
-    treasuryMonolithWFtmBalance
-    treasuryMonolithGOhmValue
-    treasuryMonolithGOhmBalance
-    treasuryfBeetsBalance
-    treasuryfBeetsValue
-    currentAPY
-    runway10k
-    runway20k
-    runway50k
-    runway7dot5k
-    runway5k
-    runway2dot5k
-    runwayCurrent
-    holders
-    treasuryOhmDaiPOL
-    treasuryMonolithPOL
-    treasuryAveragePOL
+  }
+  treasuries(first: 1000, orderBy: timestamp, orderDirection: desc) {
+    id
+    marketValue
+    riskFreeValue
+    backingValue
+    tokenBalances(first: 100) {
+      balance
+      isLiquidity
+      isRiskFree
+      token {
+        ticker
+        fullName
+      }
+      liquidity {
+        id
+      }
+      value
+    }
+    liquidities(first: 100) {
+      pol
+      timestamp
+      token {
+        ticker
+      }
+    }
+  }
+  simpleStakings(first: 1000, orderBy: timestamp, orderDirection: desc) {
+    apy
     index
-    ohmMinted
+    rebaseRate
+    stakedSupply
+    stakedPercentage
+    id
   }
-}
-`;
-
-export const rebasesDataQuery = `
-query {
-  rebases(orderBy: timestamp, first: 1000, orderDirection: desc) {
-    percentage
+  protocolMetrics(first: 1000, orderBy: timestamp, orderDirection: desc) {
+    circulatingSupply
+    holders
+    id
+    marketCap
+    exodPrice
+    runway
+    totalSupply
+    tvl
+    backingPerExod
+    wsExodPrice
+  }
+  dailyBondRevenues(orderDirection: desc, orderBy: id, first: 1000) {
     timestamp
+    valueIn
+    bonds {
+      debtRatio
+      valueIn
+      valueOut
+      amountOut
+      tokenIn {
+        ticker
+      }
+    }
   }
-}
-`;
-
-export const treasuryOhmQuery = `
-query {
-  balances(first: 100, orderBy: timestamp, orderDirection: desc) {
-    sOHMBalanceUSD
-    gOhmPrice
-  }
-}
-`;
-
-export const debtQuery = `
-query {
-  bondDiscounts(first: 1000, orderBy: timestamp, orderDirection: desc) {
-    dai_debt_ratio
-    eth_debt_ratio
-    ohmdai_debt_ratio
-    monolith_debt_ratio
-    gOhm_debt_ratio
-    monolithV2_debt_ratio
-    fBeets_debt_ratio
+  bondDeposits(first: 1000, orderDirection: desc, orderBy: timestamp) {
+    valueIn
+    amountIn
+    valueOut
+    amountOut
     timestamp
+    tokenIn {
+      ticker
+    }
+    bonder {
+      id
+    }
   }
 }
 `;
@@ -258,6 +251,12 @@ export const tooltipInfoMessages = {
   debtratio: t`Debt ratio, is a metric that tells you how much EXOD is currently vesting in relation to the total EXOD supply. The numbers dont reflect the actual values, but, it can be used to form an impression of how much EXOD is being minted from bonding in relation to the total supply.`,
   indexAdjustedPrice: t`Index adjusted price is the market price of EXOD times the index.`,
   growthOfSupply: t`Growth of Supply, is the growth of supply from bonding vs the growth of supply through the index/rebasing.`,
+  tokenBalance: t`Token balances include all of the selected tokens held by the treasury in various places. Including spot, staking and liquidity.`,
+  treasuryBreakdown: t`Treasury breakdown, breaks down our treasury assets by liquidity, risk free assets and risky assets.`,
+  bondRevenue: t`Bond Revenue breaks down the treasuries daily revenue via bonding in the various asset types we offer as bonds.`,
+  bondDiscounts: t`Bond discounts shows the discount for every bond which has been purchased by a user.`,
+  myAmountBonded: t`Total EXOD minted from all of your bonds.`,
+  myValueBonded: t`Total value (at the time of bonding) of all of your bonds.`,
 };
 
 export const itemType = {

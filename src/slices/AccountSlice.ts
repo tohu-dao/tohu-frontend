@@ -64,9 +64,10 @@ export const getBalances = createAsyncThunk(
         },
       };
     } catch (e) {
+      if (attempts < 0) return;
       if (attempts < MAX_RETRY_ATTEMPTS) {
         const newAttempts = attempts + 1;
-        dispatch(loadAccountDetails({ networkID, provider, address, attempts: newAttempts }));
+        dispatch(getBalances({ networkID, provider, address, attempts: newAttempts }));
       } else {
         if ([NetworkID.Mainnet, NetworkID.Testnet].includes(networkID)) {
           dispatch(error(`Failed to load your account balances. Please try refreshing the page.`));
@@ -127,6 +128,7 @@ export const loadAccountDetails = createAsyncThunk(
         },
       };
     } catch (e) {
+      if (attempts < 0) return;
       if (attempts < MAX_RETRY_ATTEMPTS) {
         const newAttempts = attempts + 1;
         dispatch(loadAccountDetails({ networkID, provider, address, attempts: newAttempts }));
@@ -203,6 +205,7 @@ export const calculateUserBondDetails = createAsyncThunk(
         pendingPayout: ethers.utils.formatUnits(pendingPayout, bond.outputDecimals),
       };
     } catch (e) {
+      if (attempts < 0) return;
       if (attempts < MAX_RETRY_ATTEMPTS) {
         const newAttempts = attempts + 1;
         dispatch(calculateUserBondDetails({ address, bond, networkID, provider, attempts: newAttempts }));

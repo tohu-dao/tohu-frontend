@@ -43,9 +43,9 @@ function AbsorptionBonds() {
 
   return (
     <div id="choose-bond-view">
-      <Paper className="ohm-card" style={{ padding: 0, marginBottom: "1rem", border: "none" }}>
+      {/* <Paper className="ohm-card" style={{ padding: 0, marginBottom: "1rem", border: "none" }}>
         <MigrationBanner />
-      </Paper>
+      </Paper> */}
       <Grid item xs={12}>
         <Paper className="ohm-card full-width">
           <Box className="card-header">

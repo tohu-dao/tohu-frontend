@@ -65,8 +65,8 @@ const QuickRedeem = () => {
     await dispatch(redeemAllBonds({ address, bonds: bondsToRedeem, networkID: chainID, provider, autostake }));
   };
 
-  const totalVesting = activeBonds.reduce((total, bond) => total + Number(bond.interestDue), 0);
-  const totalPending = activeBonds.reduce((total, bond) => total + Number(bond.pendingPayout), 0);
+  const totalVesting = activeBonds.reduce((total, bond) => total + Number(bond?.interestDue || 0), 0);
+  const totalPending = activeBonds.reduce((total, bond) => total + Number(bond?.pendingPayout || 0), 0);
 
   return isAppLoading ? (
     <Skeleton />

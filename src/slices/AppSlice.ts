@@ -12,16 +12,23 @@ import { OlympusStakingv2, SOhmv2 } from "../typechain";
 import { NetworkID } from "src/lib/Bond";
 
 interface IProtocolMetrics {
-  readonly timestamp: string;
-  readonly ohmCirculatingSupply: string;
-  readonly sOhmCirculatingSupply: string;
-  readonly totalSupply: string;
-  readonly ohmPrice: string;
+  readonly circulatingSupply: string;
+  readonly holders: string;
   readonly marketCap: string;
-  readonly totalValueLocked: string;
-  readonly treasuryMarketValue: string;
-  readonly nextEpochRebase: string;
-  readonly nextDistributedOhm: string;
+  readonly exodPrice: string;
+  readonly runway: string;
+  readonly totalSupply: string;
+  readonly tvl: string;
+  readonly backingPerExod: string;
+  readonly wsExodPrice: string;
+}
+
+interface ITreasuryMetrics {
+  readonly marketValue: string;
+}
+
+interface IStakingMetrics {
+  readonly stakedPercentage: string;
 }
 
 export const loadAppDetails = createAsyncThunk(
@@ -76,6 +83,7 @@ export const loadAppDetails = createAsyncThunk(
         blockRateSeconds,
       } as IAppData;
     } catch (e) {
+      if (attempts < 0) return;
       if (attempts < MAX_RETRY_ATTEMPTS) {
         const newAttempts = attempts + 1;
         dispatch(loadAppDetails({ networkID, provider, attempts: newAttempts }));
@@ -94,44 +102,48 @@ export const loadGraphData = createAsyncThunk(
   async ({ attempts = 0 }: { attempts?: number }, { dispatch }) => {
     const protocolMetricsQuery = `
     query {
-      _meta {
-        block {
-          number
-        }
-      }
       protocolMetrics(first: 1, orderBy: timestamp, orderDirection: desc) {
-        timestamp
-        ohmCirculatingSupply
-        sOhmCirculatingSupply
-        totalSupply
-        ohmPrice
+        circulatingSupply
+        holders
         marketCap
-        totalValueLocked
-        treasuryMarketValue
-        nextEpochRebase
-        nextDistributedOhm
+        runway
+        totalSupply
+        exodPrice
+        tvl
+        backingPerExod
+        wsExodPrice
+      }
+      treasuries(first: 1, orderBy: timestamp, orderDirection: desc) {
+        marketValue
+      }
+      simpleStakings(first: 1, orderBy: timestamp, orderDirection: desc) {
+        stakedPercentage
       }
     }
   `;
 
     try {
-      const graphData = await apollo<{ protocolMetrics: IProtocolMetrics[] }>(protocolMetricsQuery);
+      const graphData = await apollo<{
+        protocolMetrics: IProtocolMetrics[];
+        treasuries: ITreasuryMetrics[];
+        simpleStakings: IStakingMetrics[];
+      }>(protocolMetricsQuery);
 
       if (!graphData) {
         console.error("Returned a null response when querying TheGraph");
         return {};
       }
 
-      const stakingTVL = parseFloat(graphData.data.protocolMetrics[0].totalValueLocked);
-      // NOTE (appleseed): marketPrice from Graph was delayed, so get CoinGecko price
-      // NOTE (melondrone): this appears to work for us and is the same value as coingecko
-      const marketPrice = parseFloat(graphData.data.protocolMetrics[0].ohmPrice);
-
+      const stakingTVL = parseFloat(graphData.data.protocolMetrics[0].tvl);
       const marketCap = parseFloat(graphData.data.protocolMetrics[0].marketCap);
-      const circSupply = parseFloat(graphData.data.protocolMetrics[0].ohmCirculatingSupply);
+      const circSupply = parseFloat(graphData.data.protocolMetrics[0].circulatingSupply);
       const totalSupply = parseFloat(graphData.data.protocolMetrics[0].totalSupply);
-      const treasuryMarketValue = parseFloat(graphData.data.protocolMetrics[0].treasuryMarketValue);
-      // const currentBlock = parseFloat(graphData.data._meta.block.number);
+      const treasuryMarketValue = parseFloat(graphData.data.treasuries[0].marketValue);
+      const marketPrice = parseFloat(graphData.data.protocolMetrics[0].exodPrice);
+      const backingPerExod = parseFloat(graphData.data.protocolMetrics[0].backingPerExod);
+      const wsExodPrice = parseFloat(graphData.data.protocolMetrics[0].wsExodPrice);
+      const runway = parseFloat(graphData.data.protocolMetrics[0].runway);
+      const stakedPercentage = parseFloat(graphData.data.simpleStakings[0].stakedPercentage);
       return {
         stakingTVL,
         marketCap,
@@ -139,15 +151,18 @@ export const loadGraphData = createAsyncThunk(
         totalSupply,
         treasuryMarketValue,
         marketPrice,
+        backingPerExod,
+        wsExodPrice,
+        runway,
+        stakedPercentage,
       } as IAppData;
     } catch (e) {
+      if (attempts < 0) return;
       if (attempts < MAX_RETRY_ATTEMPTS) {
         const newAttempts = attempts + 1;
         dispatch(loadGraphData({ attempts: newAttempts }));
       } else {
-        if ([NetworkID.Mainnet, NetworkID.Testnet].includes(networkID)) {
-          dispatch(error(`Failed to load app details. Please try refreshing the page.`));
-        }
+        dispatch(error(`Failed to load app details. Please try refreshing the page.`));
         throw e;
       }
     }
@@ -237,9 +252,10 @@ export const refreshRebaseTimer = createAsyncThunk(
 
       return { secondsUntilRebase: seconds };
     } catch (e) {
+      if (attempts < 0) return;
       if (attempts < MAX_RETRY_ATTEMPTS) {
         const newAttempts = attempts + 1;
-        dispatch(loadGraphData({ attempts: newAttempts }));
+        dispatch(refreshRebaseTimer({ networkID, provider, attempts: newAttempts }));
       } else {
         if ([NetworkID.Mainnet, NetworkID.Testnet].includes(networkID)) {
           dispatch(error(`Failed to load rebase timer. Please try refreshing the page.`));
@@ -251,20 +267,40 @@ export const refreshRebaseTimer = createAsyncThunk(
 );
 
 /**
- * - fetches the OHM price from CoinGecko (via getTokenPrice)
- * - falls back to fetch marketPrice from ohm-dai contract
+ * - fetches the OHM price from Spooky LP
+ * - falls back to fetch marketPrice from coinGecko
  * - updates the App.slice when it runs
  */
-const loadMarketPrice = createAsyncThunk("app/loadMarketPrice", async ({ networkID, provider }: IBaseAsyncThunk) => {
-  let marketPrice: number;
-  try {
-    marketPrice = await getMarketPrice({ networkID, provider });
-    marketPrice = marketPrice / Math.pow(10, 9);
-  } catch (e) {
-    marketPrice = await getTokenPrice("olympus");
-  }
-  return { marketPrice };
-});
+export const loadMarketPrice = createAsyncThunk(
+  "app/loadMarketPrice",
+  async ({ networkID, provider, attempts = 0 }: IBaseAsyncThunk, { dispatch }) => {
+    let marketPrice: number;
+    const marketPriceQuery = `
+    query {
+      protocolMetrics(first: 1, orderBy: id, orderDirection: desc) {
+        exodPrice
+      }
+    }
+  `;
+    try {
+      const graphData = await apollo<{ protocolMetrics: IProtocolMetrics[] }>(marketPriceQuery);
+      if (!graphData) return;
+      marketPrice = parseFloat(graphData.data.protocolMetrics[0].exodPrice);
+      return { marketPrice };
+    } catch (e) {
+      if (attempts < 0) return;
+      if (attempts < MAX_RETRY_ATTEMPTS) {
+        const newAttempts = attempts + 1;
+        dispatch(loadMarketPrice({ networkID, provider, attempts: newAttempts }));
+      } else {
+        if ([NetworkID.Mainnet, NetworkID.Testnet].includes(networkID)) {
+          dispatch(error(`Failed to load market price. Please try refreshing the page.`));
+        }
+        throw e;
+      }
+    }
+  },
+);
 
 interface IAppData {
   readonly circSupply?: number;
@@ -274,6 +310,8 @@ interface IAppData {
   readonly loading: boolean;
   readonly loadingMarketPrice: boolean;
   readonly marketCap?: number;
+  readonly backingPerExod?: number;
+  readonly wsExodPrice?: number;
   readonly marketPrice?: number;
   readonly stakingAPY?: number;
   readonly stakingRebase?: number;
@@ -284,10 +322,12 @@ interface IAppData {
   readonly endBlock?: number;
   readonly blockRateSeconds?: number;
   readonly secondsUntilRebase?: number;
+  readonly runway?: number;
+  readonly stakedPercentage?: number;
 }
 
 const initialState: IAppData = {
-  loading: false,
+  loading: true,
   loadingMarketPrice: false,
 };
 
@@ -312,9 +352,6 @@ const appSlice = createSlice({
       .addCase(loadGraphData.rejected, (state, { error }) => {
         state.loadingMarketPrice = false;
         console.error(error.name, error.message, error.stack);
-      })
-      .addCase(loadAppDetails.pending, state => {
-        state.loading = true;
       })
       .addCase(loadAppDetails.fulfilled, (state, action) => {
         if (!action.payload) return;

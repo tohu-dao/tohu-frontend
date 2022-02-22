@@ -187,9 +187,9 @@ function Wrap() {
     <div id="stake-view">
       <Zoom in={true} onEntered={() => setZoomed(true)}>
         <>
-          <Paper className="ohm-card" style={{ padding: 0, border: "none" }}>
+          {/* <Paper className="ohm-card" style={{ padding: 0, border: "none" }}>
             <MigrationBanner />
-          </Paper>
+          </Paper> */}
           <Paper className={`ohm-card`}>
             <Grid container direction="column" spacing={2}>
               <Grid item>

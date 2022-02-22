@@ -1,10 +1,13 @@
 import { useSelector } from "react-redux";
-import { useTreasuryMetrics } from "../../hooks/useTreasuryMetrics";
 import { Skeleton } from "@material-ui/lab";
-import { Typography, Box, useMediaQuery } from "@material-ui/core";
+import { Typography, Box, useMediaQuery, useTheme } from "@material-ui/core";
+import { useWeb3Context } from "src/hooks/web3Context";
 import { trim, formatCurrency } from "../../../../helpers";
 import InfoTooltip from "src/components/InfoTooltip/InfoTooltip.jsx";
+import { getTokenBalances } from "../Graph/treasuryGraphHelpers";
 import { tooltipInfoMessages } from "../../treasuryData";
+import { useMyMetrics } from "../../hooks/useTreasuryMetrics";
+import _ from "lodash";
 import { OHM_TICKER, sOHM_TICKER, wsOHM_TICKER, EPOCH_INTERVAL } from "../../../../constants";
 
 export const Metric = props => (
@@ -100,12 +103,8 @@ export const CircSupply = ({ isDashboard = false }) => {
 };
 
 export const BackingPerOHM = ({ isDashboard = false }) => {
-  const { data } = useTreasuryMetrics({ refetchOnMount: false });
-  const circSupply = useSelector(state => state.app.circSupply);
-
-  const backing =
-    data && data[0].treasuryMarketValue - data[0].treasuryMonolithExodValue - data[0].treasuryMonolithWsExodValue;
-  const backingPerOhm = backing && circSupply && backing / circSupply;
+  const theme = useTheme();
+  const backingPerExod = useSelector(state => state.app.backingPerExod);
   const Title = isDashboard ? Metric.SmallTitle : Metric.Title;
   const Value = isDashboard ? Metric.SmallValue : Metric.Value;
 
@@ -115,7 +114,7 @@ export const BackingPerOHM = ({ isDashboard = false }) => {
         {isDashboard ? "Backing" : `Backing per ${OHM_TICKER}`}
         <InfoTooltip message={tooltipInfoMessages.backing} />
       </Title>
-      <Value>{!isNaN(backingPerOhm) && formatCurrency(backingPerOhm, 2)}</Value>
+      <Value>{!isNaN(backingPerExod) && formatCurrency(backingPerExod, 2)}</Value>
     </Metric>
   );
 };
@@ -137,7 +136,7 @@ export const CurrentIndex = ({ isDashboard = false }) => {
 };
 
 export const WSOHMPrice = ({ isDashboard = false }) => {
-  const wsOhmPrice = useSelector(state => state.app.marketPrice * state.app.currentIndex);
+  const wsExodPrice = useSelector(state => state.app.wsExodPrice);
   const Title = isDashboard ? Metric.SmallTitle : Metric.Title;
   const Value = isDashboard ? Metric.SmallValue : Metric.Value;
 
@@ -151,13 +150,13 @@ export const WSOHMPrice = ({ isDashboard = false }) => {
           }
         />
       </Title>
-      <Value>{wsOhmPrice && formatCurrency(wsOhmPrice, 2)}</Value>
+      <Value>{wsExodPrice && formatCurrency(wsExodPrice, 2)}</Value>
     </Metric>
   );
 };
 
 export const StakedPercentage = ({ isDashboard = false }) => {
-  const { data } = useTreasuryMetrics({ refetchOnMount: false });
+  const stakedPercentage = useSelector(state => state.app.stakedPercentage);
   const Title = isDashboard ? Metric.SmallTitle : Metric.Title;
   const Value = isDashboard ? Metric.SmallValue : Metric.Value;
 
@@ -167,16 +166,15 @@ export const StakedPercentage = ({ isDashboard = false }) => {
         Staked supply
         <InfoTooltip message={tooltipInfoMessages.staked} />
       </Title>
-      <Value>{data && trim((data[0].sOhmCirculatingSupply / data[0].ohmCirculatingSupply) * 100, 2)}%</Value>
+      <Value>{stakedPercentage && trim(stakedPercentage, 2)}%</Value>
     </Metric>
   );
 };
 
 export const CurrentRunway = ({ isDashboard = false }) => {
-  const { data } = useTreasuryMetrics({ refetchOnMount: false });
+  const runway = useSelector(state => state.app.runway);
   const Title = isDashboard ? Metric.SmallTitle : Metric.Title;
   const Value = isDashboard ? Metric.SmallValue : Metric.Value;
-  const epochLengthSeconds = EPOCH_INTERVAL * 0.9;
 
   return (
     <Metric className="wsoprice" isDashboard={isDashboard}>
@@ -184,7 +182,7 @@ export const CurrentRunway = ({ isDashboard = false }) => {
         Runway
         <InfoTooltip message={tooltipInfoMessages.runway} />
       </Title>
-      <Value>{data && trim((data[0].runwayCurrent * 3 * epochLengthSeconds) / 86400, 2)} days</Value>
+      <Value>{runway && trim(runway, 1)} Days</Value>
     </Metric>
   );
 };

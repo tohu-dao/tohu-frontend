@@ -53,10 +53,11 @@ const withChartCard = Component => {
     data,
     timeSelection = true,
     fullScreenDisabled = false,
+    initialTimeSelected = "all",
     ...props
   }) => {
     const [open, setOpen] = useState(false);
-    const [time, setTime] = useState("all");
+    const [time, setTime] = useState(initialTimeSelected);
     const [filteredData, setFilteredData] = useState(data);
     const [loading, setLoading] = useState(true);
 
@@ -70,12 +71,14 @@ const withChartCard = Component => {
     }, [data]);
 
     useEffect(() => {
-      if (time === "all") return setFilteredData(data);
+      if (data && data.length) {
+        if (time === "all") return setFilteredData(data);
 
-      const [value, type] = time.includes(" ") ? time.split(" ") : [1, time];
-      const cutOff = moment().subtract(value, type);
-      const newData = data.filter(entry => moment(entry.timestamp * 1000).isAfter(cutOff));
-      setFilteredData(newData);
+        const [value, type] = time.includes(" ") ? time.split(" ") : [1, time];
+        const cutOff = moment().subtract(value, type);
+        const newData = data.filter(entry => moment(entry.timestamp * 1000).isAfter(cutOff));
+        setFilteredData(newData);
+      }
     }, [time, data]);
 
     if (loading)
@@ -204,9 +207,9 @@ export const ExodiaStackedLineChart = withChartCard(
     itemNames,
     itemType,
     isExpanded = false,
-    expandedGraphStrokeColor,
     strokeWidth = 1.6,
     showTotal,
+    isPOL,
   }) => {
     const theme = useTheme();
     // Remove 0's
@@ -237,7 +240,7 @@ export const ExodiaStackedLineChart = withChartCard(
             tickLine={false}
             width={33}
             tickFormatter={number => tickFormatter(number, dataFormat)}
-            domain={[0, "auto"]}
+            domain={isPOL ? [0, 100] : [0, "auto"]}
             connectNulls={true}
             allowDataOverflow={false}
           />
@@ -275,7 +278,6 @@ export const ExodiaMultiLineChart = withChartCard(
     itemNames,
     itemType,
     isExpanded = false,
-    expandedGraphStrokeColor,
     scale,
     domain,
     withoutGlow,
@@ -286,6 +288,7 @@ export const ExodiaMultiLineChart = withChartCard(
     isGrowthOfSupply = false,
     showTotal,
     showNulls = false,
+    isDiscount,
   }) => {
     const theme = useTheme();
     // Remove 0's
@@ -301,7 +304,7 @@ export const ExodiaMultiLineChart = withChartCard(
           <defs>
             {!withoutGlow &&
               dataKey.map((key, index) => (
-                <LineShadow id={`color-${key}`} color={colors[index]} deviation={glowDeviation} />
+                <LineShadow id={`color-${key.replace(" ", "-")}`} color={colors[index]} deviation={glowDeviation} />
               ))}
           </defs>
           <XAxis
@@ -358,7 +361,16 @@ export const ExodiaMultiLineChart = withChartCard(
           <CartesianGrid stroke={theme.palette.border.primary} strokeDasharray="4 4" />
 
           {dataKey.map((key, index) => (
-            <Line {...lineProps(key, colors[index], dataAxis[index], strokeWidth, withoutGlow)} />
+            <Line
+              {...lineProps(
+                key,
+                colors[index],
+                dataAxis[index],
+                isDiscount && index === 1 ? 2 : strokeWidth,
+                withoutGlow,
+                showNulls,
+              )}
+            />
           ))}
         </ComposedChart>
       </ResponsiveContainer>
@@ -377,7 +389,6 @@ export const ExodiaLineChart = withChartCard(
     itemNames,
     itemType,
     isExpanded,
-    expandedGraphStrokeColor,
     scale,
     xInterval = 100,
     domain,
@@ -403,7 +414,6 @@ export const ExodiaLineChart = withChartCard(
           <defs>{!withoutGlow && renderGlow()}</defs>
           <XAxis
             dataKey="timestamp"
-            // interval={xInterval}
             axisLine={false}
             tickCount={3}
             tickLine={false}
@@ -433,6 +443,7 @@ export const ExodiaLineChart = withChartCard(
                 isPOL={isPOL}
                 isStaked={isStaked}
                 dataKey={dataKey}
+                isSingle
               />
             }
           />
@@ -463,6 +474,54 @@ export const ExodiaLineChart = withChartCard(
   },
 );
 
+export const ExodiaStackedBarChart = withChartCard(
+  ({ data, dataKey, colors, dataFormat, bulletpoints, itemNames, itemType, isExpanded }) => {
+    const theme = useTheme();
+
+    return (
+      <ResponsiveContainer minHeight={260} width="100%">
+        <BarChart data={data}>
+          <XAxis
+            dataKey="timestamp"
+            axisLine={false}
+            tickCount={3}
+            tickLine={false}
+            reversed={true}
+            tickFormatter={str => format(new Date(str * 1000), "MMM dd")}
+            padding={{ right: 20 }}
+          />
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tickCount={isExpanded ? EXPANDED_TICK_COUNT : TICK_COUNT}
+            width={33}
+            domain={[0, "auto"]}
+            allowDataOverflow={false}
+            tickFormatter={number => tickFormatter(number, dataFormat)}
+          />
+          <Tooltip
+            content={
+              <CustomTooltip
+                bulletpoints={bulletpoints}
+                itemNames={itemNames}
+                itemType={itemType}
+                dataKey={dataKey}
+                colors={colors}
+                showTotal
+              />
+            }
+            cursor={{ fill: theme.palette.background.default }}
+          />
+          <CartesianGrid stroke={theme.palette.border.primary} strokeDasharray="4 4" />
+          {dataKey.map((key, index) => (
+            <Bar dataKey={key} stackId="a" fill={colors[index]} />
+          ))}
+        </BarChart>
+      </ResponsiveContainer>
+    );
+  },
+);
+
 export const ExodiaPieChart = withChartCard(
   ({
     data,
@@ -473,7 +532,6 @@ export const ExodiaPieChart = withChartCard(
     itemNames,
     itemType,
     isExpanded,
-    expandedGraphStrokeColor,
     scale,
     xInterval = 100,
     domain,
@@ -525,7 +583,7 @@ export const ExodiaPieChart = withChartCard(
 export const trimNumber = number => {
   if (Number(number) > 1000000) return `${(parseFloat(number) / 1000000).toFixed(1)}M`;
   else if (Number(number) > 1000) return `${(parseFloat(number) / 1000).toFixed(0)}k`;
-  return number ? number.toFixed(1) : "-";
+  return number ? number.toFixed(0) : "-";
 };
 
 const tickFormatter = (number, dataFormat) => {
@@ -536,7 +594,7 @@ const tickFormatter = (number, dataFormat) => {
     if (dataFormat === "$") {
       return `$${trimNumber(number)}`;
     }
-    return trim(number, 2);
+    return trimNumber(number, 2);
   }
   return "";
 };
@@ -582,7 +640,7 @@ const areaProps = (dataKey, color, strokeWidth) => {
   };
 };
 
-const lineProps = (dataKey, color, yAxis, strokeWidth, withoutGlow = false) => {
+const lineProps = (dataKey, color, yAxis, strokeWidth, withoutGlow = false, showNulls = false) => {
   return {
     type: "monotone",
     strokeLinecap: "round",
@@ -590,8 +648,9 @@ const lineProps = (dataKey, color, yAxis, strokeWidth, withoutGlow = false) => {
     stroke: color ? color : "none",
     color: color,
     dot: false,
+    connectNulls: showNulls,
     strokeWidth: strokeWidth,
-    filter: withoutGlow ? undefined : `url(#color-${dataKey})`,
+    filter: withoutGlow ? undefined : `url(#color-${dataKey.replace(" ", "-")})`,
     yAxisId: yAxis === "right" ? "right" : "left",
   };
 };
