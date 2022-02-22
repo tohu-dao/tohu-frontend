@@ -1,83 +1,86 @@
-import { getColor } from "./graphHelpers";
+export const getBondDebtRatios = (data, theme, truncate = false) => {
+  if (!data || !data.dailyBondRevenues) return { dataKeys: [], colors: [], debtRatios: [], currentDebtRatio: "-" };
 
-export const getBondDiscountDetails = (data, theme, truncate = false) => {
-  if (!data || !data.bonds) return { dataKeys: [], colors: [], debtRatios: [], currentDebtRatio: "-" };
-
-  const dataKeys = extractUniqKeys(data);
-  const colors = dataKeys.map(key => getColor(key, theme));
-
-  const timestamps = initializeDataArrayWithTimeStamps(data);
-  const populatedDebtRatios = populateDebtRatios(data, timestamps);
-  const debtRatiosArray = convertToSortedArray(populatedDebtRatios, truncate);
-  const joinedDebtRatios = connectSurroundingValues(debtRatiosArray, dataKeys);
+  const [dataKeysMapping, dataKeys, colors] = getDataKeys(data, theme);
+  const bondValues = populateValues(data, dataKeysMapping, truncate);
+  const joinedDebtRatios = connectSurroundingValues(bondValues, dataKeys);
   const currentDebtRatio = getCurrentValue(joinedDebtRatios, dataKeys);
 
   return { dataKeys, colors, currentDebtRatio, debtRatios: joinedDebtRatios };
 };
 
 export const getBondValuesPerDay = (data, theme, truncate = false) => {
-  if (!data || !data.bonds)
+  if (!data || !data.dailyBondRevenues)
     return { dataKeys: [], colors: [], bondValues: [], mintedPerDay: [], currentValue: "-", bondedToday: "-" };
 
-  const dataKeys = extractUniqKeys(data);
-  const colors = dataKeys.map(key => getColor(key, theme));
+  const [dataKeysMapping, dataKeys, colors] = getDataKeys(data, theme);
+  const bondValues = populateValues(data, dataKeysMapping, truncate, false);
+  const bondedToday = data.dailyBondRevenues[0].valueIn;
 
-  const timestamps = initializeDataArrayWithTimeStamps(data);
-  const populatedBondValues = populateBondValues(data, timestamps);
-  const bondValuesArray = convertToSortedArray(populatedBondValues, truncate);
-  const currentValue = getCurrentValue(bondValuesArray, dataKeys);
-  const mintedPerDay = bondValuesArray.map(entry => {
-    return { timestamp: entry.timestamp, totalMinted: entry.totalMinted };
+  return { dataKeys, colors, bondValues, bondedToday };
+};
+
+export const getMintedPerDay = (data, theme, truncate = false) => {
+  if (!data || !data.dailyBondRevenues) return { mintedPerDay: [] };
+
+  const mintedPerDay = data.dailyBondRevenues.map(entry => {
+    const totalSupply = data.protocolMetrics.find(metric => metric.timestamp === entry.timestamp).totalSupply;
+    const minted = entry.bonds.reduce((sum, bond) => sum + bond.amountOut, 0);
+    return {
+      timestamp: entry.timestamp,
+      minted: minted,
+      mintedPercent: (minted / totalSupply) * 100,
+    };
   });
-  const bondedToday = dataKeys.reduce((sum, key) => sum + (bondValuesArray[0][key] || 0), 0);
 
-  return { dataKeys, colors, currentValue, bondValues: bondValuesArray, mintedPerDay, bondedToday };
+  const mintedWithAverages = mintedPerDay.map((entry, index) => {
+    const lastFiveDays = mintedPerDay.slice(index, Math.min(index + 5, mintedPerDay.length));
+    const fiveDayAverage = lastFiveDays.reduce((previous, current) => current.minted + previous, 0).toFixed(2) / 5;
+    const fiveDayAveragePercent =
+      lastFiveDays.reduce((previous, current) => current.mintedPercent + previous, 0).toFixed(2) / 5;
+    return {
+      ...entry,
+      fiveDayAverage: index < mintedPerDay.length - 5 ? fiveDayAverage : null,
+      fiveDayAveragePercent: index < mintedPerDay.length - 5 ? fiveDayAveragePercent : null,
+    };
+  });
+
+  return { mintedPerDay: mintedWithAverages };
 };
 
-const initializeDataArrayWithTimeStamps = data => {
-  return data.bonds.reduce((obj, entry) => {
-    obj[entry.timestamp] = { timestamp: entry.timestamp };
-    return obj;
+export const getBondDiscounts = data => {
+  if (!data || !data.bondDeposits) return { bondDiscounts: [] };
+
+  const discounts = data.bondDeposits.map(entry => {
+    const value = ((entry.valueOut - entry.valueIn) / entry.valueIn) * 100;
+    return {
+      timestamp: entry.timestamp,
+      discount: value,
+    };
+  });
+
+  const discountsWithEma = discounts.map((entry, index) => {
+    if (index > discounts.length - 50) return entry;
+    const last50 = discounts.slice(index, index + 50);
+    const ma = last50.reduce((sum, current) => sum + current.discount, 0) / 50;
+    return { ...entry, last50Ma: ma };
+  });
+
+  return { bondDiscounts: discountsWithEma };
+};
+
+const getDataKeys = (data, theme) => {
+  const dataKeysMapping = data.dailyBondRevenues.reduce((keys, entry) => {
+    entry.bonds.forEach(bond => {
+      const ticker = convertTickerName(bond.tokenIn.ticker);
+      keys[bond.tokenIn.ticker] = ticker;
+    });
+    return keys;
   }, {});
-};
+  const dataKeys = Object.values(dataKeysMapping);
+  const colors = dataKeys.map(key => theme.palette.treasuryColors[key] || theme.palette.treasuryColors.NONE);
 
-const extractUniqKeys = data => {
-  return Object.keys(
-    data.bonds.reduce((keys, entry) => {
-      const ticker = convertTickerName(entry.tokenIn.ticker);
-      keys[ticker] = ticker;
-      return keys;
-    }, {}),
-  );
-};
-
-const populateDebtRatios = (data, debtRatios) => {
-  data.bonds.forEach(entry => {
-    let ticker = convertTickerName(entry.tokenIn.ticker);
-
-    if (ticker === "DAI-EXOD") {
-      debtRatios[entry.timestamp][ticker] = entry.debtRatio / 1e18;
-    } else {
-      debtRatios[entry.timestamp][ticker] = entry.debtRatio / 1e9;
-    }
-  }, []);
-
-  return debtRatios;
-};
-
-const populateBondValues = (data, bondValues) => {
-  data.bonds.forEach(entry => {
-    let ticker = convertTickerName(entry.tokenIn.ticker);
-
-    bondValues[entry.timestamp][ticker] = entry.valueIn;
-    if (bondValues[entry.timestamp].totalMinted) {
-      bondValues[entry.timestamp].totalMinted += entry.amountOut;
-    } else {
-      bondValues[entry.timestamp].totalMinted = entry.amountOut;
-    }
-  }, []);
-
-  return bondValues;
+  return [dataKeysMapping, dataKeys, colors];
 };
 
 const convertTickerName = ticker => {
@@ -86,10 +89,27 @@ const convertTickerName = ticker => {
   else return ticker;
 };
 
-const convertToSortedArray = (data, truncate) => {
-  return _.sortBy(Object.values(data), ["timestamp"])
-    .reverse()
-    .filter(entry => (truncate ? entry.timestamp > 1639526400 : true)); // Remove the trash
+const populateValues = (data, dataKeysMapping, truncate, isDebtRatio = true) => {
+  return truncateData(data.dailyBondRevenues, truncate).map(entry => {
+    return entry.bonds.reduce((object, bond) => {
+      const ticker = dataKeysMapping[bond.tokenIn.ticker];
+      object[ticker] = isDebtRatio ? debtRatioValue(bond, ticker) : bond.valueIn;
+      return object;
+    }, {});
+  });
+};
+
+const debtRatioValue = (entry, ticker) => {
+  if (ticker === "DAI-EXOD") {
+    return entry.debtRatio / 1e18;
+  } else {
+    return entry.debtRatio / 1e9;
+  }
+};
+
+const truncateData = (data, truncate) => {
+  if (!truncate) return data;
+  return data.filter(entry => entry.timestamp > 1639526400); // Remove the trash
 };
 
 const connectSurroundingValues = (debtRatios, dataKeys) => {
