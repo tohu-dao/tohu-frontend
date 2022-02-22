@@ -366,7 +366,7 @@ export const ExodiaMultiLineChart = withChartCard(
                 key,
                 colors[index],
                 dataAxis[index],
-                isDiscount && index === 1 ? 3 : strokeWidth,
+                isDiscount && index === 1 ? 2 : strokeWidth,
                 withoutGlow,
                 showNulls,
               )}
@@ -443,6 +443,7 @@ export const ExodiaLineChart = withChartCard(
                 isPOL={isPOL}
                 isStaked={isStaked}
                 dataKey={dataKey}
+                isSingle
               />
             }
           />
@@ -582,7 +583,7 @@ export const ExodiaPieChart = withChartCard(
 export const trimNumber = number => {
   if (Number(number) > 1000000) return `${(parseFloat(number) / 1000000).toFixed(1)}M`;
   else if (Number(number) > 1000) return `${(parseFloat(number) / 1000).toFixed(0)}k`;
-  return number ? number.toFixed(1) : "-";
+  return number ? number.toFixed(0) : "-";
 };
 
 const tickFormatter = (number, dataFormat) => {

@@ -30,7 +30,7 @@ import { bulletpoints, tooltipItems, tooltipInfoMessages, itemType } from "../..
 import { EPOCH_INTERVAL, OHM_TICKER } from "../../../../constants";
 import { parse } from "date-fns";
 import { TrendingDown, TrendingUp, TrendingFlat, AccountBalance } from "@material-ui/icons";
-import { getBondDiscountDetails, getBondValuesPerDay } from "./bondGraphHelpers";
+import { getBondDebtRatios, getBondValuesPerDay, getMintedPerDay, getBondDiscounts } from "./bondGraphHelpers";
 import { getTokenBalances, getAssetTypeWeight } from "./treasuryGraphHelpers";
 
 export const Graph = ({ children }) => <>{children}</>;
@@ -155,6 +155,7 @@ export const TokenQuantities = () => {
 
   return (
     <ExodiaLineChart
+      underglow
       data={tokenValues.length ? tokenValues : null}
       dataKey={[selectedData]}
       color={color}
@@ -169,7 +170,7 @@ export const TokenQuantities = () => {
       itemNames={[selectedData]}
       itemType={selectedData}
       todayMessage=""
-      isDashboard
+      infoTooltipMessage={tooltipInfoMessages.tokenBalance}
       showTotal
     />
   );
@@ -249,9 +250,33 @@ export const AssetTypeBreakdown = () => {
       itemNames={["Liquidity", "Risk Free Reserves", "Risky Reserves"]}
       itemType={itemType.percentage}
       todayMessage=""
-      isDashboard
+      infoTooltipMessage={tooltipInfoMessages.treasuryBreakdown}
       isPOL
       showTotal
+    />
+  );
+};
+
+export const BackingPerExod = () => {
+  const theme = useTheme();
+  const { data } = useTreasuryMetrics({ refetchOnMount: false });
+  const metrics = data && data.protocolMetrics;
+
+  return (
+    <ExodiaLineChart
+      underglow
+      data={metrics}
+      dataKey={["backingPerExod"]}
+      dataFormat="$"
+      itemNames={["Backing per EXOD"]}
+      itemType={itemType.dollar}
+      headerText="Backing per EXOD"
+      color={theme.palette.chartColors[4]}
+      stroke={theme.palette.chartColors[4]}
+      bulletpoints={bulletpoints.apy}
+      infoTooltipMessage={tooltipInfoMessages.backing}
+      headerSubText={`Current Backing: ${metrics && formatCurrency(metrics[0].backingPerExod, 2)} `}
+      todayMessage=""
     />
   );
 };
@@ -259,22 +284,14 @@ export const AssetTypeBreakdown = () => {
 export const OHMStakedGraph = () => {
   const theme = useTheme();
   const { data } = useTreasuryMetrics({ refetchOnMount: false });
-
-  const staked =
-    data &&
-    data.simpleStakings
-      .map((metric, index) => ({
-        staked: (metric.stakedSupply / data.protocolMetrics[index].circulatingSupply) * 100,
-        timestamp: metric.id,
-      }))
-      .filter(metric => metric.staked < 100 && metric.staked > 0.05);
+  const staked = data && data.simpleStakings;
 
   return (
     <ExodiaLineChart
       isStaked
       underglow
       data={staked}
-      dataKey={["staked"]}
+      dataKey={["stakedPercentage"]}
       dataFormat="percent"
       itemNames={tooltipItems.staked}
       itemType={itemType.percentage}
@@ -283,7 +300,7 @@ export const OHMStakedGraph = () => {
       stroke={theme.palette.chartColors[4]}
       bulletpoints={bulletpoints.staked}
       infoTooltipMessage={tooltipInfoMessages.staked}
-      headerSubText={`${staked && trim(staked[0].staked, 2)}% `}
+      headerSubText={`${staked && trim(staked[0].stakedPercentage, 2)}% `}
       todayMessage=""
     />
   );
@@ -308,7 +325,6 @@ export const APYOverTimeGraph = () => {
 
   return (
     <ExodiaLineChart
-      type="line"
       data={apy}
       dataKey={["apy"]}
       dataFormat="percent"
@@ -320,6 +336,7 @@ export const APYOverTimeGraph = () => {
       bulletpoints={bulletpoints.apy}
       infoTooltipMessage={tooltipInfoMessages.apy}
       headerSubText={`${apy && apy[0].apy.toLocaleString("en-us")}%`}
+      initialTimeSelected="3 month"
       todayMessage=""
     />
   );
@@ -382,28 +399,13 @@ export const DilutionGraph = () => {
 export const OhmMintedGraph = () => {
   const theme = useTheme();
   const { data } = useTreasuryMetrics({ refetchOnMount: false });
-  const { mintedPerDay } = getBondValuesPerDay(data, theme);
-
-  const minted = mintedPerDay
-    .map((entry, index) => {
-      const lastFiveDays = mintedPerDay.slice(index, Math.min(index + 5, mintedPerDay.length));
-      const fiveDayAverage =
-        lastFiveDays.reduce((previous, current) => current.totalMinted + previous, 0).toFixed(2) / 5;
-      return {
-        timestamp: entry.timestamp,
-        totalMinted: entry.totalMinted,
-        fiveDayAverage: index < mintedPerDay.length - 5 ? fiveDayAverage : null,
-      };
-    })
-    .slice(0, mintedPerDay.length - 1);
-
-  const fiveDayTotal = minted.length && minted.slice(0, 5).reduce((sum, current) => sum + current.totalMinted, 0);
+  const { mintedPerDay } = getMintedPerDay(data);
 
   return (
     <ExodiaMultiLineChart
       dataFormat={["OHM", "OHM"]}
-      data={minted.length ? minted : null}
-      dataKey={["totalMinted", "fiveDayAverage"]}
+      data={mintedPerDay.length ? mintedPerDay : null}
+      dataKey={["minted", "fiveDayAverage"]}
       itemNames={tooltipItems.minted}
       itemType={itemType.OHM}
       headerText={`${OHM_TICKER} minted`}
@@ -411,7 +413,7 @@ export const OhmMintedGraph = () => {
       stroke={[theme.palette.chartColors[4], theme.palette.chartColors[0]]}
       bulletpoints={bulletpoints.staked}
       infoTooltipMessage={tooltipInfoMessages.minted}
-      headerSubText={`${(fiveDayTotal && fiveDayTotal / 5).toFixed(2)} EXOD`}
+      headerSubText={`${mintedPerDay.length && mintedPerDay[0].fiveDayAverage.toFixed(2)} EXOD`}
       todayMessage="5-day Average"
       glowDeviation="4"
       showNulls
@@ -422,30 +424,13 @@ export const OhmMintedGraph = () => {
 export const OhmMintedPerTotalSupplyGraph = () => {
   const theme = useTheme();
   const { data } = useTreasuryMetrics({ refetchOnMount: false });
-  const { mintedPerDay } = getBondValuesPerDay(data, theme);
-
-  const minted = mintedPerDay
-    .map((entry, index) => {
-      const lastFiveDays = mintedPerDay.slice(index, Math.min(index + 5, mintedPerDay.length));
-      const totalSupply = data.protocolMetrics.find(metric => metric.timestamp === entry.timestamp).totalSupply;
-      const fiveDayAverage =
-        lastFiveDays.reduce((previous, current) => (current.totalMinted / totalSupply) * 100 + previous, 0).toFixed(2) /
-        5;
-      return {
-        timestamp: entry.timestamp,
-        mintedPercent: (entry.totalMinted / totalSupply) * 100,
-        fiveDayAveragePercent: index < mintedPerDay.length - 5 ? fiveDayAverage : null,
-      };
-    })
-    .slice(0, mintedPerDay.length - 1);
-
-  const fiveDayTotal = minted.length && minted.slice(0, 5).reduce((sum, current) => current.mintedPercent);
+  const { mintedPerDay } = getMintedPerDay(data);
 
   return (
     <ExodiaMultiLineChart
       glowDeviation="4"
       dataFormat={["percent", "percent"]}
-      data={minted.length ? minted : null}
+      data={mintedPerDay.length ? mintedPerDay : null}
       dataKey={["mintedPercent", "fiveDayAveragePercent"]}
       itemNames={tooltipItems.mcs}
       itemType={itemType.percentage}
@@ -454,7 +439,7 @@ export const OhmMintedPerTotalSupplyGraph = () => {
       stroke={[theme.palette.chartColors[3], theme.palette.chartColors[0]]}
       bulletpoints={bulletpoints.tvl}
       infoTooltipMessage={tooltipInfoMessages.mcs}
-      headerSubText={`${(minted.length && minted[0].fiveDayAveragePercent).toFixed(2)}%`}
+      headerSubText={`${mintedPerDay.length && mintedPerDay[0].fiveDayAveragePercent.toFixed(2)}%`}
       todayMessage="5-day Average"
       showNulls
     />
@@ -464,48 +449,24 @@ export const OhmMintedPerTotalSupplyGraph = () => {
 export const BondDiscounts = () => {
   const theme = useTheme();
   const { data } = useTreasuryMetrics({ refetchOnMount: false });
-
-  const discounts =
-    data &&
-    data.bondDeposits
-      .map(entry => {
-        const value = ((entry.valueOut - entry.valueIn) / entry.valueIn) * 100;
-        if (value > 50) return {};
-
-        return {
-          timestamp: entry.timestamp,
-          discount: value,
-        };
-      })
-      .reverse()
-      .filter(entry => Object.keys(entry).length);
-
-  const discountsWithEma =
-    discounts &&
-    discounts
-      .map((entry, index) => {
-        if (index < 50) return entry;
-        const last50 = discounts.slice(index - 50, index);
-        const ma = last50.reduce((sum, current) => sum + current.discount, 0) / 50;
-        return { ...entry, last50Ma: ma };
-      })
-      .reverse();
+  const { bondDiscounts } = getBondDiscounts(data);
 
   return (
     <ExodiaMultiLineChart
-      glowDeviation="0"
+      glowDeviation="2"
       type="line"
-      data={discountsWithEma}
+      data={bondDiscounts.length ? bondDiscounts : null}
       dataKey={["discount", "last50Ma"]}
       dataFormat="percent"
       headerText="Bond Discounts (at time of bonding)"
-      headerSubText={discountsWithEma && `Last 50 MA: ${trim(discountsWithEma[0].last50Ma, 2)}%`}
+      headerSubText={bondDiscounts.length && `Last 50 MA: ${trim(bondDiscounts[0].last50Ma, 2)}%`}
       itemNames={["Discount", "Last 50 Average"]}
       itemType={itemType.percentage}
       colors={[theme.palette.chartColors[4], theme.palette.chartColors[0]]}
       stroke={[theme.palette.chartColors[4], theme.palette.chartColors[0]]}
       bulletpoints={bulletpoints.apy}
-      isDashboard
+      strokeWidth={1}
+      infoTooltipMessage={tooltipInfoMessages.bondDiscounts}
       isDiscount
       todayMessage=""
     />
@@ -515,7 +476,7 @@ export const BondDiscounts = () => {
 export const DebtRatioGraph = () => {
   const theme = useTheme();
   const { data } = useTreasuryMetrics({ refetchOnMount: false });
-  const { dataKeys, colors, currentDebtRatio, debtRatios } = getBondDiscountDetails(data, theme, true);
+  const { dataKeys, colors, currentDebtRatio, debtRatios } = getBondDebtRatios(data, theme, true);
 
   return (
     <ExodiaMultiLineChart
@@ -542,7 +503,7 @@ export const DebtRatioGraph = () => {
 export const BondValuesChart = () => {
   const theme = useTheme();
   const { data } = useTreasuryMetrics({ refetchOnMount: false });
-  const { dataKeys, colors, currentDebtRatio, bondValues, bondedToday } = getBondValuesPerDay(data, theme, true);
+  const { dataKeys, colors, bondValues, bondedToday } = getBondValuesPerDay(data, theme, true);
 
   return (
     <ExodiaStackedBarChart
@@ -556,7 +517,7 @@ export const BondValuesChart = () => {
       itemNames={dataKeys}
       itemType={itemType.dollar}
       todayMessage=""
-      isDashboard
+      infoTooltipMessage={tooltipInfoMessages.bondRevenue}
       showTotal
     />
   );
@@ -566,22 +527,16 @@ export const IndexAdjustedPrice = () => {
   const theme = useTheme();
   const { data } = useTreasuryMetrics({ refetchOnMount: false });
 
-  const indexAdjustedPrice =
-    data &&
-    data.protocolMetrics.map((entry, index) => ({
-      timestamp: entry.timestamp,
-      price: entry.price,
-      indexAdjustedPrice: entry.price * data.simpleStakings[index].index,
-    }));
+  const indexAdjustedPrice = data && data.protocolMetrics;
 
   return (
     <ExodiaMultiLineChart
       data={indexAdjustedPrice}
-      dataKey={["price", "indexAdjustedPrice"]}
+      dataKey={["exodPrice", "wsExodPrice"]}
       colors={[theme.palette.chartColors[0], theme.palette.chartColors[4]]}
       stroke={[theme.palette.chartColors[0], theme.palette.chartColors[4]]}
       headerText="Index Adjusted Price"
-      headerSubText={`$${indexAdjustedPrice && trim(indexAdjustedPrice[0].indexAdjustedPrice, 2)}`}
+      headerSubText={`$${indexAdjustedPrice && trim(indexAdjustedPrice[0].wsExodPrice, 2)}`}
       dataFormat={["$"]}
       bulletpoints={bulletpoints.indexAdjustedPrice}
       itemNames={tooltipItems.indexAdjustedPrice}
@@ -630,30 +585,23 @@ export const DashboardPriceGraph = ({ isDashboard = false }) => {
   const { data } = useTreasuryMetrics({ refetchOnMount: false });
   const [selectedData, setSelectedData] = useState("marketCap");
 
-  const entries = { price: 0, wsEXOD: 1, marketCap: 2 };
-  const formattedData =
-    data &&
-    data.protocolMetrics.map((entry, index) => ({
-      timestamp: entry.timestamp,
-      price: entry.price,
-      wsEXOD: entry.price * data.simpleStakings[index].index,
-      marketCap: entry.marketCap,
-    }));
+  const entries = { price: 0, wsExodPrice: 1, marketCap: 2 };
+  const formattedData = data && data.protocolMetrics;
 
   const value =
     formattedData &&
     (selectedData == "price"
       ? formattedData[0].price
-      : selectedData == "wsEXOD"
-      ? formattedData[0].wsEXOD
+      : selectedData == "wsExodPrice"
+      ? formattedData[0].wsExodPrice
       : formattedData[0].marketCap);
 
   const lastValue =
     formattedData &&
     (selectedData == "price"
       ? formattedData[1].price
-      : selectedData == "wsEXOD"
-      ? formattedData[1].wsEXOD
+      : selectedData == "wsExodPrice"
+      ? formattedData[1].wsExodPrice
       : formattedData[1].marketCap);
 
   const SelectDataType = () => (
@@ -676,7 +624,7 @@ export const DashboardPriceGraph = ({ isDashboard = false }) => {
         disableUnderline
       >
         <MenuItem value={"price"}>EXOD</MenuItem>
-        <MenuItem value={"wsEXOD"}>wsEXOD</MenuItem>
+        <MenuItem value={"wsExodPrice"}>wsEXOD</MenuItem>
         <MenuItem value={"marketCap"}>Market Cap</MenuItem>
       </Select>
     </FormControl>

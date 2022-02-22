@@ -2,10 +2,15 @@ import { t } from "@lingui/macro";
 
 export const treasuryDataQuery = `
 query {
-  treasuries(first: 1000, orderBy: id, orderDirection: desc) {
+  auxes(first: 1000) {
+    historicalGOhmValue
+    id
+  }
+  treasuries(first: 1000, orderBy: timestamp, orderDirection: desc) {
     id
     marketValue
     riskFreeValue
+    backingValue
     tokenBalances(first: 100) {
       balance
       isLiquidity
@@ -27,36 +32,37 @@ query {
       }
     }
   }
-  simpleStakings(first: 1000, orderBy: id, orderDirection: desc) {
+  simpleStakings(first: 1000, orderBy: timestamp, orderDirection: desc) {
     apy
     index
     rebaseRate
     stakedSupply
+    stakedPercentage
     id
   }
-  protocolMetrics(first: 1000, orderBy: id, orderDirection: desc) {
+  protocolMetrics(first: 1000, orderBy: timestamp, orderDirection: desc) {
     circulatingSupply
     holders
     id
     marketCap
-    price
+    exodPrice
     runway
     totalSupply
     tvl
+    backingPerExod
+    wsExodPrice
   }
-  bonds(first: 1000, orderBy: timestamp, orderDirection: desc) {
-    amountIn
-    amountOut
-    debtRatio
-    id
+  dailyBondRevenues(orderDirection: desc, orderBy: id, first: 1000) {
     timestamp
     valueIn
-    valueOut
-    tokenIn {
-      ticker
-    }
-    tokenOut {
-      ticker
+    bonds {
+      debtRatio
+      valueIn
+      valueOut
+      amountOut
+      tokenIn {
+        ticker
+      }
     }
   }
   bondDeposits(first: 1000, orderDirection: desc, orderBy: timestamp) {
@@ -67,6 +73,9 @@ query {
     timestamp
     tokenIn {
       ticker
+    }
+    bonder {
+      id
     }
   }
 }
@@ -242,6 +251,12 @@ export const tooltipInfoMessages = {
   debtratio: t`Debt ratio, is a metric that tells you how much EXOD is currently vesting in relation to the total EXOD supply. The numbers dont reflect the actual values, but, it can be used to form an impression of how much EXOD is being minted from bonding in relation to the total supply.`,
   indexAdjustedPrice: t`Index adjusted price is the market price of EXOD times the index.`,
   growthOfSupply: t`Growth of Supply, is the growth of supply from bonding vs the growth of supply through the index/rebasing.`,
+  tokenBalance: t`Token balances include all of the selected tokens held by the treasury in various places. Including spot, staking and liquidity.`,
+  treasuryBreakdown: t`Treasury breakdown, breaks down our treasury assets by liquidity, risk free assets and risky assets.`,
+  bondRevenue: t`Bond Revenue breaks down the treasuries daily revenue via bonding in the various asset types we offer as bonds.`,
+  bondDiscounts: t`Bond discounts shows the discount for every bond which has been purchased by a user.`,
+  myAmountBonded: t`Total EXOD minted from all of your bonds.`,
+  myValueBonded: t`Total value (at the time of bonding) of all of your bonds.`,
 };
 
 export const itemType = {

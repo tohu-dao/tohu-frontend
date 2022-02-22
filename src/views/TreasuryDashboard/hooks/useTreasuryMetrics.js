@@ -12,7 +12,8 @@ export const useTreasuryMetrics = options => {
       const data = response.data;
 
       return {
-        bonds: data.bonds.slice(0, -2).map(entry => transformStringsToFloats(entry)),
+        auxes: data.auxes.slice(0, -2).map(entry => transformStringsToFloats(entry)),
+        dailyBondRevenues: data.dailyBondRevenues.slice(0, -2).map(entry => transformStringsToFloats(entry)),
         protocolMetrics: data.protocolMetrics.slice(0, -2).map(entry => transformStringsToFloats(entry)),
         simpleStakings: data.simpleStakings.slice(0, -2).map(entry => transformStringsToFloats(entry)),
         treasuries: data.treasuries.slice(0, -2).map(entry => transformStringsToFloats(entry)),
@@ -37,6 +38,7 @@ const iterateValue = (result, value, key) => {
       result["timestamp"] = parseFloat(value);
     }
     const parsedValue = parseFloat(value);
-    result[key] = isNaN(parsedValue) ? value : parsedValue;
+    const isAddress = typeof value === "string" && value.startsWith("0x");
+    result[key] = isNaN(parsedValue) || isAddress ? value : parsedValue;
   }
 };

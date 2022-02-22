@@ -42,6 +42,7 @@ const renderTooltipItems = (
   colors,
   dataKey,
   showTotal,
+  isSingle,
 ) => {
   const theme = useTheme();
 
@@ -104,6 +105,7 @@ const renderTooltipItems = (
     <>
       {payload.map((item, index) => {
         const itemIndex = dataKey.findIndex(name => name === item.dataKey);
+        if (isSingle && index > 0) return <></>;
         return (
           <Box key={index}>
             <Box className="item" display="flex">
@@ -173,6 +175,7 @@ function CustomTooltip({
   isPie,
   colors,
   showTotal = false,
+  isSingle = false,
 }) {
   if (active && payload && payload.length) {
     return (
@@ -190,6 +193,7 @@ function CustomTooltip({
           colors,
           dataKey,
           showTotal,
+          isSingle,
         )}
       </Paper>
     );

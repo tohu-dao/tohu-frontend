@@ -1,6 +1,4 @@
 import { formatCurrency } from "../../../../helpers";
-import { getColor } from "./graphHelpers";
-import gohmHistory from "./gohmHistory";
 
 // Smooth out bad data by putting the ticker name under the timestamp.
 // The value corresponds to how many data points back or forwards to jump to.
@@ -29,12 +27,15 @@ export const getTokenBalances = (data, theme, { isRiskFree = false, type = "valu
         }
       }
     });
-    values.gOHM = Math.max(values.gOHM || 0, gohmHistory[entry.timestamp] || 0);
+    const gOhmHistoricAux = data.auxes.find(
+      aux => aux.timestamp === data.treasuries[index + 2]?.timestamp || aux.timestamp === entry.timestamp,
+    );
+    if (type === "balance" && gOhmHistoricAux) values.gOHM = 4.5;
     return values;
   });
 
   const dataKeys = filterSortDataKeys(keys, type);
-  const colors = dataKeys.map(key => getColor(key, theme));
+  const colors = dataKeys.map(key => theme.palette.treasuryColors[key] || theme.palette.treasuryColors.NONE);
 
   const value = isRiskFree ? data.treasuries[0].riskFreeValue : data.treasuries[0].marketValue;
   const lastValue = isRiskFree ? data.treasuries[1].riskFreeValue : data.treasuries[1].marketValue;
@@ -95,7 +96,8 @@ export const getAssetTypeWeight = data => {
     let liquidity = 0;
     let reserves = 0;
     let riskFree = 0;
-    entry.tokenBalances.forEach(tokenBalance => {
+    let liquidityMarketCapRatio = 0;
+    entry.tokenBalances.forEach((tokenBalance, index) => {
       values.timestamp = entry.timestamp;
 
       if (tokenBalance.token.ticker !== "fBEETS") {
@@ -112,6 +114,7 @@ export const getAssetTypeWeight = data => {
     values.liquidity = (liquidity / (reserves + riskFree + liquidity)) * 100;
     values.reserves = (reserves / (reserves + riskFree + liquidity)) * 100;
     values.riskFree = (riskFree / (reserves + riskFree + liquidity)) * 100;
+    values.liquidityMarketCapRatio = (liquidity / data.protocolMetrics[index].marketCap) * 100;
     return values;
   });
 };

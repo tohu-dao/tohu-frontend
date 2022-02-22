@@ -259,21 +259,21 @@ export const dark = responsiveFontSizes(
             color: darkTheme.primaryButtonColor,
             backgroundColor: darkTheme.gold,
             boxShadow: `0px 0px 10px 5px rgba(70,171,21,0.3)`,
+            "@media (hover:none)": {
+              color: darkTheme.primaryButtonColor,
+              backgroundColor: darkTheme.gold,
+            },
             "&:hover": {
               backgroundColor: darkTheme.primaryButtonHoverBG,
               color: darkTheme.primaryButtonHoverColor,
               boxShadow: `0px 0px 5px 3px rgba(70,171,21,0.3)`,
+              "@media (hover:none)": {
+                backgroundColor: `${darkTheme.primaryButtonHoverBG} !important`,
+              },
             },
             "&:active": {
               backgroundColor: darkTheme.primaryButtonHoverBG,
               color: darkTheme.primaryButtonHoverColor,
-            },
-            "@media (hover:none)": {
-              color: darkTheme.primaryButtonColor,
-              backgroundColor: darkTheme.gold,
-              "&:hover": {
-                backgroundColor: darkTheme.primaryButtonHoverBG,
-              },
             },
           },
           containedSecondary: {

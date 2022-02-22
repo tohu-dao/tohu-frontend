@@ -15,14 +15,20 @@ interface IProtocolMetrics {
   readonly circulatingSupply: string;
   readonly holders: string;
   readonly marketCap: string;
-  readonly price: string;
+  readonly exodPrice: string;
   readonly runway: string;
   readonly totalSupply: string;
   readonly tvl: string;
+  readonly backingPerExod: string;
+  readonly wsExodPrice: string;
 }
 
 interface ITreasuryMetrics {
   readonly marketValue: string;
+}
+
+interface IStakingMetrics {
+  readonly stakedPercentage: string;
 }
 
 export const loadAppDetails = createAsyncThunk(
@@ -96,25 +102,32 @@ export const loadGraphData = createAsyncThunk(
   async ({ attempts = 0 }: { attempts?: number }, { dispatch }) => {
     const protocolMetricsQuery = `
     query {
-      protocolMetrics(first: 1, orderBy: id, orderDirection: desc) {
+      protocolMetrics(first: 1, orderBy: timestamp, orderDirection: desc) {
         circulatingSupply
         holders
         marketCap
         runway
         totalSupply
-        price
+        exodPrice
         tvl
+        backingPerExod
+        wsExodPrice
       }
-      treasuries(first: 1, orderBy: id, orderDirection: desc) {
+      treasuries(first: 1, orderBy: timestamp, orderDirection: desc) {
         marketValue
+      }
+      simpleStakings(first: 1, orderBy: timestamp, orderDirection: desc) {
+        stakedPercentage
       }
     }
   `;
 
     try {
-      const graphData = await apollo<{ protocolMetrics: IProtocolMetrics[]; treasuries: ITreasuryMetrics[] }>(
-        protocolMetricsQuery,
-      );
+      const graphData = await apollo<{
+        protocolMetrics: IProtocolMetrics[];
+        treasuries: ITreasuryMetrics[];
+        simpleStakings: IStakingMetrics[];
+      }>(protocolMetricsQuery);
 
       if (!graphData) {
         console.error("Returned a null response when querying TheGraph");
@@ -126,7 +139,11 @@ export const loadGraphData = createAsyncThunk(
       const circSupply = parseFloat(graphData.data.protocolMetrics[0].circulatingSupply);
       const totalSupply = parseFloat(graphData.data.protocolMetrics[0].totalSupply);
       const treasuryMarketValue = parseFloat(graphData.data.treasuries[0].marketValue);
-      const marketPrice = parseFloat(graphData.data.protocolMetrics[0].price);
+      const marketPrice = parseFloat(graphData.data.protocolMetrics[0].exodPrice);
+      const backingPerExod = parseFloat(graphData.data.protocolMetrics[0].backingPerExod);
+      const wsExodPrice = parseFloat(graphData.data.protocolMetrics[0].wsExodPrice);
+      const runway = parseFloat(graphData.data.protocolMetrics[0].runway);
+      const stakedPercentage = parseFloat(graphData.data.simpleStakings[0].stakedPercentage);
       return {
         stakingTVL,
         marketCap,
@@ -134,6 +151,10 @@ export const loadGraphData = createAsyncThunk(
         totalSupply,
         treasuryMarketValue,
         marketPrice,
+        backingPerExod,
+        wsExodPrice,
+        runway,
+        stakedPercentage,
       } as IAppData;
     } catch (e) {
       if (attempts < 0) return;
@@ -257,14 +278,14 @@ export const loadMarketPrice = createAsyncThunk(
     const marketPriceQuery = `
     query {
       protocolMetrics(first: 1, orderBy: id, orderDirection: desc) {
-        price
+        exodPrice
       }
     }
   `;
     try {
       const graphData = await apollo<{ protocolMetrics: IProtocolMetrics[] }>(marketPriceQuery);
       if (!graphData) return;
-      marketPrice = parseFloat(graphData.data.protocolMetrics[0].price);
+      marketPrice = parseFloat(graphData.data.protocolMetrics[0].exodPrice);
       return { marketPrice };
     } catch (e) {
       if (attempts < 0) return;
@@ -289,6 +310,8 @@ interface IAppData {
   readonly loading: boolean;
   readonly loadingMarketPrice: boolean;
   readonly marketCap?: number;
+  readonly backingPerExod?: number;
+  readonly wsExodPrice?: number;
   readonly marketPrice?: number;
   readonly stakingAPY?: number;
   readonly stakingRebase?: number;
@@ -299,6 +322,8 @@ interface IAppData {
   readonly endBlock?: number;
   readonly blockRateSeconds?: number;
   readonly secondsUntilRebase?: number;
+  readonly runway?: number;
+  readonly stakedPercentage?: number;
 }
 
 const initialState: IAppData = {
