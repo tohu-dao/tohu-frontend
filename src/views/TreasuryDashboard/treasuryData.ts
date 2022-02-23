@@ -255,8 +255,7 @@ export const tooltipInfoMessages = {
   treasuryBreakdown: t`Treasury breakdown, breaks down our treasury assets by liquidity, risk free assets and risky assets.`,
   bondRevenue: t`Bond Revenue breaks down the treasuries daily revenue via bonding in the various asset types we offer as bonds.`,
   bondDiscounts: t`Bond discounts shows the discount for every bond which has been purchased by a user.`,
-  myAmountBonded: t`Total EXOD minted from all of your bonds.`,
-  myValueBonded: t`Total value (at the time of bonding) of all of your bonds.`,
+  premium: t`Premium is the ratio of market price over backing.`,
 };
 
 export const itemType = {

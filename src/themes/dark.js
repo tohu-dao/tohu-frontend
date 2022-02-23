@@ -36,7 +36,7 @@ export const darkTheme = {
   containedSecondaryButtonHoverBG: "rgba(255, 255, 255, 0.15)",
   graphStrokeColor: "rgba(255, 255, 255, .1)",
   sidebarBackground: `linear-gradient(0deg, rgba(31,31,31,1) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 100%), url(${navBg})`,
-  chartColors: ["#46ab15", "#ebc342", "#fe868c", "#598fb5", "#775bb5", "#42bd8c", "#888888"],
+  chartColors: ["#46ab15", "#ebc342", "#fe868c", "#598fb5", "#775bb5", "#42bd8c", "#db3737", "#888888"],
   treasuryColors: {
     EXOD: "#46ab15",
     wsEXOD: "#6dd63a",
