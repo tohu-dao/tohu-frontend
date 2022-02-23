@@ -55,9 +55,9 @@ function Calc() {
   const wsohmAsSohm = useAppSelector(state => {
     return state.account.balances && state.account.balances.wsohmAsSohm;
   });
-  const { data } = useTreasuryMetrics({ refetchOnMount: false });
+  const { protocolMetrics } = useTreasuryMetrics();
 
-  const currentRunway = data && data.protocolMetrics[0].runway;
+  const currentRunway = protocolMetrics && protocolMetrics[0].runway;
 
   const trimmedBalance = Number(
     [sohmBalance, wsohmAsSohm]

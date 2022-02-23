@@ -8,11 +8,12 @@ const sneakyJoins = {
   },
 };
 
-export const getTokenBalances = (data, theme, { isRiskFree = false, type = "value" } = {}) => {
-  if (!data) return { tokenValues: [], dataKeys: [], colors: [], formattedValue: "-", lastValue: "-", value: "-" };
+export const getTokenBalances = (treasuries, auxes, theme, { isRiskFree = false, type = "value" } = {}) => {
+  if (!treasuries || !auxes)
+    return { tokenValues: [], dataKeys: [], colors: [], formattedValue: "-", lastValue: "-", value: "-" };
   const keys = {};
 
-  const tokenValues = data.treasuries.map((entry, index) => {
+  const tokenValues = treasuries.map((entry, index) => {
     const values = { timestamp: entry.timestamp };
     entry.tokenBalances.forEach((tokenBalance, tickerIndex) => {
       if (!isRiskFree || (isRiskFree && tokenBalance.isRiskFree)) {
@@ -21,14 +22,14 @@ export const getTokenBalances = (data, theme, { isRiskFree = false, type = "valu
 
         if (sneakyJoins[entry.timestamp] && Object.keys(sneakyJoins[entry.timestamp]).includes(ticker)) {
           const nextIndex = sneakyJoins[entry.timestamp][ticker];
-          addValues(data.treasuries[index - nextIndex].tokenBalances[tickerIndex], values, ticker, type);
+          addValues(treasuries[index - nextIndex].tokenBalances[tickerIndex], values, ticker, type);
         } else {
           addValues(tokenBalance, values, ticker, type);
         }
       }
     });
-    const gOhmHistoricAux = data.auxes.find(
-      aux => aux.timestamp === data.treasuries[index + 2]?.timestamp || aux.timestamp === entry.timestamp,
+    const gOhmHistoricAux = auxes.find(
+      aux => aux.timestamp === treasuries[index + 2]?.timestamp || aux.timestamp === entry.timestamp,
     );
     if (type === "balance" && gOhmHistoricAux) values.gOHM = 4.5;
     return values;
@@ -37,8 +38,8 @@ export const getTokenBalances = (data, theme, { isRiskFree = false, type = "valu
   const dataKeys = filterSortDataKeys(keys, type);
   const colors = dataKeys.map(key => theme.palette.treasuryColors[key] || theme.palette.treasuryColors.NONE);
 
-  const value = isRiskFree ? data.treasuries[0].riskFreeValue : data.treasuries[0].marketValue;
-  const lastValue = isRiskFree ? data.treasuries[1].riskFreeValue : data.treasuries[1].marketValue;
+  const value = isRiskFree ? treasuries[0].riskFreeValue : treasuries[0].marketValue;
+  const lastValue = isRiskFree ? treasuries[1].riskFreeValue : treasuries[1].marketValue;
   const formattedValue = formatCurrency(value);
 
   return { tokenValues, dataKeys, colors, formattedValue, lastValue, value };
@@ -88,10 +89,10 @@ const sortTreasuryKeys = (first, second) => {
   }
 };
 
-export const getAssetTypeWeight = data => {
-  if (!data) return [];
+export const getAssetTypeWeight = treasuries => {
+  if (!treasuries) return [];
 
-  return data.treasuries.map((entry, index) => {
+  return treasuries.map((entry, index) => {
     const values = {};
     let liquidity = 0;
     let reserves = 0;

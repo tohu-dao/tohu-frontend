@@ -14,7 +14,13 @@ import { segmentUA } from "./helpers/userAnalyticHelpers";
 import { shouldTriggerSafetyCheck } from "./helpers";
 
 import { calcBondDetails, calcAbsorptionBondDetails } from "./slices/BondSlice";
-import { loadAppDetails, loadGraphData, refreshRebaseTimer } from "./slices/AppSlice";
+import {
+  loadAppDetails,
+  loadGraphData,
+  refreshRebaseTimer,
+  loadAnalyticsData,
+  loadTreasuryData,
+} from "./slices/AppSlice";
 import { loadAccountDetails, calculateUserBondDetails } from "./slices/AccountSlice";
 import { info } from "./slices/MessagesSlice";
 
@@ -202,7 +208,9 @@ function App() {
   // ... if we don't wait we'll ALWAYS fire API calls via JsonRpc because provider has not
   // ... been reloaded within App.
   useEffect(() => {
-    dispatch(loadGraphData({}));
+    let interval: any = null;
+    loadMetrics();
+
     if (hasCachedProvider()) {
       // then user DOES have a wallet
       connect().then(() => {
@@ -220,7 +228,19 @@ function App() {
     if (shouldTriggerSafetyCheck()) {
       dispatch(info("Safety Check: Always verify you're on app.exodia.fi!"));
     }
+
+    interval = setInterval(() => {
+      loadMetrics(-1);
+    }, 60000); // The subgraph updates it's latest value every minute
+
+    return () => clearInterval(interval);
   }, []);
+
+  const loadMetrics = (attempts = 0) => {
+    dispatch(loadGraphData({ attempts }));
+    dispatch(loadTreasuryData({ attempts }));
+    dispatch(loadAnalyticsData({ attempts }));
+  };
 
   // this useEffect fires on state change from above. It will ALWAYS fire AFTER
   useEffect(() => {
@@ -271,7 +291,6 @@ function App() {
     dispatch(refreshRebaseTimer({ networkID: chainID, provider }));
     interval = setInterval(() => {
       dispatch(refreshRebaseTimer({ networkID: chainID, provider, attempts: -1 }));
-      dispatch(loadGraphData({ attempts: -1 }));
     }, 60000);
 
     return () => clearInterval(interval);
