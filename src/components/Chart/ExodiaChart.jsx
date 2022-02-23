@@ -649,7 +649,7 @@ const UnderGlow = ({ color, redNegative, mid = 0, uniqueId = "" }) => {
   }
 
   return (
-    <linearGradient id={`underglow-${color.replace("#", "")}`} x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id={`underglow-${uniqueId}${color.replace("#", "")}`} x1="0" y1="0" x2="0" y2="1">
       <stop offset="5%" stopColor={color} stopOpacity={0.2} />
       <stop offset="100%" stopColor={theme.palette.background.paper} stopOpacity={0.3} />
     </linearGradient>
