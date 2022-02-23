@@ -214,8 +214,9 @@ export const ExodiaStackedLineChart = withChartCard(
     const theme = useTheme();
     // Remove 0's
     const formattedData = data.map(dataEntry => {
-      dataKey.forEach(key => (dataEntry[key] = dataEntry[key] || null));
-      return dataEntry;
+      const entry = _.cloneDeep(dataEntry);
+      dataKey.forEach(key => (entry[key] = dataEntry[key] || null));
+      return entry;
     });
     return (
       <ResponsiveContainer minHeight={260} width="100%">
@@ -295,8 +296,9 @@ export const ExodiaMultiLineChart = withChartCard(
     const formattedData = showNulls
       ? data
       : data.map(dataEntry => {
-          dataKey.forEach(key => (dataEntry[key] = dataEntry[key] || null));
-          return dataEntry;
+          const entry = _.cloneDeep(dataEntry);
+          dataKey.forEach(key => (entry[key] = dataEntry[key] || null));
+          return entry;
         });
     return (
       <ResponsiveContainer minHeight={260} width="100%">

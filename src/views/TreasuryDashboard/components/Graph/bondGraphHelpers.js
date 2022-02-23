@@ -1,30 +1,30 @@
-export const getBondDebtRatios = (data, theme, truncate = false) => {
-  if (!data || !data.dailyBondRevenues) return { dataKeys: [], colors: [], debtRatios: [], currentDebtRatio: "-" };
+export const getBondDebtRatios = (dailyBondRevenues, theme, truncate = false) => {
+  if (!dailyBondRevenues) return { dataKeys: [], colors: [], debtRatios: [], currentDebtRatio: "-" };
 
-  const [dataKeysMapping, dataKeys, colors] = getDataKeys(data, theme);
-  const bondValues = populateValues(data, dataKeysMapping, truncate);
+  const [dataKeysMapping, dataKeys, colors] = getDataKeys(dailyBondRevenues, theme);
+  const bondValues = populateValues(dailyBondRevenues, dataKeysMapping, truncate);
   const joinedDebtRatios = connectSurroundingValues(bondValues, dataKeys);
   const currentDebtRatio = getCurrentValue(joinedDebtRatios, dataKeys);
 
   return { dataKeys, colors, currentDebtRatio, debtRatios: joinedDebtRatios };
 };
 
-export const getBondValuesPerDay = (data, theme, truncate = false) => {
-  if (!data || !data.dailyBondRevenues)
+export const getBondValuesPerDay = (dailyBondRevenues, theme, truncate = false) => {
+  if (!dailyBondRevenues)
     return { dataKeys: [], colors: [], bondValues: [], mintedPerDay: [], currentValue: "-", bondedToday: "-" };
 
-  const [dataKeysMapping, dataKeys, colors] = getDataKeys(data, theme);
-  const bondValues = populateValues(data, dataKeysMapping, truncate, false);
-  const bondedToday = data.dailyBondRevenues[0].valueIn;
+  const [dataKeysMapping, dataKeys, colors] = getDataKeys(dailyBondRevenues, theme);
+  const bondValues = populateValues(dailyBondRevenues, dataKeysMapping, truncate, false);
+  const bondedToday = dailyBondRevenues[0].valueIn;
 
   return { dataKeys, colors, bondValues, bondedToday };
 };
 
-export const getMintedPerDay = (data, theme, truncate = false) => {
-  if (!data || !data.dailyBondRevenues) return { mintedPerDay: [] };
+export const getMintedPerDay = (dailyBondRevenues, protocolMetrics, theme, truncate = false) => {
+  if (!dailyBondRevenues || !protocolMetrics) return { mintedPerDay: [] };
 
-  const mintedPerDay = data.dailyBondRevenues.map(entry => {
-    const totalSupply = data.protocolMetrics.find(metric => metric.timestamp === entry.timestamp).totalSupply;
+  const mintedPerDay = dailyBondRevenues.map(entry => {
+    const totalSupply = protocolMetrics.find(metric => metric.timestamp === entry.timestamp).totalSupply;
     const minted = entry.bonds.reduce((sum, bond) => sum + bond.amountOut, 0);
     return {
       timestamp: entry.timestamp,
@@ -48,10 +48,10 @@ export const getMintedPerDay = (data, theme, truncate = false) => {
   return { mintedPerDay: mintedWithAverages };
 };
 
-export const getBondDiscounts = data => {
-  if (!data || !data.bondDeposits) return { bondDiscounts: [] };
+export const getBondDiscounts = bondDeposits => {
+  if (!bondDeposits) return { bondDiscounts: [] };
 
-  const discounts = data.bondDeposits.map(entry => {
+  const discounts = bondDeposits.map(entry => {
     const value = ((entry.valueOut - entry.valueIn) / entry.valueIn) * 100;
     return {
       timestamp: entry.timestamp,
@@ -69,8 +69,8 @@ export const getBondDiscounts = data => {
   return { bondDiscounts: discountsWithEma };
 };
 
-const getDataKeys = (data, theme) => {
-  const dataKeysMapping = data.dailyBondRevenues.reduce((keys, entry) => {
+const getDataKeys = (dailyBondRevenues, theme) => {
+  const dataKeysMapping = dailyBondRevenues.reduce((keys, entry) => {
     entry.bonds.forEach(bond => {
       const ticker = convertTickerName(bond.tokenIn.ticker);
       keys[bond.tokenIn.ticker] = ticker;
@@ -89,8 +89,8 @@ const convertTickerName = ticker => {
   else return ticker;
 };
 
-const populateValues = (data, dataKeysMapping, truncate, isDebtRatio = true) => {
-  return truncateData(data.dailyBondRevenues, truncate).map(entry => {
+const populateValues = (dailyBondRevenues, dataKeysMapping, truncate, isDebtRatio = true) => {
+  return truncateData(dailyBondRevenues, truncate).map(entry => {
     return entry.bonds.reduce((object, bond) => {
       object.timestamp = entry.timestamp;
       const ticker = dataKeysMapping[bond.tokenIn.ticker];
