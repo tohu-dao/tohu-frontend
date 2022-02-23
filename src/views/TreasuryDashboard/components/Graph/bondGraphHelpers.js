@@ -92,6 +92,7 @@ const convertTickerName = ticker => {
 const populateValues = (data, dataKeysMapping, truncate, isDebtRatio = true) => {
   return truncateData(data.dailyBondRevenues, truncate).map(entry => {
     return entry.bonds.reduce((object, bond) => {
+      object.timestamp = entry.timestamp;
       const ticker = dataKeysMapping[bond.tokenIn.ticker];
       object[ticker] = isDebtRatio ? debtRatioValue(bond, ticker) : bond.valueIn;
       return object;

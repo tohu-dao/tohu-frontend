@@ -25,9 +25,11 @@ import ClaimBonds from "./ClaimBonds";
 import { allBondsMap } from "src/helpers/AllBonds";
 import { useAppSelector } from "src/hooks";
 import {
-  DebtRatioGraph,
   OhmMintedGraph,
   OhmMintedPerTotalSupplyGraph,
+  Premium,
+  BondDiscounts,
+  BondRevenue,
 } from "../TreasuryDashboard/components/Graph/Graph";
 import { QueryClient, QueryClientProvider } from "react-query";
 import styled from "styled-components";
@@ -158,14 +160,26 @@ function ChooseBond() {
                 <OhmMintedGraph />
               </Paper>
             </Grid>
+
             <Grid item lg={6} md={6} sm={12} xs={12}>
               <Paper className="ohm-card full-width">
                 <OhmMintedPerTotalSupplyGraph />
               </Paper>
             </Grid>
+            <Grid item lg={6} md={6} sm={12} xs={12}>
+              <Paper className="ohm-card full-width">
+                <Premium isBondPage />
+              </Paper>
+            </Grid>
+
+            <Grid item lg={6} md={6} sm={12} xs={12}>
+              <Paper className="ohm-card full-width">
+                <BondRevenue />
+              </Paper>
+            </Grid>
             <Grid item xs={12}>
               <Paper className="ohm-card full-width">
-                <DebtRatioGraph />
+                <BondDiscounts />
               </Paper>
             </Grid>
           </Grid>

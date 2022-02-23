@@ -398,11 +398,22 @@ export const ExodiaLineChart = withChartCard(
     isPOL,
     isStaked,
     strokeWidth = 1.6,
+    redNegative = false,
   }) => {
     const theme = useTheme();
+    const [uniqueId] = useState(_.uniqueId());
+    const dMax = _.maxBy(data, o => o[dataKey[0]]);
+    const dMin = _.minBy(data, o => o[dataKey[0]]);
+    const mid = dMax && Math.abs(dMin[dataKey[0]]) / (Math.abs(dMin[dataKey[0]]) + dMax[dataKey[0]]);
+
     const renderGlow = () => {
       return underglow ? (
-        <UnderGlow color={color} />
+        <UnderGlow
+          color={color}
+          redNegative={redNegative}
+          mid={dMin[dataKey[0]] < 0 ? 1 - mid : 1}
+          uniqueId={uniqueId}
+        />
       ) : (
         <LineShadow id={`shadow-${color.replace("#", "")}`} color={color} deviation={glowDeviation} />
       );
@@ -452,7 +463,9 @@ export const ExodiaLineChart = withChartCard(
             type="monotone"
             strokeLinecap="round"
             dataKey={dataKey[0]}
-            stroke={stroke ? stroke : "none"}
+            stroke={
+              stroke ? (redNegative ? `url(#underglow-negative-${uniqueId}${color.replace("#", "")})` : stroke) : "none"
+            }
             color={color}
             dot={false}
             strokeWidth={strokeWidth}
@@ -465,7 +478,7 @@ export const ExodiaLineChart = withChartCard(
               stroke={false}
               strokeWidth={strokeWidth}
               fillOpacity={1}
-              fill={`url(#underglow-${color.replace("#", "")})`}
+              fill={`url(#underglow-${uniqueId}${color.replace("#", "")})`}
             />
           )}
         </ComposedChart>
@@ -614,8 +627,26 @@ const LineShadow = ({ id, color, deviation = "12" }) => {
   );
 };
 
-const UnderGlow = ({ color }) => {
+const UnderGlow = ({ color, redNegative, mid = 0, uniqueId = "" }) => {
   const theme = useTheme();
+
+  if (redNegative) {
+    return (
+      <>
+        <linearGradient id={`underglow-${uniqueId}${color.replace("#", "")}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity={0.3} />
+          <stop offset={`${mid * 100}%`} stopColor={theme.palette.background.paper} stopOpacity={0.2} />
+          <stop offset="100%" stopColor={theme.palette.chartColors[6]} stopOpacity={0.3} />
+        </linearGradient>
+        <linearGradient id={`underglow-negative-${uniqueId}${color.replace("#", "")}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity={1} />
+          <stop offset={`${mid * 100}%`} stopColor={color} stopOpacity={1} />
+          <stop offset={`${mid * 100}%`} stopColor={theme.palette.chartColors[6]} stopOpacity={1} />
+          <stop offset="100%" stopColor={theme.palette.chartColors[6]} stopOpacity={1} />
+        </linearGradient>
+      </>
+    );
+  }
 
   return (
     <linearGradient id={`underglow-${color.replace("#", "")}`} x1="0" y1="0" x2="0" y2="1">
