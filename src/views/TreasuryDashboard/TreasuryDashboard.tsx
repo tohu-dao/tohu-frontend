@@ -21,9 +21,10 @@ import {
   TokenQuantities,
   Holders,
   AssetTypeBreakdown,
-  BondValuesChart,
+  BondRevenue,
   BondDiscounts,
   BackingPerExod,
+  Premium,
 } from "./components/Graph/Graph";
 import MigrationMessage from "src/components/MigrationMessage";
 
@@ -142,14 +143,14 @@ const TreasuryDashboard = memo(() => {
             </Grid>
 
             <Grid item lg={6} md={6} sm={12} xs={12}>
-              <Paper className="ohm-card">
-                <DebtRatioGraph />
+              <Paper className="ohm-card bar-chart">
+                <BondRevenue />
               </Paper>
             </Grid>
 
             <Grid item lg={6} md={6} sm={12} xs={12}>
-              <Paper className="ohm-card">
-                <OhmMintedGraph />
+              <Paper className="ohm-card bar-chart">
+                <BondDiscounts />
               </Paper>
             </Grid>
 
@@ -161,13 +162,19 @@ const TreasuryDashboard = memo(() => {
 
             <Grid item lg={6} md={6} sm={12} xs={12}>
               <Paper className="ohm-card bar-chart">
-                <BondValuesChart />
+                <Premium />
               </Paper>
             </Grid>
 
             <Grid item lg={6} md={6} sm={12} xs={12}>
-              <Paper className="ohm-card bar-chart">
-                <BondDiscounts />
+              <Paper className="ohm-card">
+                <OhmMintedGraph />
+              </Paper>
+            </Grid>
+
+            <Grid item lg={6} md={6} sm={12} xs={12}>
+              <Paper className="ohm-card">
+                <DebtRatioGraph />
               </Paper>
             </Grid>
           </Grid>

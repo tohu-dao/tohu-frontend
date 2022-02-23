@@ -7,9 +7,10 @@ import { t, Trans } from "@lingui/macro";
 const TwitterFeed = () => {
   const theme = useTheme();
   const onTwitterLoad = tweetWidgetEl => {
-    if (!tweetWidgetEl) return;
+    if (!tweetWidgetEl || !tweetWidgetEl.contentWindow || !tweetWidgetEl.contentWindow.document) return;
 
     var body = tweetWidgetEl.contentWindow.document.querySelector("body");
+    if (!body) return;
     tweetWidgetEl.contentWindow.document.querySelectorAll("p").forEach(e => (e.style.lineHeight = "22px"));
     tweetWidgetEl.contentWindow.document.querySelectorAll("p").forEach(e => (e.style.fontSize = "1rem"));
     tweetWidgetEl.contentWindow.document.querySelectorAll("abbr").forEach(e => (e.style.textDecoration = "none"));

@@ -281,6 +281,37 @@ export const BackingPerExod = () => {
   );
 };
 
+export const Premium = ({ isBondPage }) => {
+  const theme = useTheme();
+  const { data } = useTreasuryMetrics({ refetchOnMount: false });
+  const metrics =
+    data &&
+    data.protocolMetrics.map(entry => ({
+      timestamp: entry.timestamp,
+      premium: (entry.exodPrice / entry.backingPerExod - 1) * 100,
+    }));
+
+  return (
+    <ExodiaLineChart
+      underglow
+      data={metrics}
+      dataKey={["premium"]}
+      dataFormat="percent"
+      itemNames={["Premium"]}
+      itemType={itemType.percentage}
+      headerText="Premium"
+      color={theme.palette.chartColors[0]}
+      stroke={theme.palette.chartColors[0]}
+      bulletpoints={bulletpoints.apy}
+      infoTooltipMessage={tooltipInfoMessages.premium}
+      headerSubText={`Current ${isBondPage ? "" : "Premium"}: ${metrics && trim(metrics[0].premium, 2)}%`}
+      initialTimeSelected="3 month"
+      redNegative
+      todayMessage=""
+    />
+  );
+};
+
 export const OHMStakedGraph = () => {
   const theme = useTheme();
   const { data } = useTreasuryMetrics({ refetchOnMount: false });
@@ -500,7 +531,7 @@ export const DebtRatioGraph = () => {
   );
 };
 
-export const BondValuesChart = () => {
+export const BondRevenue = () => {
   const theme = useTheme();
   const { data } = useTreasuryMetrics({ refetchOnMount: false });
   const { dataKeys, colors, bondValues, bondedToday } = getBondValuesPerDay(data, theme, true);
