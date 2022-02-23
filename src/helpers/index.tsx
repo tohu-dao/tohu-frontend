@@ -1,6 +1,7 @@
 import { EPOCH_INTERVAL, addresses } from "../constants";
 import { BigNumber, ethers } from "ethers";
 import axios from "axios";
+import _ from "lodash";
 import { abi as PairContractABI } from "../abi/PairContract.json";
 import { abi as RedeemHelperABI } from "../abi/RedeemHelper.json";
 
@@ -235,4 +236,26 @@ export const toBN = (num: number) => {
 
 export const bnToNum = (bigNum: BigNumber) => {
   return Number(bigNum.toString());
+};
+
+export const transFormValues = (array: Array<any>) =>
+  array.slice(0, -2).map((entry: any) => transformStringsToFloats(entry));
+
+export const transformStringsToFloats = (entry: any) => {
+  return _.transform(entry, iterateValue);
+};
+
+const iterateValue = (result: any, value: any, key: string) => {
+  if (_.isObject(value)) {
+    result[key] = transformStringsToFloats(value);
+  } else if (_.isArray(value)) {
+    result[key] = value.map(entry => iterateValue(result, value, key));
+  } else {
+    if (key === "id") {
+      result["timestamp"] = parseFloat(value);
+    }
+    const parsedValue = parseFloat(value);
+    const isAddress = typeof value === "string" && value.startsWith("0x");
+    result[key] = isNaN(parsedValue) || isAddress ? value : parsedValue;
+  }
 };

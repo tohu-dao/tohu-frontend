@@ -1,8 +1,17 @@
 import { ethers } from "ethers";
 import { addresses, EPOCH_INTERVAL, MAX_RETRY_ATTEMPTS } from "../constants";
+import {
+  auxesQuery,
+  treasuriesQuery,
+  simpleStakingsQuery,
+  protocolMetricsQuery,
+  dailyBondRevenueQuery,
+  bondDepositsQuery,
+  latestMetricQuery,
+} from "src/views/TreasuryDashboard/treasuryData";
 import { abi as OlympusStakingv2ABI } from "../abi/OlympusStakingv2.json";
 import { abi as sOHMv2 } from "../abi/sOhmv2.json";
-import { setAll, getTokenPrice, getMarketPrice, secondsUntilBlock, prettifySeconds } from "../helpers";
+import { setAll, secondsUntilBlock, transFormValues } from "../helpers";
 import apollo from "../lib/apolloClient";
 import { createSlice, createSelector, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "src/store";
@@ -100,62 +109,83 @@ export const loadAppDetails = createAsyncThunk(
 export const loadGraphData = createAsyncThunk(
   "app/loadGraphData",
   async ({ attempts = 0 }: { attempts?: number }, { dispatch }) => {
-    const protocolMetricsQuery = `
-    query {
-      protocolMetrics(first: 1, orderBy: timestamp, orderDirection: desc) {
-        circulatingSupply
-        holders
-        marketCap
-        runway
-        totalSupply
-        exodPrice
-        tvl
-        backingPerExod
-        wsExodPrice
-      }
-      treasuries(first: 1, orderBy: timestamp, orderDirection: desc) {
-        marketValue
-      }
-      simpleStakings(first: 1, orderBy: timestamp, orderDirection: desc) {
-        stakedPercentage
-      }
-    }
-  `;
-
     try {
       const graphData = await apollo<{
         protocolMetrics: IProtocolMetrics[];
         treasuries: ITreasuryMetrics[];
         simpleStakings: IStakingMetrics[];
-      }>(protocolMetricsQuery);
+      }>(latestMetricQuery);
 
       if (!graphData) {
         console.error("Returned a null response when querying TheGraph");
         return {};
       }
 
-      const stakingTVL = parseFloat(graphData.data.protocolMetrics[0].tvl);
-      const marketCap = parseFloat(graphData.data.protocolMetrics[0].marketCap);
-      const circSupply = parseFloat(graphData.data.protocolMetrics[0].circulatingSupply);
-      const totalSupply = parseFloat(graphData.data.protocolMetrics[0].totalSupply);
-      const treasuryMarketValue = parseFloat(graphData.data.treasuries[0].marketValue);
-      const marketPrice = parseFloat(graphData.data.protocolMetrics[0].exodPrice);
-      const backingPerExod = parseFloat(graphData.data.protocolMetrics[0].backingPerExod);
-      const wsExodPrice = parseFloat(graphData.data.protocolMetrics[0].wsExodPrice);
-      const runway = parseFloat(graphData.data.protocolMetrics[0].runway);
-      const stakedPercentage = parseFloat(graphData.data.simpleStakings[0].stakedPercentage);
       return {
-        stakingTVL,
-        marketCap,
-        circSupply,
-        totalSupply,
-        treasuryMarketValue,
-        marketPrice,
-        backingPerExod,
-        wsExodPrice,
-        runway,
-        stakedPercentage,
+        stakingTVL: parseFloat(graphData.data.protocolMetrics[0].tvl),
+        marketCap: parseFloat(graphData.data.protocolMetrics[0].marketCap),
+        circSupply: parseFloat(graphData.data.protocolMetrics[0].circulatingSupply),
+        totalSupply: parseFloat(graphData.data.protocolMetrics[0].totalSupply),
+        treasuryMarketValue: parseFloat(graphData.data.treasuries[0].marketValue),
+        marketPrice: parseFloat(graphData.data.protocolMetrics[0].exodPrice),
+        backingPerExod: parseFloat(graphData.data.protocolMetrics[0].backingPerExod),
+        wsExodPrice: parseFloat(graphData.data.protocolMetrics[0].wsExodPrice),
+        runway: parseFloat(graphData.data.protocolMetrics[0].runway),
+        stakedPercentage: parseFloat(graphData.data.simpleStakings[0].stakedPercentage),
       } as IAppData;
+    } catch (e) {
+      if (attempts < 0) return;
+      if (attempts < MAX_RETRY_ATTEMPTS) {
+        const newAttempts = attempts + 1;
+        dispatch(loadGraphData({ attempts: newAttempts }));
+      } else {
+        dispatch(error(`Failed to load app details. Please try refreshing the page.`));
+        throw e;
+      }
+    }
+  },
+);
+
+export const loadAnalyticsData = createAsyncThunk(
+  "app/loadAnalyticsData",
+  async ({ attempts = 0 }: { attempts?: number }, { dispatch }) => {
+    try {
+      const [simpleStakingsResponse, dailyBondRevenueResponse, bondDepositsResponse]: [any, any, any] =
+        await Promise.all([apollo(simpleStakingsQuery), apollo(dailyBondRevenueQuery), apollo(bondDepositsQuery)]);
+
+      return {
+        simpleStakings: transFormValues(simpleStakingsResponse?.data.simpleStakings),
+        dailyBondRevenues: transFormValues(dailyBondRevenueResponse?.data.dailyBondRevenues),
+        bondDeposits: transFormValues(bondDepositsResponse?.data.bondDeposits),
+      };
+    } catch (e) {
+      if (attempts < 0) return;
+      if (attempts < MAX_RETRY_ATTEMPTS) {
+        const newAttempts = attempts + 1;
+        dispatch(loadGraphData({ attempts: newAttempts }));
+      } else {
+        dispatch(error(`Failed to load app details. Please try refreshing the page.`));
+        throw e;
+      }
+    }
+  },
+);
+
+export const loadTreasuryData = createAsyncThunk(
+  "app/loadTreasuryData",
+  async ({ attempts = 0 }: { attempts?: number }, { dispatch }) => {
+    try {
+      const [auxesResponse, treasuriesResponse, protocolMetricsResponse]: [any, any, any] = await Promise.all([
+        apollo(auxesQuery),
+        apollo(treasuriesQuery),
+        apollo(protocolMetricsQuery),
+      ]);
+
+      return {
+        auxes: transFormValues(auxesResponse?.data.auxes),
+        treasuries: transFormValues(treasuriesResponse?.data.treasuries),
+        protocolMetrics: transFormValues(protocolMetricsResponse?.data.protocolMetrics),
+      };
     } catch (e) {
       if (attempts < 0) return;
       if (attempts < MAX_RETRY_ATTEMPTS) {
@@ -324,11 +354,13 @@ interface IAppData {
   readonly secondsUntilRebase?: number;
   readonly runway?: number;
   readonly stakedPercentage?: number;
+  readonly treasuryMetrics?: any;
 }
 
 const initialState: IAppData = {
   loading: true,
   loadingMarketPrice: false,
+  treasuryMetrics: {},
 };
 
 const appSlice = createSlice({
@@ -376,6 +408,30 @@ const appSlice = createSlice({
       .addCase(refreshRebaseTimer.fulfilled, (state, action) => {
         if (!action.payload) return;
         setAll(state, action.payload);
+      })
+      .addCase(loadAnalyticsData.rejected, (state, { error }) => {
+        console.error(error.name, error.message, error.stack);
+      })
+      .addCase(loadAnalyticsData.fulfilled, (state, action) => {
+        const { simpleStakings, dailyBondRevenues, bondDeposits } = action.payload || {};
+        state.treasuryMetrics = {
+          ...state.treasuryMetrics,
+          simpleStakings,
+          dailyBondRevenues,
+          bondDeposits,
+        };
+      })
+      .addCase(loadTreasuryData.rejected, (state, { error }) => {
+        console.error(error.name, error.message, error.stack);
+      })
+      .addCase(loadTreasuryData.fulfilled, (state, action) => {
+        const { auxes, treasuries, protocolMetrics } = action.payload || {};
+        state.treasuryMetrics = {
+          ...state.treasuryMetrics,
+          auxes,
+          treasuries,
+          protocolMetrics,
+        };
       });
   },
 });

@@ -214,8 +214,9 @@ export const ExodiaStackedLineChart = withChartCard(
     const theme = useTheme();
     // Remove 0's
     const formattedData = data.map(dataEntry => {
-      dataKey.forEach(key => (dataEntry[key] = dataEntry[key] || null));
-      return dataEntry;
+      const entry = _.cloneDeep(dataEntry);
+      dataKey.forEach(key => (entry[key] = dataEntry[key] || null));
+      return entry;
     });
     return (
       <ResponsiveContainer minHeight={260} width="100%">
@@ -295,8 +296,9 @@ export const ExodiaMultiLineChart = withChartCard(
     const formattedData = showNulls
       ? data
       : data.map(dataEntry => {
-          dataKey.forEach(key => (dataEntry[key] = dataEntry[key] || null));
-          return dataEntry;
+          const entry = _.cloneDeep(dataEntry);
+          dataKey.forEach(key => (entry[key] = dataEntry[key] || null));
+          return entry;
         });
     return (
       <ResponsiveContainer minHeight={260} width="100%">
@@ -649,7 +651,7 @@ const UnderGlow = ({ color, redNegative, mid = 0, uniqueId = "" }) => {
   }
 
   return (
-    <linearGradient id={`underglow-${color.replace("#", "")}`} x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id={`underglow-${uniqueId}${color.replace("#", "")}`} x1="0" y1="0" x2="0" y2="1">
       <stop offset="5%" stopColor={color} stopOpacity={0.2} />
       <stop offset="100%" stopColor={theme.palette.background.paper} stopOpacity={0.3} />
     </linearGradient>

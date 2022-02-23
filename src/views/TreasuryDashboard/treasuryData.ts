@@ -1,11 +1,38 @@
 import { t } from "@lingui/macro";
 
-export const treasuryDataQuery = `
+export const latestMetricQuery = `
+query {
+  protocolMetrics(first: 1, orderBy: timestamp, orderDirection: desc) {
+    circulatingSupply
+    holders
+    marketCap
+    runway
+    totalSupply
+    exodPrice
+    tvl
+    backingPerExod
+    wsExodPrice
+  }
+  treasuries(first: 1, orderBy: timestamp, orderDirection: desc) {
+    marketValue
+  }
+  simpleStakings(first: 1, orderBy: timestamp, orderDirection: desc) {
+    stakedPercentage
+  }
+}
+`;
+
+export const auxesQuery = `
 query {
   auxes(first: 1000) {
     historicalGOhmValue
     id
   }
+}
+`;
+
+export const treasuriesQuery = `
+query {
   treasuries(first: 1000, orderBy: timestamp, orderDirection: desc) {
     id
     marketValue
@@ -32,6 +59,11 @@ query {
       }
     }
   }
+}
+`;
+
+export const simpleStakingsQuery = `
+query {
   simpleStakings(first: 1000, orderBy: timestamp, orderDirection: desc) {
     apy
     index
@@ -40,6 +72,11 @@ query {
     stakedPercentage
     id
   }
+}
+`;
+
+export const protocolMetricsQuery = `
+query {
   protocolMetrics(first: 1000, orderBy: timestamp, orderDirection: desc) {
     circulatingSupply
     holders
@@ -52,6 +89,11 @@ query {
     backingPerExod
     wsExodPrice
   }
+}
+`;
+
+export const dailyBondRevenueQuery = `
+query {
   dailyBondRevenues(orderDirection: desc, orderBy: id, first: 1000) {
     timestamp
     valueIn
@@ -65,6 +107,11 @@ query {
       }
     }
   }
+}
+`;
+
+export const bondDepositsQuery = `
+query {
   bondDeposits(first: 1000, orderDirection: desc, orderBy: timestamp) {
     valueIn
     amountIn
