@@ -2,14 +2,12 @@ name: Docker build
 
 on:
   push:
-    branches: [ master ]
+    branches: [ develop ]
 
 jobs:
   build-push:
 
     runs-on: ubuntu-latest
-    env:
-      REACT_APP_GA_API_KEY: ${{secrets.GA_API_KEY}}
     steps:
       - uses: actions/checkout@v2
       - name: Login to GitHub Container Registry
@@ -21,5 +19,7 @@ jobs:
       - name: Push app to GitHub Packages
         uses: docker/build-push-action@v2
         with:
-          tags: "ghcr.io/exodiafinance/exodia-frontend:latest"
+          tags: "ghcr.io/exodiafinance/exodia-frontend:development"
           push: true
+          build-args: |
+            GA_API_KEY=${{secrets.GA_API_KEY}}
