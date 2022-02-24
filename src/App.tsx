@@ -93,7 +93,7 @@ const useStyles = makeStyles(theme => ({
 
 function App() {
   //useSegmentAnalytics();
-  //useGoogleAnalytics();
+  useGoogleAnalytics();
   const location = useLocation();
   const dispatch = useDispatch();
   const [theme, toggleTheme, mounted] = useTheme();
