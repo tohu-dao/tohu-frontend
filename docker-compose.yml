@@ -1,6 +1,9 @@
 version: '3'
 services:
   frontend:
-    build: .
+    build:
+      context: .
+      args:
+        GA_API_KEY: ${REACT_APP_GA_API_KEY}
     ports:
       - '8000:80'
