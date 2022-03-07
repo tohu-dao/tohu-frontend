@@ -630,6 +630,7 @@ export const DashboardPriceGraph = ({ isDashboard = false }) => {
   const { protocolMetrics } = useTreasuryMetrics();
   const [selectedData, setSelectedData] = useState("marketCap");
 
+
   const entries = { exodPrice: 0, wsExodPrice: 1, marketCap: 2 };
 
   const value =
