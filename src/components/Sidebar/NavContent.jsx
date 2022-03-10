@@ -222,7 +222,7 @@ function NavContent() {
                 className={`button-dapp-menu ${isActive ? "active" : ""} obliterator`}
               >
                 <Tooltip
-                  title={<Trans>Estimate and visualize your potential returns over time by staking with Exodia</Trans>}
+                  title={<Trans>Estimate and visualize your potential returns over time by staking with Tohu</Trans>}
                 >
                   <Typography variant="h6" className="obliterator">
                     <SvgIcon color="primary" component={StarIcon} />
