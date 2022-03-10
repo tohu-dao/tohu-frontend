@@ -176,12 +176,12 @@ export function BondTableData({ bond, upcoming }) {
       <TableCell>
         {upcoming ? (
           <Button variant="outlined" color="primary" disabled>
-            <Typography variant="h6">{t`Bond`}</Typography>
+            <Typography variant="h6">{t`do_bond`}</Typography>
           </Button>
         ) : (
           <Link component={NavLink} to={`/${bond.isAbsorption ? "absorption" : "bonds"}/${bond.name}`}>
             <Button variant="outlined" color="primary" disabled={!bond.isAvailable[chainID]}>
-              <Typography variant="h6">{!bond.isAvailable[chainID] ? t`Sold Out` : t`Bond`}</Typography>
+              <Typography variant="h6">{!bond.isAvailable[chainID] ? t`Sold Out` : t`do_bond`}</Typography>
             </Button>
           </Link>
         )}

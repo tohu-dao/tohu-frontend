@@ -12,7 +12,7 @@
     backdrop-filter: none;
   }
   .MuiDrawer-paper::before {
-    background-image: linear-gradient(0deg, #FE9F01 0%, #FE9F01 46%, #FE9F01 100%),
+    background-image: linear-gradient(0deg, #FFFDD3 0%, #FFFDD3 46%, #FFFDD3 100%),
       url("../../assets/images/exod-sidebar.jpg");
     background-repeat: no-repeat;
     background-color: #131313;

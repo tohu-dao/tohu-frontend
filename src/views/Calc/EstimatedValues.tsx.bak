@@ -36,7 +36,7 @@ const EstimatedValues = ({
         />
         <div />
         <FieldValue field={<Trans>Estimated ROI</Trans>} value={`${estimatedROI ? estimatedROI.toFixed(2) : 0}x`} />
-        <FieldValue field={<Trans>Total sTOHU</Trans>} value={`${totalSExod.toFixed(2)}`} />
+        <FieldValue field={<Trans>Total sEXOD</Trans>} value={`${totalSExod.toFixed(2)}`} />
         <FieldValue
           field={<Trans>Estimated profits</Trans>}
           value={new Intl.NumberFormat("en-US", {

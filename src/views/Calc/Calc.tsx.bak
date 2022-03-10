@@ -114,7 +114,7 @@ function Calc() {
               <ImportantValues {...{ marketPrice, stakingRebase, isAppLoading, trimmedBalance }} />
               <CalcArea>
                 <FieldInput
-                  field={t`sTOHU Amount`}
+                  field={t`sEXOD Amount`}
                   value={exodAmountInput}
                   max={<Trans>Max</Trans>}
                   onChange={setExodAmountInput}
@@ -128,7 +128,7 @@ function Calc() {
                   onMax={() => setRebaseRateInput(stakingRebase * 100)}
                 />
                 <FieldInput
-                  field={t`TOHU price at purchase ($)`}
+                  field={t`EXOD price at purchase ($)`}
                   value={Number(exodPriceInput.toFixed(2))}
                   max={<Trans>Current</Trans>}
                   onChange={setExodPriceInput}
@@ -136,7 +136,7 @@ function Calc() {
                 />
 
                 <FieldInput
-                  field={t`Future TOHU market price ($)`}
+                  field={t`Future EXOD market price ($)`}
                   value={Number(finalExodPriceInput.toFixed(2))}
                   max={<Trans>Current</Trans>}
                   onChange={setFinalExodPriceInput}

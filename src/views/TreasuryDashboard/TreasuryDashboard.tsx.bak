@@ -81,11 +81,11 @@ const TreasuryDashboard = memo(() => {
             </Grid>
 
             {/* Will add when it looks better :') */}
-            <Grid item lg={6} md={6} sm={12} xs={12}>
+            {/* <Grid item lg={6} md={6} sm={12} xs={12}>
               <Paper className="ohm-card">
                 <Holders />
               </Paper>
-            </Grid>
+            </Grid> */}
 
             {/*<Grid item lg={6} md={6} sm={12} xs={12}>
               <Paper className="ohm-card">

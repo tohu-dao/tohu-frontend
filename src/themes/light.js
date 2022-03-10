@@ -4,14 +4,14 @@ import commonSettings from "./global.js";
 
 const lightTheme = {
   color: "#000000",
-  gold: "#00D70E", // Dark green
+  gold: "#FFB53F", // Yellow orange
   gray: "#A3A3A3",
-  blueish_gray: "#565A69", // Gray
-  textHighlightColor: "#93AEBC", // "#F4D092",
-  backgroundColor: "#FFFFFF",
+  blueish_gray: "#FE9F01", // Orange peel
+  textHighlightColor: "#FFF3A5", // "#F4D092",
+  backgroundColor: "#FFFDD3",
   // background:
   // "radial-gradient(circle at 25% 0%, rgba(227,255,240,.5), rgba(227,255,240,0) 50%), radial-gradient(circle at 80% 80%, rgba(131,165,203,.5), rgba(131,165,203,0) 50%)",
-  background: "#FFFFFF",
+  background: "#FFFDD3",
   paperBg: "#f4f4f4",
   modalBg: "#FAFAFAEF",
   popoverBg: "rgba(255, 255, 255, 0.95)",

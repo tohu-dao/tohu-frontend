@@ -204,10 +204,10 @@ export const Holders = () => {
       stroke={theme.palette.chartColors[0]}
       dataFormat="OHM"
       headerText="Total holders"
-      headerSubText={protocolMetrics && `${protocolMetrics[0].holders} sTOHU holders`}
+      headerSubText={protocolMetrics && `${protocolMetrics[0].holders} Exodians`}
       bulletpoints={bulletpoints.coin}
-      itemNames={["Holders"]}
-      itemType="Holders"
+      itemNames={["Exodians"]}
+      itemType="Exodians"
       todayMessage=""
       isDashboard
       showTotal

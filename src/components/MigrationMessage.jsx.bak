@@ -19,7 +19,7 @@ const MigrationMessage = () => {
         <a href={BEETS_LINK} target="_blank" rel="nofollow noopener noreferrer">
           Beethoven-x
         </a>{" "}
-        to trade TOHU and wsTOHU.
+        to trade EXOD and wsEXOD.
       </Typography>
     </BannerContainer>
   );

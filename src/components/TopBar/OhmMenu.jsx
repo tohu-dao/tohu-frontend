@@ -40,13 +40,13 @@ const addTokenToWallet = (tokenSymbol, tokenAddress, address) => async () => {
     let tokenPath;
     let tokenDecimals = TOKEN_DECIMALS;
     switch (tokenSymbol) {
-      case "EXOD":
+      case "TOHU":
         tokenPath = OhmImg;
         break;
       case "33T":
         tokenPath = token33tImg;
         break;
-      case "wsEXOD":
+      case "wsTOHU":
         tokenPath = WsOhmImg;
         tokenDecimals = 18;
         break;
@@ -95,7 +95,7 @@ function OhmMenu() {
           size="large"
           variant="contained"
           color="primary"
-          title="EXOD"
+          title="TOHU"
           style={{ color: `${theme.palette.primaryColor} !important` }}
           aria-describedby={id}
           disabled
@@ -125,7 +125,7 @@ function OhmMenu() {
       onMouseLeave={e => handleClick(e)}
       id="ohm-menu-button-hover"
     >
-      <Button id="ohm-menu-button" size="large" variant="contained" color="primary" title="EXOD" aria-describedby={id}>
+      <Button id="ohm-menu-button" size="large" variant="contained" color="primary" title="TOHU" aria-describedby={id}>
         <SvgIcon component={InfoIcon} color="primary" />
         <Typography>{OHM_TICKER}</Typography>
       </Button>

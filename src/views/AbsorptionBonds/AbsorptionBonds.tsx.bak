@@ -88,7 +88,7 @@ function AbsorptionBonds() {
                   <Grid item xs={6}>
                     <Box textAlign="center">
                       <Typography variant="h5" color="textSecondary">
-                        <Trans>wsTOHU Price</Trans>
+                        <Trans>wsEXOD Price</Trans>
                       </Typography>
                       <Typography variant="h4">
                         {isAppLoading ? <Skeleton width="100px" /> : formatCurrency(Number(wsOhmPrice), 2)}

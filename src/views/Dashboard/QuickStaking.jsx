@@ -67,11 +67,11 @@ const QuickStaking = () => {
     // 1st catch if quantity > balance
     let gweiValue = ethers.utils.parseUnits(quantity.toString(), "gwei");
     if (action === "stake" && gweiValue.gt(ethers.utils.parseUnits(ohmBalance, "gwei"))) {
-      return dispatch(error(t`You cannot stake more than your EXOD balance.`));
+      return dispatch(error(t`You cannot stake more than your TOHU balance.`));
     }
 
     if (action === "unstake" && gweiValue.gt(ethers.utils.parseUnits(sohmBalance, "gwei"))) {
-      return dispatch(error(t`You cannot unstake more than your sEXOD balance.`));
+      return dispatch(error(t`You cannot unstake more than your sTOHU balance.`));
     }
 
     await dispatch(changeStake({ address, action, value: quantity.toString(), provider, networkID: chainID }));
@@ -138,11 +138,11 @@ const QuickStaking = () => {
       <Container>
         <Balances>
           <>
-            <Typography variant="body1">EXOD:</Typography>
+            <Typography variant="body1">TOHU:</Typography>
             <Typography variant="body1">{trim(ohmBalance || 0, 2)}</Typography>
           </>
           <>
-            <Typography variant="body1">sEXOD:</Typography>
+            <Typography variant="body1">sTOHU:</Typography>
             <Typography variant="body1">{trim(sohmBalance || 0, 2)}</Typography>
           </>
         </Balances>
@@ -152,11 +152,11 @@ const QuickStaking = () => {
               <Typography variant="body1" className="stake-note" color="textSecondary">
                 {view === 0 ? (
                   <>
-                    <Trans>Please approve Exodia to use your</Trans> <b>EXOD</b> <Trans>for staking</Trans>.
+                    <Trans>Please approve TOHU to use your</Trans> <b>TOHU</b> <Trans>for staking</Trans>.
                   </>
                 ) : (
                   <>
-                    <Trans>Please approve Exodia to use your</Trans> <b>sEXOD</b> <Trans>for unstaking</Trans>.
+                    <Trans>Please approve TOHU to use your</Trans> <b>sTOHU</b> <Trans>for unstaking</Trans>.
                   </>
                 )}
               </Typography>
@@ -215,7 +215,7 @@ const QuickStaking = () => {
                 <TxnButtonTextGeneralPending
                   pendingTransactions={pendingTransactions}
                   type="staking"
-                  defaultText={<Trans>Stake EXOD</Trans>}
+                  defaultText={<Trans>Stake TOHU</Trans>}
                 />
               </Button>
             )
@@ -246,7 +246,7 @@ const QuickStaking = () => {
               <TxnButtonTextGeneralPending
                 pendingTransactions={pendingTransactions}
                 type="unstaking"
-                defaultText={<Trans>Unstake EXOD</Trans>}
+                defaultText={<Trans>Unstake TOHU</Trans>}
               />
             </Button>
           )}

@@ -26,6 +26,7 @@ interface IAddresses {
 
 export const addresses: IAddresses = {
   250: {
+    // EXODIAAAAAAAAA
     DAI_ADDRESS: "0x8D11eC38a3EB5E956B052f67Da8Bdc9bef8Abf3E", // OKAY
     OHM_ADDRESS: "0x3b57f3feaaf1e8254ec680275ee6e7727c7413c7", // OKAY
     STAKING_ADDRESS: "0x8b8d40f98a2f14e2dd972b3f2e2a2cc227d1e3be", // The new staking contract // OKAY

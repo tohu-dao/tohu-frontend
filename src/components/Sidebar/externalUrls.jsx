@@ -11,12 +11,12 @@ import { BEETS_LINK } from "src/constants";
 const externalUrls = [
   {
     title: <Trans>Governance</Trans>,
-    url: "https://snapshot.org/#/exodiadao.eth",
+    url: "https://snapshot.org/#/randomz.eth",
     icon: <SvgIcon color="primary" component={GovIcon} />,
   },
   {
     title: <Trans>Docs</Trans>,
-    url: "https://docs.exodia.fi",
+    url: "https://fantoms.gitbook.io",
     icon: <SvgIcon color="primary" component={DocsIcon} />,
   },
   {
@@ -30,7 +30,7 @@ const externalUrls = [
   },
   {
     title: <Trans>Chart on Dextools</Trans>,
-    url: "https://www.dextools.io/app/fantom/pair-explorer/0xc0c1dff0fe24108586e11ec9e20a7cbb405cb769",
+    url: "https://www.dextools.io/app/fantom/pair-explorer/<>",
     icon: (
       <span>
         <TrendingUpIcon />

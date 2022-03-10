@@ -271,7 +271,7 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
               {isBondLoading ? (
                 <Skeleton width="100px" />
               ) : (
-                `${trim(bond.bondQuote, 4) || "0"} ${bond.isAbsorption ? "wsTOHU" : OHM_TICKER}`
+                `${trim(bond.bondQuote, 4) || "0"} ${bond.isAbsorption ? "wsEXOD" : OHM_TICKER}`
               )}
             </Typography>
           </div>

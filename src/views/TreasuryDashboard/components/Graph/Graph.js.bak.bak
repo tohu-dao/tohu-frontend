@@ -204,10 +204,10 @@ export const Holders = () => {
       stroke={theme.palette.chartColors[0]}
       dataFormat="OHM"
       headerText="Total holders"
-      headerSubText={protocolMetrics && `${protocolMetrics[0].holders} sTOHU holders`}
+      headerSubText={protocolMetrics && `${protocolMetrics[0].holders} Exodians`}
       bulletpoints={bulletpoints.coin}
-      itemNames={["Holders"]}
-      itemType="Holders"
+      itemNames={["Exodians"]}
+      itemType="Exodians"
       todayMessage=""
       isDashboard
       showTotal
@@ -228,8 +228,8 @@ export const ProtocolOwnedLiquidityGraph = () => {
       return formatting;
     }, []);
 
-	return (
-  <ExodiaLineChart
+  return (
+    <ExodiaLineChart
       isPOL
       underglow
       data={formattedData}
@@ -244,8 +244,8 @@ export const ProtocolOwnedLiquidityGraph = () => {
       color={theme.palette.chartColors[0]}
       stroke={theme.palette.chartColors[0]}
       todayMessage=""
-  />
-	);
+    />
+  );
 };
 
 export const AssetTypeBreakdown = () => {
@@ -283,9 +283,9 @@ export const BackingPerExod = () => {
       data={protocolMetrics}
       dataKey={["backingPerExod"]}
       dataFormat="$"
-      itemNames={["Backing per TOHU"]}
+      itemNames={["Backing per EXOD"]}
       itemType={itemType.dollar}
-      headerText="Backing per TOHU"
+      headerText="Backing per EXOD"
       color={theme.palette.chartColors[4]}
       stroke={theme.palette.chartColors[4]}
       bulletpoints={bulletpoints.apy}
@@ -434,7 +434,7 @@ export const DilutionGraph = () => {
       headerSubText={`${dilution && trim(dilution[0].percentage, 2)}%`}
       bulletpoints={bulletpoints.dilution}
       itemNames={tooltipItems.dilution}
-      itemType={[itemType.percentage, "sTOHU"]}
+      itemType={[itemType.percentage, "sEXOD"]}
       infoTooltipMessage={tooltipInfoMessages.dilution}
       todayMessage=""
       isDilution
@@ -459,7 +459,7 @@ export const OhmMintedGraph = () => {
       stroke={[theme.palette.chartColors[4], theme.palette.chartColors[0]]}
       bulletpoints={bulletpoints.staked}
       infoTooltipMessage={tooltipInfoMessages.minted}
-      headerSubText={`${mintedPerDay.length && mintedPerDay[0].fiveDayAverage.toFixed(2)} TOHU`}
+      headerSubText={`${mintedPerDay.length && mintedPerDay[0].fiveDayAverage.toFixed(2)} EXOD`}
       todayMessage="5-day Average"
       glowDeviation="4"
       showNulls
@@ -668,8 +668,8 @@ export const DashboardPriceGraph = ({ isDashboard = false }) => {
         onChange={e => setSelectedData(e.target.value)}
         disableUnderline
       >
-        <MenuItem value={"exodPrice"}>TOHU</MenuItem>
-        <MenuItem value={"wsExodPrice"}>wsTOHU</MenuItem>
+        <MenuItem value={"exodPrice"}>EXOD</MenuItem>
+        <MenuItem value={"wsExodPrice"}>wsEXOD</MenuItem>
         <MenuItem value={"marketCap"}>Market Cap</MenuItem>
       </Select>
     </FormControl>
@@ -685,7 +685,7 @@ export const DashboardPriceGraph = ({ isDashboard = false }) => {
       initialTimeSelected="3 month"
       headerText={
         <>
-          {selectedData == "exodPrice" ? "TOHU Price" : selectedData == "wsTOHU" ? "wsTOHU Price" : "Market Cap"}{" "}
+          {selectedData == "exodPrice" ? "EXOD Price" : selectedData == "wsEXOD" ? "wsEXOD Price" : "Market Cap"}{" "}
           {<Trend formattedValue={formatCurrency(value)} value={value} lastValue={lastValue} />}
         </>
       }

@@ -32,7 +32,7 @@ const TwitterFeed = () => {
 
       <TwitterTimelineEmbed
         sourceType="timeline"
-        screenName="exodiafinance"
+        screenName="FantomsOpera"
         placeholder={<Skeleton />}
         options={{ id: "twitter-widget" }}
         id="twitter-widget"

@@ -226,7 +226,7 @@ function App() {
       setWalletChecked(true);
     }
     if (shouldTriggerSafetyCheck()) {
-      dispatch(info("Safety Check: Always verify you're on app.exodia.fi!"));
+      dispatch(info("Safety Check: Always verify you're on the right site!"));
     }
 
     interval = setInterval(() => {

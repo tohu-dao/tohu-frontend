@@ -288,7 +288,7 @@ function Stake() {
                     >
                       <Tab
                         label={t({
-                          id: "Stake",
+                          id: "do_stake",
                           comment: "The action of staking (verb)",
                         })}
                         {...a11yProps(0)}

@@ -61,7 +61,7 @@ function Wrap() {
   const [zoomed, setZoomed] = useState(false);
   const [view, setView] = useState(0);
   const [quantity, setQuantity] = useState("");
-  const [asset, setAsset] = useState("sTOHU");
+  const [asset, setAsset] = useState("sEXOD");
 
   const classes = useStyles();
 
@@ -103,7 +103,7 @@ function Wrap() {
 
   const setMax = () => {
     if (view === 0) {
-      asset === "sTOHU" ? setQuantity(sohmBalance) : setQuantity(ohmBalance);
+      asset === "sEXOD" ? setQuantity(sohmBalance) : setQuantity(ohmBalance);
     } else {
       setQuantity(wsohmBalance);
     }
@@ -128,12 +128,12 @@ function Wrap() {
 
     // 1st catch if quantity > balance
     if (action === "wrap") {
-      if (asset === "sTOHU") {
+      if (asset === "sEXOD") {
         if (ethers.utils.parseUnits(quantity, "gwei").gt(ethers.utils.parseUnits(sohmBalance, "gwei")))
-          return dispatch(error("You cannot wrap more than your sTOHU balance."));
+          return dispatch(error("You cannot wrap more than your sEXOD balance."));
       } else {
         if (ethers.utils.parseUnits(quantity, "gwei").gt(ethers.utils.parseUnits(ohmBalance, "gwei"))) {
-          return dispatch(error("You cannot wrap more than your TOHU balance."));
+          return dispatch(error("You cannot wrap more than your EXOD balance."));
         }
       }
     }
@@ -142,11 +142,11 @@ function Wrap() {
       action === "unwrap" &&
       ethers.utils.parseUnits(quantity, "ether").gt(ethers.utils.parseUnits(wsohmBalance, "ether"))
     ) {
-      return dispatch(error("You cannot unwrap more than your wsTOHU balance."));
+      return dispatch(error("You cannot unwrap more than your wsEXOD balance."));
     }
 
-    if (action === "wrap") finalAction = asset === "sTOHU" ? "wrapFromsOHM" : "wrapFromOHM";
-    if (action === "unwrap") finalAction = asset === "sTOHU" ? "unwrapTosOHM" : "unwrapToOHM";
+    if (action === "wrap") finalAction = asset === "sEXOD" ? "wrapFromsOHM" : "wrapFromOHM";
+    if (action === "unwrap") finalAction = asset === "sEXOD" ? "unwrapTosOHM" : "unwrapToOHM";
 
     await dispatch(
       changeWrap({ address, action: finalAction, value: quantity.toString(), provider, networkID: chainID }),
@@ -203,7 +203,7 @@ function Wrap() {
                     target="_blank"
                     rel="nofollow noopener noreferrer"
                   >
-                    <Typography>wsTOHU</Typography> <SvgIcon component={InfoIcon} color="primary" />
+                    <Typography>wsEXOD</Typography> <SvgIcon component={InfoIcon} color="primary" />
                   </Link>
                 </div>
               </Grid>
@@ -214,7 +214,7 @@ function Wrap() {
                     <Grid item xs={12} sm={4} md={4} lg={4}>
                       <div className="wrap-sOHM">
                         <Typography variant="h5" color="textSecondary">
-                          sTOHU Price
+                          sEXOD Price
                         </Typography>
                         <Typography variant="h4">
                           {sOhmPrice ? formatCurrency(sOhmPrice, 2) : <Skeleton width="150px" />}
@@ -227,17 +227,17 @@ function Wrap() {
                           Current Index
                         </Typography>
                         <Typography variant="h4">
-                          {currentIndex ? <>{trim(currentIndex, 2)} TOHU</> : <Skeleton width="150px" />}
+                          {currentIndex ? <>{trim(currentIndex, 2)} EXOD</> : <Skeleton width="150px" />}
                         </Typography>
                       </div>
                     </Grid>
                     <Grid item xs={12} sm={4} md={4} lg={4}>
                       <div className="wrap-wsOHM">
                         <Typography variant="h5" color="textSecondary">
-                          wsTOHU Price
+                          wsEXOD Price
                           <InfoTooltip
                             message={
-                              "wsTOHU = sTOHU * index\n\nThe price of wsTOHU is equal to the price of TOHU multiplied by the current index"
+                              "wsEXOD = sEXOD * index\n\nThe price of wsEXOD is equal to the price of EXOD multiplied by the current index"
                             }
                           />
                         </Typography>
@@ -256,7 +256,7 @@ function Wrap() {
                     <div className="wallet-menu" id="wallet-menu">
                       {modalButton}
                     </div>
-                    <Typography variant="h6">Connect your wallet to wrap sTOHU</Typography>
+                    <Typography variant="h6">Connect your wallet to wrap sEXOD</Typography>
                   </div>
                 ) : (
                   <>
@@ -300,8 +300,8 @@ function Wrap() {
                             onChange={changeAssetFrom}
                             disableUnderline
                           >
-                            <MenuItem value={"TOHU"}>TOHU</MenuItem>
-                            <MenuItem value={"sTOHU"}>sTOHU</MenuItem>
+                            <MenuItem value={"EXOD"}>EXOD</MenuItem>
+                            <MenuItem value={"sEXOD"}>sEXOD</MenuItem>
                           </Select>
                         </FormControl>
                       </Box>
@@ -312,14 +312,14 @@ function Wrap() {
                         style={{ paddingBottom: 0 }}
                       >
                         {address && !isAllowanceDataLoading ? (
-                          !hasAllowance(asset === "sTOHU" ? "sohm" : "ohm") && view === 0 ? (
+                          !hasAllowance(asset === "sEXOD" ? "sohm" : "ohm") && view === 0 ? (
                             <Box className="help-text">
                               <Typography variant="body1" className="stake-note" color="textSecondary">
                                 {view === 0 && (
                                   <>
                                     First time wrapping <b>{asset}</b>?
                                     <br />
-                                    Please approve Tohu to use your <b>{asset}</b> for wrapping.
+                                    Please approve Exodia to use your <b>{asset}</b> for wrapping.
                                   </>
                                 )}
                               </Typography>
@@ -350,7 +350,7 @@ function Wrap() {
                         )}
 
                         <TabPanel value={view} index={0} className="stake-tab-panel">
-                          {address && hasAllowance(asset === "sTOHU" ? "sohm" : "ohm") ? (
+                          {address && hasAllowance(asset === "sEXOD" ? "sohm" : "ohm") ? (
                             <Button
                               className="stake-button"
                               variant="contained"
@@ -416,8 +416,8 @@ function Wrap() {
                         <Box padding={1}>
                           <Typography variant="body2" className={classes.textHighlight}>
                             {isUnwrap
-                              ? `Unwrapping ${quantity} wsTOHU will result in ${trim(convertedQuantity, 4)} ${asset}`
-                              : `Wrapping ${quantity} ${asset} will result in ${trim(convertedQuantity, 4)} wsTOHU`}
+                              ? `Unwrapping ${quantity} wsEXOD will result in ${trim(convertedQuantity, 4)} ${asset}`
+                              : `Wrapping ${quantity} ${asset} will result in ${trim(convertedQuantity, 4)} wsEXOD`}
                           </Typography>
                         </Box>
                       )}
@@ -431,7 +431,7 @@ function Wrap() {
                             <Skeleton width="80px" />
                           ) : (
                             <>
-                              {asset === "sTOHU" ? <>{trim(sohmBalance, 4)} sTOHU</> : <>{trim(ohmBalance, 4)} TOHU</>}
+                              {asset === "sEXOD" ? <>{trim(sohmBalance, 4)} sEXOD</> : <>{trim(ohmBalance, 4)} EXOD</>}
                             </>
                           )}
                         </Typography>
@@ -439,7 +439,7 @@ function Wrap() {
                       <div className="data-row">
                         <Typography variant="body1">Unwrappable Balance</Typography>
                         <Typography variant="body1">
-                          {isAppLoading ? <Skeleton width="80px" /> : <>{trim(wsohmBalance, 4)} wsTOHU</>}
+                          {isAppLoading ? <Skeleton width="80px" /> : <>{trim(wsohmBalance, 4)} wsEXOD</>}
                         </Typography>
                       </div>
                     </div>

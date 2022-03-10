@@ -18,7 +18,7 @@ type PersonalExodChartProps = {
 
 const infoTooltipMessage = (
   <Trans>
-    Your projected staked TOHU balance over time. You can use this to estimate the growth of your sTOHU balance.
+    Your projected staked EXOD balance over time. You can use this to estimate the growth of your sEXOD balance.
   </Trans>
 );
 
@@ -38,22 +38,22 @@ const PersonalExodChart = ({
   stakingView,
 }: PersonalExodChartProps) => {
   const theme = useTheme();
-  const [mode, setMode] = useState(stakingView ? "USD" : "sTOHU");
+  const [mode, setMode] = useState(stakingView ? "USD" : "sEXOD");
   const blockRateSeconds = useAppSelector(state => state.app.blockRateSeconds);
 
   const defaultExod = stakingView ? 1 : 0;
   const data =
-    mode === "sTOHU"
+    mode === "sEXOD"
       ? calcSExodChart(calcDays, exodAmount || defaultExod, rebaseRate, blockRateSeconds)
       : calcUsdChart(calcDays, exodAmount || defaultExod, rebaseRate, finalExodPrice, exodPrice, blockRateSeconds);
 
   const switchMode = () => {
-    setMode(mode === "sTOHU" ? "USD" : "sTOHU");
+    setMode(mode === "sEXOD" ? "USD" : "sEXOD");
   };
 
   const profits =
-    mode === "sTOHU"
-      ? `${trim(data[0][mode], 2)} sTOHU`
+    mode === "sEXOD"
+      ? `${trim(data[0][mode], 2)} sEXOD`
       : new Intl.NumberFormat("en-US", {
           style: "currency",
           currency: "USD",
@@ -81,7 +81,7 @@ const PersonalExodChart = ({
       dataFormat="$"
       color={theme.palette.primaryColor}
       stroke={[theme.palette.primaryColor]}
-      infoTooltipMessage={mode === "sTOHU" ? infoTooltipMessage : usdTooltip}
+      infoTooltipMessage={mode === "sEXOD" ? infoTooltipMessage : usdTooltip}
       expandedGraphStrokeColor={theme.palette.graphStrokeColor}
       bulletpoints={bulletpointColors}
       timeSelection={false}
@@ -96,8 +96,8 @@ const calcSExodChart = (calcDays: number, exodAmount: number, rebaseRate: number
 
   for (let day = 0; day <= calcDays; day++) {
     const yeildPercent = calcYieldPercent(rebaseRate, day, blockRateSeconds);
-    const sTOHU = calcTotalExod(exodAmount, yeildPercent);
-    data.unshift({ sTOHU, timestamp: nowPlusDays(day) });
+    const sEXOD = calcTotalExod(exodAmount, yeildPercent);
+    data.unshift({ sEXOD, timestamp: nowPlusDays(day) });
   }
   return data;
 };
@@ -118,8 +118,8 @@ const calcUsdChart = (
 
   for (let day = 0; day <= calcDays; day++) {
     const yeildPercent = calcYieldPercent(rebaseRate, day, blockRateSeconds);
-    const sTOHU = calcTotalExod(exodAmount, yeildPercent);
-    const USD = sTOHU * price;
+    const sEXOD = calcTotalExod(exodAmount, yeildPercent);
+    const USD = sEXOD * price;
     price = price + price * changePerDay;
 
     data.unshift({ USD, timestamp: nowPlusDays(day) });
@@ -135,7 +135,7 @@ const HeaderText = ({ mode, switchMode }: { mode: string; switchMode: () => void
   return (
     <HeaderContainer>
       <SwitchToUSD onClick={switchMode}>
-        <Trans>Switch to</Trans> {mode === "sTOHU" ? "USD" : "sTOHU"}
+        <Trans>Switch to</Trans> {mode === "sEXOD" ? "USD" : "sEXOD"}
       </SwitchToUSD>
     </HeaderContainer>
   );
@@ -165,7 +165,7 @@ const HeaderSubText = ({
           <Trans>if price remains stable</Trans>
         </>
       )}
-      {!exodAmount && stakingView && <> ({t`Staking`} 1 TOHU)</>}
+      {!exodAmount && stakingView && <> ({t`Staking`} 1 EXOD)</>}
     </>
   );
 };

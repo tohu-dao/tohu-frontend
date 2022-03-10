@@ -25,9 +25,9 @@ function alreadyApprovedToken(token: string, ohmWrap: BigNumber, sohmWrap: BigNu
   let applicableAllowance = bigZero;
 
   // determine which allowance to check
-  if (token === "sTOHU") {
+  if (token === "sEXOD") {
     applicableAllowance = sohmWrap;
-  } else if (token === "TOHU") {
+  } else if (token === "EXOD") {
     applicableAllowance = ohmWrap;
   }
 
@@ -66,13 +66,13 @@ export const changeApproval = createAsyncThunk(
     }
 
     try {
-      if (token === "sTOHU") {
+      if (token === "sEXOD") {
         // won't run if wrapAllowance > 0
         approveTx = await sohmContract.approve(
           addresses[networkID].WSOHM_ADDRESS,
           ethers.utils.parseUnits("1000000000", "gwei").toString(),
         );
-      } else if (token === "TOHU") {
+      } else if (token === "EXOD") {
         // won't run if wrapAllowance > 0
         approveTx = await ohmContract.approve(
           addresses[networkID].WSOHM_ADDRESS,
@@ -80,8 +80,8 @@ export const changeApproval = createAsyncThunk(
         );
       }
 
-      const text = "Approve " + (["TOHU", "sTOHU"].includes(token) ? "Wrapping" : "Unwrapping");
-      const pendingTxnType = ["TOHU", "sTOHU"].includes(token) ? "approve_wrapping" : "approve_unwrapping";
+      const text = "Approve " + (["EXOD", "sEXOD"].includes(token) ? "Wrapping" : "Unwrapping");
+      const pendingTxnType = ["EXOD", "sEXOD"].includes(token) ? "approve_wrapping" : "approve_unwrapping";
       if (approveTx) {
         dispatch(fetchPendingTxns({ txnHash: approveTx.hash, text, type: pendingTxnType }));
 
@@ -114,8 +114,8 @@ export const changeApproval = createAsyncThunk(
 
     dispatch(
       pollUpdateState({
-        field: `wrapping.${token === "TOHU" ? "ohmWrap" : "sohmWrap"}`,
-        stateAccessor: `account.wrapping.${token === "TOHU" ? "ohmWrap" : "sohmWrap"}`,
+        field: `wrapping.${token === "EXOD" ? "ohmWrap" : "sohmWrap"}`,
+        stateAccessor: `account.wrapping.${token === "EXOD" ? "ohmWrap" : "sohmWrap"}`,
         thunkToCall: () => fetchFreshAllowances(),
       }),
     );
