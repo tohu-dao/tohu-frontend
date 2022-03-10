@@ -7,7 +7,7 @@ const CalcHeader = () => {
   return (
     <Grid item>
       <Heading variant="h5">
-        <Trans>Tohulator</Trans> (🍞🧮)
+        <Trans>OBLITERATOR</Trans> (🧪 + 🧪 = ❔)
       </Heading>
       <Typography variant="body1">
         <Trans>Estimate your returns</Trans>

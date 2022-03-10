@@ -42,7 +42,7 @@ function NavContent() {
     if (currentPath.indexOf("wrap") >= 0 && page === "wrap") {
       return true;
     }
-    if (currentPath.indexOf("obliterator") >= 0 && page === "obliterator") {
+    if (currentPath.indexOf("calc") >= 0 && page === "calc") {
       return true;
     }
     if (currentPath.indexOf("analytics") >= 0 && page === "analytics") {
@@ -215,14 +215,14 @@ function NavContent() {
               <Link
                 component={NavLink}
                 id="calc-nav"
-                to="/obliterator"
+                to="/calc"
                 isActive={(match, location) => {
-                  return checkPage(match, location, "obliterator");
+                  return checkPage(match, location, "calc");
                 }}
-                className={`button-dapp-menu ${isActive ? "active" : ""} obliterator`}
+                className={`button-dapp-menu ${isActive ? "active" : ""} calc`}
               >
                 <Tooltip
-                  title={<Trans>Estimate and visualize your potential returns over time by staking with Exodia</Trans>}
+                  title={<Trans>Estimate and visualize your potential returns over time by staking with Tohu</Trans>}
                 >
                   <Typography variant="h6" className="obliterator">
                     <SvgIcon color="primary" component={StarIcon} />
