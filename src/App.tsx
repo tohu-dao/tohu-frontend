@@ -347,7 +347,7 @@ function App() {
                 </Route>
    */}
 
-              <Route path="/absorption">
+              {/*<Route path="/absorption">
                 {(absorptionBonds as IAllBondData[]).map(bond => {
                   return (
                     <Route exact key={bond.name} path={`/absorption/${bond.name}`}>
@@ -356,7 +356,7 @@ function App() {
                   );
                 })}
                 <AbsorptionBonds />
-              </Route>
+              </Route>*/}
 
               <Route path="/bonds">
                 {(bonds as IAllBondData[]).map(bond => {
