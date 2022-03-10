@@ -62,8 +62,8 @@ function NavContent() {
       <Box className="dapp-sidebar-inner" display="flex" justifyContent="space-between" flexDirection="column">
         <div className="dapp-menu-top">
           <Box className="branding-header">
-            <Link href="https://exodia.fi" target="_blank" rel="nofollow noopener noreferrer">
-              <img src={ExodiaLogo} alt={"Exodia logo"} />
+            <Link href="https://fantoms.art" target="_blank" rel="nofollow noopener noreferrer">
+              <img src={ExodiaLogo} alt={"Tohu logo"} />
             </Link>
 
             {address && (
@@ -84,7 +84,7 @@ function NavContent() {
 
           <div className="dapp-menu-links">
             <div className="dapp-nav" id="navbarNav">
-              <Link href={`https://www.exodia.fi/`} target="_blank" rel="nofollow noopener noreferrer">
+              <Link href={`https://www.fantoms.art`} target="_blank" rel="nofollow noopener noreferrer">
                 <Typography variant="h6">
                   <SvgIcon color="primary" component={HomeIcon} />
                   <Trans>Landing Page</Trans>

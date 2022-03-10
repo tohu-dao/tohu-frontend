@@ -168,6 +168,6 @@ const queryClient = new QueryClient();
 // much higher up in our App.
 export default () => (
   <QueryClientProvider client={queryClient}>
-    <AbsorptionBonds />
+    {/*<AbsorptionBonds />*/}
   </QueryClientProvider>
 );

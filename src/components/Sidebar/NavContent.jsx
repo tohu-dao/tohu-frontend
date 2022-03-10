@@ -197,7 +197,7 @@ function NavContent() {
                 </div>
               </div>
 
-              <Link
+              {/*<Link
                 component={NavLink}
                 id="bond-nav"
                 to="/absorption"
@@ -210,7 +210,7 @@ function NavContent() {
                   <SvgIcon color="primary" component={CallMerge} />
                   <Trans>Absorption</Trans>
                 </Typography>
-              </Link>
+              </Link>*/}
 
               <Link
                 component={NavLink}
