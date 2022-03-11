@@ -84,12 +84,12 @@ function NavContent() {
 
           <div className="dapp-menu-links">
             <div className="dapp-nav" id="navbarNav">
-              <Link href={`https://www.fantoms.art`} target="_blank" rel="nofollow noopener noreferrer">
+              {/*}<Link href={`https://www.fantoms.art`} target="_blank" rel="nofollow noopener noreferrer">
                 <Typography variant="h6">
                   <SvgIcon color="primary" component={HomeIcon} />
                   <Trans>Landing Page</Trans>
                 </Typography>
-              </Link>
+              </Link>*/}
               <Link
                 component={NavLink}
                 id="dash-nav"
