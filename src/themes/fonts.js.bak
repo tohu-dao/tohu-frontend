@@ -15,7 +15,7 @@ import MontserratMediumWOFF from "../assets/fonts/Montserrat-Medium.ttf";
 const square = {
   fontFamily: "Square",
   fontStyle: "normal",
-  fontDisplay: "swap", 
+  fontDisplay: "swap",
   fontWeight: 400,
   src: `
 		local('Inconsolata'),

@@ -7,7 +7,7 @@ import poolDataReducer from "./slices/PoolThunk";
 import messagesReducer from "./slices/MessagesSlice";
 // reducers are named automatically based on the name field in the slice
 // exported in slice files by default as nameOfSlice.reducer
-
+ 
 const store = configureStore({
   reducer: {
     //   we'll have state.account, state.bonding, etc, each handled by the corresponding

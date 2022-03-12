@@ -1,23 +1,23 @@
 import { NetworkID, CustomBond, BondType } from "src/lib/Bond";
-import { ReactComponent as gOHMImg } from "src/assets/tokens/gOHM.svg";
+import { XOprImage } from "src/assets/tokens/xopr_svg";
+import { abi as ReserveOhmDaiContract } from "src/abi/reserves/OhmDai.json";
 import { abi as EthBondContract } from "src/abi/bonds/EthContract.json";
-import { abi as ierc20Abi } from "src/abi/IERC20.json";
 import customTreasuryBalance from "./customTreasuryBalance";
 
-const gohm = new CustomBond({
-  name: "gohm",
-  displayName: "gOHM",
-  lpUrl: "",
+const xopr = new CustomBond({
+  name: "xopr",
+  displayName: "xOPR",
+  bondToken: "xopr",
   bondType: BondType.StableAsset,
-  bondToken: "gOHM", 
   isAvailable: { [NetworkID.Mainnet]: true },
-  bondIconSvg: gOHMImg,
+  bondIconSvg: XOprImage,
+  isMonolith: false,
   bondContractABI: EthBondContract,
-  reserveContract: ierc20Abi, // The Standard ierc20Abi since they're normal tokens
+  reserveContract: ReserveOhmDaiContract,
   networkAddrs: {
     [NetworkID.Mainnet]: {
-      bondAddress: "0xcf69ba319ff0f8e2481de13d16ce7f74b063533e",
-      reserveAddress: "0x91fa20244Fb509e8289CA630E5db3E9166233FDc",
+      bondAddress: "0x0000000000000000000000000000000000000000",
+      reserveAddress: "0x9E7f8D1E52630d46e8749C8f81e91D4e934f3589",
     },
     [NetworkID.Testnet]: {
       bondAddress: "",
@@ -25,6 +25,7 @@ const gohm = new CustomBond({
     },
   },
   customTreasuryBalanceFunc: customTreasuryBalance,
+  lpUrl: "https://staking.fantoms.art/",
 });
 
-export default gohm;
+export default xopr;

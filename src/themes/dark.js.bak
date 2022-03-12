@@ -37,7 +37,7 @@ export const darkTheme = {
   outlinedSecondaryButtonHoverColor: "#F5DDB4", //gold became dark green
   containedSecondaryButtonHoverBG: "rgba(255, 255, 255, 0.15)",
   graphStrokeColor: "rgba(255, 255, 255, .1)",
-  sidebarBackground: `linear-gradient(0deg, #FFB53F 0%, #FE9F01 46%, #FFFDD3 100%, url(${navBg})); outline: 2px bold`,
+  sidebarBackground: `linear-gradient(0deg, #FFB53F 0%, #FE9F01 46%, #FFFDD3 100%, url(${navBg}))`,
   chartColors: ["#46ab15", "#ebc342", "#fe868c", "#598fb5", "#775bb5", "#42bd8c", "#db3737", "#888888"],
   treasuryColors: {
     EXOD: "#46ab15",
@@ -124,7 +124,7 @@ export const dark = responsiveFontSizes(
         graphStrokeColor: darkTheme.graphStrokeColor,
       },
       typography: {
-        fontFamily: "Square",
+        fontFamily: "Montserrat",
       },
       props: {
         MuiSvgIcon: {

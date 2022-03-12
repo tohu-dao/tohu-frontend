@@ -333,7 +333,7 @@ function App() {
                 <Stake />
               </Route>
 
-              <Route path="/obliterator">
+              <Route path="/calc">
                 <Calc />
               </Route>
 
@@ -388,7 +388,7 @@ const AppContainer = styled.div<{ backgroundColor: string }>`
   flex-direction: column;
   z-index: 1;
   background-size: cover;
-  font-family: "Square";
+  font-family: "Montserrat";
   overflow: hidden;
   transition: all ease 0.33ms;
   background: ${({ backgroundColor }) => backgroundColor};
