@@ -51,9 +51,7 @@ function TopBar({ theme, toggleTheme, handleDrawerToggle }) {
         </Button>
         {!isSmallScreen && <RebaseTimer />}
         <Box display="flex">
-          {/*
-		  !isVerySmallScreen && <OhmMenu />
-		  */}
+          {!isVerySmallScreen && <OhmMenu /> && false}
 
           <ConnectMenu theme={theme} />
 
