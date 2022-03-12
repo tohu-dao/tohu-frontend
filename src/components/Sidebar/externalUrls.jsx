@@ -13,7 +13,7 @@ const externalUrls = [
     title: <Trans>Governance</Trans>,
     url: "https://snapshot.org/#/randomz.eth",
     icon: <SvgIcon color="primary" component={GovIcon} />,
-  },
+  }, 
   {
     title: <Trans>Docs</Trans>,
     url: "https://fantoms.gitbook.io",
