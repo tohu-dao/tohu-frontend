@@ -27,7 +27,7 @@ export const ConfirmationModal = props => {
               </Box>
               <Typography variant="body2" className="info-text">
                 You're depositing <strong>{props.quantity} sOhm </strong>in the
-                <strong> (🍞, 🍞) Together Pool </strong>
+                <strong> (3, 3) Together Pool </strong>
               </Typography>
               <Typography variant="h6" className="header" style={{ color: theme.palette.highlight }}>
                 Please Note:
