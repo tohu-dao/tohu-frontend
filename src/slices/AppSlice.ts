@@ -308,7 +308,7 @@ export const loadMarketPrice = createAsyncThunk(
     const marketPriceQuery = `
     query {
       protocolMetrics(first: 1, orderBy: id, orderDirection: desc) {
-        ohmPrice
+        exodPrice
       }
     }
   `;

@@ -3,7 +3,7 @@ export const THE_GRAPH_URL_ETH = "https://api.thegraph.com/subgraphs/name/exodia
 export const BEETS_LINK = "https://beets.fi/#/trade/fantom/0x3b57f3feaaf1e8254ec680275ee6e7727c7413c7";
 export const EPOCH_INTERVAL = 21600;
 
-export const MAX_RETRY_ATTEMPTS = 10;
+export const MAX_RETRY_ATTEMPTS = 7;
 
 export const TOKEN_DECIMALS = 9;
 

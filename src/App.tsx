@@ -52,7 +52,7 @@ import { useGoogleAnalytics } from "./hooks/useGoogleAnalytics";
 const DEBUG = false;
 
 // Should be in beta
-const BETA_WARNING = true;
+const BETA_WARNING = false;
 
 // 🛰 providers
 if (DEBUG) console.log("📡 Connecting to Mainnet Ethereum");

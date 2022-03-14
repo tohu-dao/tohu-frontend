@@ -144,7 +144,8 @@
     "lingui:extract": "lingui extract",
     "lingui:compile": "lingui compile",
     "typechain:build": "yarn run typechain --target ethers-v5 --out-dir src/typechain src/abi/*.json src/abi/**/*.json",
-    "postinstall": "yarn typechain:build && yarn lingui:compile"
+    "postinstall": "yarn typechain:build && yarn lingui:compile",
+    "commit": "git add . && git commit -m '' && git push origin develop"
   },
   "resolutions": {
     "**/immer": "9.0.6",
