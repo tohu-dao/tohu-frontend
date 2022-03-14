@@ -434,6 +434,8 @@ const appSlice = createSlice({
           treasuries,
           protocolMetrics,
         };
+		console.log("TREASURY METRICS");
+		console.log(state.treasuryMetrics)
       });
   },
 });
